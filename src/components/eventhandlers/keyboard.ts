@@ -24,7 +24,7 @@ enum Modal {
 
 export function useModalKey({ onSequenceComplete, isActive = true, mode = 0 }: UseModalKeyOptions = {}) {
 	const [sequence, setSequence] = useState<string>("");
-	const [ctrlActive, setCtrlActive] = useState<boolean>();
+	//const [ctrlActive, setCtrlActive] = useState<boolean>();
 
 	useEffect(() => {
 		if (!isActive) return;
@@ -33,9 +33,7 @@ export function useModalKey({ onSequenceComplete, isActive = true, mode = 0 }: U
 			event.preventDefault();
 			const key = event.key;
 
-			console.log("---");
-			console.log("input");
-			console.log("sequence=" + sequence);
+			//console.log("useModalKey: key="+ key);
 
 			// Check static commands - Esc, leader, etc.
 			let checkStaticCmds = staticCommands(key);
@@ -49,7 +47,7 @@ export function useModalKey({ onSequenceComplete, isActive = true, mode = 0 }: U
 			}
 			else if(checkStaticCmds === Command.Ignore) return;
 
-			console.log("static check complete");
+			//console.log("useModalKey: post static check");
 
 			// Assemble new input into sequence
 			const newSeq = sequence + key;
@@ -58,20 +56,23 @@ export function useModalKey({ onSequenceComplete, isActive = true, mode = 0 }: U
 			// Check if there are any more possible commands
 			let possibleCmds = possibleCommands(newSeq);
 			if(possibleCmds > 1){
+				//console.log("useModalKey: possibleCmds > 1");
 				return;
 			}
 			else if(possibleCmds === 0){
 				// todo UX feedback that input has been rejected
+				//console.log("useModalKey: possibleCmds = 0");
 				setSequence("");
 				return;
 			}
 
-			console.log("possible check complete");
-
 			// possibleCmds must be 1
 			const cmd = assembleCommand(newSeq);
+
+			console.log("useModalKey: SEND: " + newSeq);
 			onSequenceComplete?.(cmd);
-			return "";
+			setSequence("");
+			//return "";
 		};
 
 		window.addEventListener('keydown', handleKeyDown);
@@ -80,7 +81,7 @@ export function useModalKey({ onSequenceComplete, isActive = true, mode = 0 }: U
 		};
 	}, [onSequenceComplete, isActive, mode]);
 
-	return sequence; 
+	//return sequence; 
 }
 enum Command {
 	None,
@@ -118,40 +119,39 @@ function populateCommandMap(){
 }
 
 function possibleCommands(input: string): number {
-	// Check for numerics
+	// If input is an integer, multiple valid commands are possible, skip further checks
+	let isInt = isStrictInteger(input);
+	if(isInt){
+		//console.log("possibleCommands:return 2");
+		return 2;
+	}
+
 	let lastNumberIdx = getNumberEndsIdx(input);
 
-	// If input is purely numeric, multiple valid commands are possible, skip further checks
-	if(input.length === lastNumberIdx+1) return 2;
-
-	console.log("possibleCommands not purely numeric");
-
 	let cmd = commandMap.get(input.substring(lastNumberIdx+1, input.length));
-	if(cmd === undefined) return 0;
+	if(cmd === undefined) {
+		//console.log("possibleCommands:undefined");
+		return 0;
+	}
 
-	console.log("possibleCommands success");
-
+	//console.log("possibleCommands:return 1");
 	return 1;
 }
-
+function isStrictInteger(input: string): boolean {
+  const num = Number(input);
+  return Number.isInteger(num) && input.trim() === num.toString();
+}
 function getNumberEndsIdx(input: string): number {
-	let lastNumberIdx = 0;
+	let lastNumberIdx = -1;
 	for(let i = 0; i < input.length; i++){
 		if(numeric.includes(input[i])) lastNumberIdx = i;	
 		else break;
 	}
-
-	console.log("last number at " + lastNumberIdx);
-
 	return lastNumberIdx;
 }
 
 function assembleCommand(input: string): CommandSequence {
-
-	// todo
 	let lastNumberIdx = getNumberEndsIdx(input);
-	console.log(input);
-
 	let modInt = 0;
 	if(lastNumberIdx != 0){
 		modInt = parseInt(input.substring(0, lastNumberIdx+1)) || 0;
@@ -159,7 +159,7 @@ function assembleCommand(input: string): CommandSequence {
 
 	const tmp: CommandSequence = {
 		modInt: modInt,
-		cmd: commandMap.get(input.substring(lastNumberIdx+1, input.length)) ?? Command.Error,
+		cmd: commandMap.get(input.substring(modInt == 0 ? 0 : lastNumberIdx+1, input.length)) ?? Command.Error,
 	};
 	return tmp;
 }
