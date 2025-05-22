@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 
-export type KeySequence = string;
+const numeric = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const commandMap = new Map<string,Command>();
+populateCommandMap();
 
+export type KeySequence = string;
 interface UseModalKeyOptions {
 	onSequenceComplete?: (sequence: CommandSequence) => void;
 	isActive?: boolean; // Toggle input listening
@@ -10,7 +13,7 @@ interface UseModalKeyOptions {
 
 export type CommandSequence = {
 	modInt: number,
-	cmd: Commands,
+	cmd: Command,
 }
 
 enum Modal {
@@ -30,11 +33,13 @@ export function useModalKey({ onSequenceComplete, isActive = true, mode = 0 }: U
 			event.preventDefault();
 			const key = event.key;
 
+			console.log("---");
 			console.log("input");
+			console.log("sequence=" + sequence);
 
 			// Check static commands - Esc, leader, etc.
 			let checkStaticCmds = staticCommands(key);
-			if(checkStaticCmds === Commands.Escape || checkStaticCmds === Commands.Leader || checkStaticCmds === Commands.Console) {
+			if(checkStaticCmds === Command.Escape || checkStaticCmds === Command.Leader || checkStaticCmds === Command.Console) {
 				if(sequence != ""){ // cancel sequence
 					setSequence("");
 					return;
@@ -42,7 +47,7 @@ export function useModalKey({ onSequenceComplete, isActive = true, mode = 0 }: U
 				// todo if no ongoing sequence, send event to gui handler
 				return;
 			}
-			else if(checkStaticCmds === Commands.Ignore) return;
+			else if(checkStaticCmds === Command.Ignore) return;
 
 			console.log("static check complete");
 
@@ -77,11 +82,12 @@ export function useModalKey({ onSequenceComplete, isActive = true, mode = 0 }: U
 
 	return sequence; 
 }
-enum Commands {
+enum Command {
 	None,
 	Cancel,
 	Escape,
 	Console,
+	Error,
 
 	Ignore,
 	Input,
@@ -94,40 +100,66 @@ enum Commands {
 	CursorRight
 }
 
-function staticCommands(input: string): Commands {
+function staticCommands(input: string): Command {
 	switch(input) {
-		case 'Escape':	return Commands.Escape;
-		case 'Alt':		return Commands.Ignore;
-		case ':':		return Commands.Console;
-		case ' ':		return Commands.Leader;
-		default:		return Commands.None;
+		case 'Escape':	return Command.Escape;
+		case 'Alt':		return Command.Ignore;
+		case ':':		return Command.Console;
+		case ' ':		return Command.Leader;
+		default:		return Command.None;
 	}
+}
+
+function populateCommandMap(){
+	commandMap.set('h', Command.CursorLeft);
+	commandMap.set('j', Command.CursorDown);
+	commandMap.set('k', Command.CursorUp);
+	commandMap.set('l', Command.CursorRight);
 }
 
 function possibleCommands(input: string): number {
 	// Check for numerics
-	let numeric = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+	let lastNumberIdx = getNumberEndsIdx(input);
+
+	// If input is purely numeric, multiple valid commands are possible, skip further checks
+	if(input.length === lastNumberIdx+1) return 2;
+
+	console.log("possibleCommands not purely numeric");
+
+	let cmd = commandMap.get(input.substring(lastNumberIdx+1, input.length));
+	if(cmd === undefined) return 0;
+
+	console.log("possibleCommands success");
+
+	return 1;
+}
+
+function getNumberEndsIdx(input: string): number {
 	let lastNumberIdx = 0;
 	for(let i = 0; i < input.length; i++){
 		if(numeric.includes(input[i])) lastNumberIdx = i;	
 		else break;
 	}
 
-	// If input is numeric, multiple valid commands are possible, skip further checks
-	if(input.length === lastNumberIdx) return 2;
+	console.log("last number at " + lastNumberIdx);
 
-	// todo
-
-	return 0;
+	return lastNumberIdx;
 }
 
 function assembleCommand(input: string): CommandSequence {
 
 	// todo
+	let lastNumberIdx = getNumberEndsIdx(input);
+	console.log(input);
+
+	let modInt = 0;
+	if(lastNumberIdx != 0){
+		modInt = parseInt(input.substring(0, lastNumberIdx+1)) || 0;
+	}
 
 	const tmp: CommandSequence = {
-		modInt: 0,
-		cmd: Commands.None,
+		modInt: modInt,
+		cmd: commandMap.get(input.substring(lastNumberIdx+1, input.length)) ?? Command.Error,
 	};
 	return tmp;
 }
