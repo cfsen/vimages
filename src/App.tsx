@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+//import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 
-import { useModalKey, CommandSequence } from "./components/eventhandlers/keyboard.ts";
+//import { useModalKey, CommandSequence } from "./components/eventhandlers/keyboard.ts";
+import { useModalKey } from './keyboard/KeyboardModule';
+import { CommandSequence } from './keyboard/Command';
 
 function App() {
 	const [cmdLog, setCmdLog] = useState<CommandSequence[]>([]);
@@ -20,7 +22,6 @@ function App() {
 
 	return (
 	<main className="container">
-		<h1>Welcome to Tauri + React</h1>
 
 		<div className="row">
 			{cmdLog.map((cmd, index) => <div key={index}>{cmd.cmd.toString()}</div>)}
