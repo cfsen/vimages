@@ -19,6 +19,7 @@ export enum Command {
 	Cancel,
 	Escape,
 	Console,
+	Return,
 	Error,
 
 	Ignore,

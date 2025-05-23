@@ -32,11 +32,18 @@ export function useModalKey({ onSequenceComplete, isActive = true, mode = 0 }: U
 			// Check static commands - Esc, leader, etc.
 			let checkStaticCmds = staticCommands(key);
 			if(checkStaticCmds === Command.Escape || checkStaticCmds === Command.Leader || checkStaticCmds === Command.Console) {
-				if(sequence != ""){ // cancel sequence
+				if(sequence != ""){ // Esc should revert the input sequence 
 					setSequence("");
 					return;
 				}
-				// todo if no ongoing sequence, send event to gui handler
+
+				const tmp: CommandSequence = {
+					modInt: 0,
+					cmd: checkStaticCmds,
+				};
+				onSequenceComplete?.(tmp);
+				setSequence("");
+
 				return;
 			}
 			else if(checkStaticCmds === Command.Ignore) return;

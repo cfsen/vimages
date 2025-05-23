@@ -1,33 +1,47 @@
-import { useState } from "react";
-//import { invoke } from "@tauri-apps/api/core";
+import { useState, useCallback, useEffect } from "react";
+import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 
-//import { useModalKey, CommandSequence } from "./components/eventhandlers/keyboard.ts";
 import { useModalKey } from './keyboard/KeyboardModule';
 import { CommandSequence } from './keyboard/Command';
 
-function App() {
-	const [cmdLog, setCmdLog] = useState<CommandSequence[]>([]);
+import { useCommand } from './context/vimagesCtx';
 
-	//async function greet() {
-	//	// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-	//	//setGreetMsg(await invoke("greet", { name }));
-	//}
-	const sequence = useModalKey({
+function App() {
+	const { handleCmd } = useCommand();
+	const [cmdLog, setCmdLog] = useState<CommandSequence[]>([]);
+	const [fsPwdEntities, setFsPwdEntities] = useState<string>();
+
+	const fs_list = useCallback( async (path: string) => {
+		const res = await invoke("fs_list_directory", { path });
+		setFsPwdEntities(res as string);
+		console.log("fslist");
+	}, []);
+	
+	useEffect(() => {
+		fs_list(".");
+	}, [fs_list]);
+
+
+	useModalKey({
 		onSequenceComplete: (seq) => {
+			handleCmd(seq);
 			setCmdLog(cmdLog => [...cmdLog, seq]);
 		},
 	}
 	);
 
 	return (
-	<main className="container">
+		<main className="container">
 
-		<div className="row">
-			{cmdLog.map((cmd, index) => <div key={index}>{cmd.cmd.toString()}</div>)}
-		</div>
+			<div className="row">
+				{cmdLog.map((cmd, index) => <div key={index}>{cmd.cmd.toString()}</div>)}
+			</div>
+			<div className="row">
+				{fsPwdEntities}
+			</div>
 
-	</main>
+		</main>
 	);
 }
 
