@@ -77,7 +77,7 @@ export function useModalKey({ onSequenceComplete, isActive = true, mode = 0 }: U
 
 			// Avoid sending partial commands ('g', 'z' -> finalized next run with 'gg', 'zz')
 			if(tmp.cmd === Command.PartialInput) {
-				console.log("useModalKey:PartialInput!");
+				//console.log("useModalKey:PartialInput!");
 				return;
 			}
 

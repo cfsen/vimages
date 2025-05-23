@@ -5,6 +5,7 @@ export function staticCommands(input: KeyboardEvent): Command {
 	switch(input.key) {
 		case 'Escape':	return Command.Escape;
 		case 'Alt':		return Command.Ignore;
+		case 'Shift':	return Command.Ignore;
 		case ':':		return Command.Console;
 		case ' ':		return Command.Leader;
 		default:		return Command.None;
