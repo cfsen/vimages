@@ -1,8 +1,8 @@
 import { isStrictInteger, getNumberEndsIdx } from './Helpers';
 import { Command, CommandSequence } from './Command.ts';
 
-export function staticCommands(input: string): Command {
-	switch(input) {
+export function staticCommands(input: KeyboardEvent): Command {
+	switch(input.key) {
 		case 'Escape':	return Command.Escape;
 		case 'Alt':		return Command.Ignore;
 		case ':':		return Command.Console;
@@ -18,9 +18,9 @@ export function possibleCommands(input: string, commandMap: Map<string,Command>)
 
 	let lastNumberIdx = getNumberEndsIdx(input);
 
+	// Look for complete command
 	let cmd = commandMap.get(input.substring(lastNumberIdx+1, input.length));
 	if(cmd === undefined) return 0;
-
 	return 1;
 }
 

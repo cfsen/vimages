@@ -6,6 +6,13 @@ export function populateCommandMap(): Map<string,Command>{
 	commandMap.set('k', Command.CursorUp);
 	commandMap.set('l', Command.CursorRight);
 
+	commandMap.set('g', Command.PartialInput);
+	commandMap.set('gg', Command.JumpFirst);
+	commandMap.set('G', Command.JumpLast);
+
+	commandMap.set('z', Command.PartialInput);
+	commandMap.set('zz', Command.CenterView);
+
 	return commandMap;
 }
 
@@ -18,17 +25,24 @@ export enum Command {
 	None,
 	Cancel,
 	Escape,
-	Console,
+	Ignore,
 	Return,
+
+	Console,
+	Leader,
 	Error,
 
-	Ignore,
 	Input,
+	PartialInput,
 	Numeric,
-	Leader,
 
 	CursorLeft,
 	CursorUp,
 	CursorDown,
-	CursorRight
+	CursorRight,
+
+	JumpFirst,
+	JumpLast,
+
+	CenterView,
 }

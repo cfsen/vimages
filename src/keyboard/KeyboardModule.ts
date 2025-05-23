@@ -20,17 +20,16 @@ const commandMap = populateCommandMap();
 
 export function useModalKey({ onSequenceComplete, isActive = true, mode = 0 }: UseModalKeyOptions = {}) {
 	const [sequence, setSequence] = useState<string>("");
-	//const [ctrlActive, setCtrlActive] = useState<boolean>();
 
 	useEffect(() => {
 		if (!isActive) return;
 
 		const handleKeyDown = (event: KeyboardEvent) => {
 			event.preventDefault();
-			const key = event.key;
 
 			// Check static commands - Esc, leader, etc.
-			let checkStaticCmds = staticCommands(key);
+			let checkStaticCmds = staticCommands(event);
+			if(checkStaticCmds === Command.Ignore) return;
 			if(checkStaticCmds === Command.Escape || checkStaticCmds === Command.Leader || checkStaticCmds === Command.Console) {
 				if(sequence != ""){ // Esc should revert the input sequence 
 					setSequence("");
@@ -46,10 +45,15 @@ export function useModalKey({ onSequenceComplete, isActive = true, mode = 0 }: U
 
 				return;
 			}
-			else if(checkStaticCmds === Command.Ignore) return;
+
+			// Handle ctrl+key events
+			if(event.ctrlKey){
+				console.log("useModalKey:event.ctrl");
+				return;
+			}
 
 			// Assemble new input into sequence
-			const newSeq = sequence + key;
+			const newSeq = sequence + event.key;
 			setSequence(newSeq);
 
 			// Check if there are any more possible commands
@@ -58,17 +62,28 @@ export function useModalKey({ onSequenceComplete, isActive = true, mode = 0 }: U
 				return;
 			}
 			else if(possibleCmds === 0){
-				// todo UX feedback that input has been rejected
+				// No commands are possible, reset sequence, send error
+				const tmp: CommandSequence = {
+					modInt: 0,
+					cmd: Command.Error,
+				};
+				onSequenceComplete?.(tmp);
 				setSequence("");
 				return;
 			}
 
 			// possibleCmds must be 1
-			const cmd = assembleCommand(newSeq, commandMap);
+			const tmp = assembleCommand(newSeq, commandMap);
+
+			// Avoid sending partial commands ('g', 'z' -> finalized next run with 'gg', 'zz')
+			if(tmp.cmd === Command.PartialInput) {
+				console.log("useModalKey:PartialInput!");
+				return;
+			}
 
 			console.log("useModalKey: SEND: " + newSeq);
 
-			onSequenceComplete?.(cmd);
+			onSequenceComplete?.(tmp);
 			setSequence("");
 		};
 
