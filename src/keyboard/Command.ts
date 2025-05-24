@@ -13,6 +13,13 @@ export function populateCommandMap(): Map<string,Command>{
 	commandMap.set('z', Command.PartialInput);
 	commandMap.set('zz', Command.CenterView);
 
+	commandMap.set('V', Command.ModeVisual);
+
+	commandMap.set('i', Command.ModeInsert);
+	commandMap.set('a', Command.ModeInsertAppend);
+	commandMap.set('I', Command.ModeInsertPrefix);
+	commandMap.set('A', Command.ModeInsertSuffix);
+
 	return commandMap;
 }
 
@@ -31,6 +38,13 @@ export enum Command {
 	Console,
 	Leader,
 	Error,
+
+	ModeNormal,
+	ModeInsert,
+	ModeInsertPrefix,
+	ModeInsertSuffix,
+	ModeInsertAppend,
+	ModeVisual,
 
 	Input,
 	PartialInput,
