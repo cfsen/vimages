@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useRef, useContext, useState } from "react";
 import { Command, CommandSequence } from '../keyboard/Command';
 
 type vimagesCtxType = {
@@ -8,6 +8,16 @@ type vimagesCtxType = {
 	updatePwd: (dir: string) => void;
 	showLeader: boolean;
 	showConsole: boolean;
+
+	navActiveId: string | null;
+	setNavActiveId: (id: string) => void;
+	navRegister: (navItem: NavigationItem) => void;
+	navUnregister: (id: string) => void;
+};
+
+type NavigationItem = {
+	id: string;
+	ref: React.RefObject<HTMLElement>;
 };
 
 const vimagesCtx = createContext<vimagesCtxType | undefined>(undefined);
@@ -18,6 +28,34 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 	const [showLeader, setShowLeader] = useState<boolean>(false);
 	const [showConsole, setShowConsole] = useState<boolean>(false);
 
+
+	//
+	// Navigation
+	//
+
+	const [navActiveId, setNavActiveId] = useState<string | null>(null);
+	const navItemsRef = useRef<NavigationItem[]>([]);
+
+	const navRegister = (navItem: NavigationItem) => {
+		navItemsRef.current?.push(navItem);
+		if (navItemsRef.current?.length === 1) setNavActiveId(navItem.id);
+		console.log("vimagesCtx:navRegister");
+		console.log("vimagesCtx:navItemsRef.length:" + navItemsRef.current?.length);
+
+		console.log("vimagesCtx:navActiveId:" + navActiveId);
+	};
+
+	const navUnregister = (id: string) => {
+		navItemsRef.current = navItemsRef.current?.filter((i) => i.id !== id);
+		if (navActiveId === id) setNavActiveId(null);
+		console.log("vimagesCtx:navUnregister");
+	}
+
+
+	//
+	// Command handling
+	//
+	
 	const handleCmd = (seq: CommandSequence) => {
 		setCmdLog(prev => [...prev, seq]);
 
@@ -37,6 +75,9 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 		}
 		if(seq.cmd === Command.Error){
 			console.log("ctx:handleCmd:error");
+		}
+		if(seq.cmd === Command.CursorRight){
+			setNavActiveId(navItemsRef.current[navItemsRef.current.length-1].id);
 		}
 
 		//
@@ -59,6 +100,10 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 			updatePwd,
 			showLeader,
 			showConsole,
+			navRegister,
+			navUnregister,
+			navActiveId,
+			setNavActiveId,
 		}}>
 			{children}
 		</vimagesCtx.Provider>
@@ -87,3 +132,30 @@ export const useCommand = (): vimagesCtxType => {
 //		navigate(seq); // shared function, updates state
 //	}
 //});
+//
+
+
+// navigation
+//
+// // NavigableItem.tsx
+//import { useEffect, useRef } from 'react';
+//import { useNavigation } from './NavigationContext';
+//
+//export const NavigableItem: React.FC<{ id: string }> = ({ id, children }) => {
+//  const ref = useRef<HTMLDivElement>(null);
+//  const { register, unregister, activeId } = useNavigation();
+//
+//  useEffect(() => {
+//    register({ id, ref });
+//    return () => unregister(id);
+//  }, [id]);
+//
+//  return (
+//    <div
+//      ref={ref}
+//      style={{ background: activeId === id ? 'lightblue' : 'white' }}
+//    >
+//      {children}
+//    </div>
+//  );
+//};

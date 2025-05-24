@@ -6,6 +6,7 @@ import { useModalKey } from './keyboard/KeyboardModule';
 import { CommandSequence } from './keyboard/Command';
 
 import { useCommand } from './context/vimagesCtx';
+import Vimage from "./components/Image";
 
 function App() {
 	const { handleCmd } = useCommand();
@@ -31,11 +32,14 @@ function App() {
 	}
 	);
 
+//{cmdLog.map((cmd, index) => <div key={index}>{cmd.cmd.toString()}</div>)}
 	return (
 		<main className="container">
 
 			<div className="row">
-				{cmdLog.map((cmd, index) => <div key={index}>{cmd.cmd.toString()}</div>)}
+				<Vimage id="vimage1" />
+				<Vimage id="vimage2" />
+				<Vimage id="vimage3" />
 			</div>
 			<div className="row">
 				{fsPwdEntities}
