@@ -38,6 +38,13 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 		if(seq.cmd === Command.Error){
 			console.log("ctx:handleCmd:error");
 		}
+
+		//
+		//testing
+		//
+		if(seq.cmd === Command.PageUp){
+			console.log("ctx.handleCmd:pageup");
+		}
 	}
 
 	const updatePwd = (dir: string) => {

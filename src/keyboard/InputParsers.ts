@@ -12,6 +12,14 @@ export function staticCommands(input: KeyboardEvent): Command {
 	}
 }
 
+export function ctrlCommands(input: KeyboardEvent): Command {
+	switch(input.key) {
+		case 'u':		return Command.PageUp;
+		case 'd':		return Command.PageDown;
+		default:		return Command.None;
+	}
+}
+
 export function possibleCommands(input: string, commandMap: Map<string,Command>): number {
 	// If input is an integer, multiple valid commands are possible, skip further checks
 	let isInt = isStrictInteger(input);

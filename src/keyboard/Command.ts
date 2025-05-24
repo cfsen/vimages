@@ -57,6 +57,8 @@ export enum Command {
 
 	JumpFirst,
 	JumpLast,
+	PageUp,
+	PageDown,
 
 	CenterView,
 }

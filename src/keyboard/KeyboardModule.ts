@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { staticCommands, possibleCommands, assembleCommand } from './InputParsers';
+import { staticCommands, possibleCommands, assembleCommand, ctrlCommands } from './InputParsers';
 import { Command, CommandSequence, populateCommandMap } from './Command';
 
 interface UseModalKeyOptions {
@@ -48,7 +48,13 @@ export function useModalKey({ onSequenceComplete, isActive = true, mode = 0 }: U
 
 			// Handle ctrl+key events
 			if(event.ctrlKey){
-				console.log("useModalKey:event.ctrl");
+				let cmd = ctrlCommands(event);
+				const tmp: CommandSequence = {
+					modInt: 0,
+					cmd: cmd,
+				};
+				onSequenceComplete?.(tmp);
+				setSequence("");
 				return;
 			}
 
@@ -77,7 +83,6 @@ export function useModalKey({ onSequenceComplete, isActive = true, mode = 0 }: U
 
 			// Avoid sending partial commands ('g', 'z' -> finalized next run with 'gg', 'zz')
 			if(tmp.cmd === Command.PartialInput) {
-				//console.log("useModalKey:PartialInput!");
 				return;
 			}
 
