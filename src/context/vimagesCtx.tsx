@@ -76,13 +76,51 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 		if(seq.cmd === Command.Error){
 			console.log("ctx:handleCmd:error");
 		}
-		if(seq.cmd === Command.CursorRight){
-			setNavActiveId(navItemsRef.current[navItemsRef.current.length-1].id);
-		}
 
 		//
-		//testing
+		// Navigation keys
 		//
+		// TODO: 3 is a magic number stand in for images per row, and should be replaced
+
+		if(seq.cmd === Command.CursorRight){
+			let cur = navItemsRef.current.findIndex((i) => i.id === navActiveId);
+
+			if((cur + 1) < navItemsRef.current.length)
+				cur = cur + 1;
+
+			setNavActiveId(navItemsRef.current[cur].id);
+		}
+		if(seq.cmd === Command.CursorLeft){
+			let cur = navItemsRef.current.findIndex((i) => i.id === navActiveId);
+
+			if((cur - 1) < 0)	
+				cur = cur;
+			else				
+				cur = (cur - 1) % navItemsRef.current.length;
+
+			setNavActiveId(navItemsRef.current[cur].id);
+		}
+		if(seq.cmd === Command.CursorUp){
+			let cur = navItemsRef.current.findIndex((i) => i.id === navActiveId);
+
+			if((cur - 3) < 0)	
+				cur = cur;
+			else 
+				cur = (cur - 3) % navItemsRef.current.length;
+
+			setNavActiveId(navItemsRef.current[cur].id);
+		}
+		if(seq.cmd === Command.CursorDown){
+			let cur = navItemsRef.current.findIndex((i) => i.id === navActiveId);
+
+			if((cur + 3) >= navItemsRef.current.length)	
+				cur = cur;
+			else 
+				cur = (cur + 3) % navItemsRef.current.length;
+
+			setNavActiveId(navItemsRef.current[cur].id);
+		}
+
 		if(seq.cmd === Command.PageUp){
 			console.log("ctx.handleCmd:pageup");
 		}

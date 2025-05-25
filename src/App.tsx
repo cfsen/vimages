@@ -42,6 +42,16 @@ function App() {
 				<Vimage id="vimage3" />
 			</div>
 			<div className="row">
+				<Vimage id="vimage4" />
+				<Vimage id="vimage5" />
+				<Vimage id="vimage6" />
+			</div>
+			<div className="row">
+				<Vimage id="vimage7" />
+				<Vimage id="vimage8" />
+				<Vimage id="vimage9" />
+			</div>
+			<div className="row">
 				{fsPwdEntities}
 			</div>
 
