@@ -1,5 +1,6 @@
 import { createContext, useRef, useContext, useState } from "react";
 import { Command, CommandSequence } from '../keyboard/Command';
+import { image } from "@tauri-apps/api";
 
 type vimagesCtxType = {
 	pwd: string;
@@ -13,6 +14,9 @@ type vimagesCtxType = {
 	setNavActiveId: (id: string) => void;
 	navRegister: (navItem: NavigationItem) => void;
 	navUnregister: (id: string) => void;
+
+	imagesPerRow: number;
+	setImagesPerRow: (value: number) => void;
 };
 
 type NavigationItem = {
@@ -28,6 +32,7 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 	const [showLeader, setShowLeader] = useState<boolean>(false);
 	const [showConsole, setShowConsole] = useState<boolean>(false);
 
+	const [imagesPerRow, setImagesPerRow] = useState<number>(0);
 
 	//
 	// Navigation
@@ -81,11 +86,16 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 		// Navigation keys
 		//
 		// TODO: 3 is a magic number stand in for images per row, and should be replaced
+		// TODO: refactor and move out from here
 
 		if(seq.cmd === Command.CursorRight){
 			let cur = navItemsRef.current.findIndex((i) => i.id === navActiveId);
 
-			if((cur + 1) < navItemsRef.current.length)
+			// TODO: limit cursor from moving to the next row
+
+			if((cur + 1) % imagesPerRow === 0)
+			cur = cur;
+			else if((cur + 1) < navItemsRef.current.length)
 				cur = cur + 1;
 
 			setNavActiveId(navItemsRef.current[cur].id);
@@ -95,6 +105,8 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 
 			if((cur - 1) < 0)	
 				cur = cur;
+			else if((cur) % imagesPerRow === 0)
+				cur = cur;
 			else				
 				cur = (cur - 1) % navItemsRef.current.length;
 
@@ -103,20 +115,20 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 		if(seq.cmd === Command.CursorUp){
 			let cur = navItemsRef.current.findIndex((i) => i.id === navActiveId);
 
-			if((cur - 3) < 0)	
+			if((cur - imagesPerRow) < 0)	
 				cur = cur;
 			else 
-				cur = (cur - 3) % navItemsRef.current.length;
+				cur = (cur - imagesPerRow) % navItemsRef.current.length;
 
 			setNavActiveId(navItemsRef.current[cur].id);
 		}
 		if(seq.cmd === Command.CursorDown){
 			let cur = navItemsRef.current.findIndex((i) => i.id === navActiveId);
 
-			if((cur + 3) >= navItemsRef.current.length)	
+			if((cur + imagesPerRow) >= navItemsRef.current.length)	
 				cur = cur;
 			else 
-				cur = (cur + 3) % navItemsRef.current.length;
+				cur = (cur + imagesPerRow) % navItemsRef.current.length;
 
 			setNavActiveId(navItemsRef.current[cur].id);
 		}
@@ -142,6 +154,9 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 			navUnregister,
 			navActiveId,
 			setNavActiveId,
+
+			imagesPerRow,
+			setImagesPerRow,
 		}}>
 			{children}
 		</vimagesCtx.Provider>

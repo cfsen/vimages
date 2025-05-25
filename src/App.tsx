@@ -7,6 +7,7 @@ import { CommandSequence } from './keyboard/Command';
 
 import { useCommand } from './context/vimagesCtx';
 import Vimage from "./components/Image";
+import VimageGrid from "./components/VimageGrid";
 
 function App() {
 	const { handleCmd } = useCommand();
@@ -35,21 +36,8 @@ function App() {
 //{cmdLog.map((cmd, index) => <div key={index}>{cmd.cmd.toString()}</div>)}
 	return (
 		<main className="container">
-
 			<div className="row">
-				<Vimage id="vimage1" />
-				<Vimage id="vimage2" />
-				<Vimage id="vimage3" />
-			</div>
-			<div className="row">
-				<Vimage id="vimage4" />
-				<Vimage id="vimage5" />
-				<Vimage id="vimage6" />
-			</div>
-			<div className="row">
-				<Vimage id="vimage7" />
-				<Vimage id="vimage8" />
-				<Vimage id="vimage9" />
+				<VimageGrid />
 			</div>
 			<div className="row">
 				{fsPwdEntities}
