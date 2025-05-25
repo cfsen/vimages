@@ -85,13 +85,10 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 		//
 		// Navigation keys
 		//
-		// TODO: 3 is a magic number stand in for images per row, and should be replaced
 		// TODO: refactor and move out from here
 
 		if(seq.cmd === Command.CursorRight){
 			let cur = navItemsRef.current.findIndex((i) => i.id === navActiveId);
-
-			// TODO: limit cursor from moving to the next row
 
 			if((cur + 1) % imagesPerRow === 0)
 			cur = cur;
@@ -132,10 +129,19 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 
 			setNavActiveId(navItemsRef.current[cur].id);
 		}
-
+		if(seq.cmd === Command.JumpFirst){
+			setNavActiveId(navItemsRef.current[0].id);
+		}
+		if(seq.cmd === Command.JumpLast){
+			setNavActiveId(navItemsRef.current[navItemsRef.current.length-1].id);
+		}
 		if(seq.cmd === Command.PageUp){
 			console.log("ctx.handleCmd:pageup");
 		}
+		if(seq.cmd === Command.PageDown){
+			console.log("ctx.handleCmd:pagedown");
+		}
+
 	}
 
 	const updatePwd = (dir: string) => {
@@ -150,6 +156,7 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 			updatePwd,
 			showLeader,
 			showConsole,
+
 			navRegister,
 			navUnregister,
 			navActiveId,
@@ -170,45 +177,10 @@ export const useCommand = (): vimagesCtxType => {
 };
 
 
-//other files
+// Reminder:
+// Access context from any nested component:
 //
-//3. Use it anywhere (including keyboard hook or components):
+//import { useCommand } from "../context/vimagesCtx";
 //
-//import { useCommand } from "../context/CommandContext";
-//
-//useModalKey({
-//	onSequenceComplete: (seq) => {
-//		const { navigate } = useCommand();
-//
-//		// or do this
-//		const { cmdLog, navigate, handleCmd, updatePwd } = useCommand();
-//		navigate(seq); // shared function, updates state
-//	}
-//});
-//
-
-
-// navigation
-//
-// // NavigableItem.tsx
-//import { useEffect, useRef } from 'react';
-//import { useNavigation } from './NavigationContext';
-//
-//export const NavigableItem: React.FC<{ id: string }> = ({ id, children }) => {
-//  const ref = useRef<HTMLDivElement>(null);
-//  const { register, unregister, activeId } = useNavigation();
-//
-//  useEffect(() => {
-//    register({ id, ref });
-//    return () => unregister(id);
-//  }, [id]);
-//
-//  return (
-//    <div
-//      ref={ref}
-//      style={{ background: activeId === id ? 'lightblue' : 'white' }}
-//    >
-//      {children}
-//    </div>
-//  );
-//};
+//const { cmdLog, navigate, handleCmd, updatePwd } = useCommand();
+//navigate(seq); // shared function, updates state
