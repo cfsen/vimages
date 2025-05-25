@@ -11,9 +11,7 @@ function Vimage(props: VimageProps) {
 	const { cmdLog, handleCmd, updatePwd } = useCommand();
 
 	return(
-		<NavigableItem id={props.id}>
-			<div className={styles.vimage}>{props.id}</div>
-		</NavigableItem>
+		<div className={styles.vimage}>{props.id}</div>
 	);
 }
 

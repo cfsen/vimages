@@ -6,7 +6,7 @@ import { useModalKey } from './keyboard/KeyboardModule';
 import { CommandSequence } from './keyboard/Command';
 
 import { useCommand } from './context/vimagesCtx';
-import Vimage from "./components/Image";
+import Vimage from "./components/Vimage";
 import VimageGrid from "./components/VimageGrid";
 
 function App() {

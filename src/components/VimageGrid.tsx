@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavigableItem } from "./../context/NavigableItem";
 import { useCommand } from "../context/vimagesCtx";
-import Vimage from './Image';
+import Vimage from './Vimage';
 
 
 const VimageGrid: React.FC = () => {
@@ -74,7 +74,7 @@ const VimageGrid: React.FC = () => {
 						  border: '1px solid #999',
 						}}
 					>
-						{idx + 1}
+					<Vimage id={"vimage" + idx} />
 					</div>
 				</NavigableItem>
 			))}
