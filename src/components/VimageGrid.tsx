@@ -13,8 +13,6 @@ const VimageGrid: React.FC = () => {
 
 	const { setImagesPerRow } = useCommand();
 
-	// TODO: this should update vimagesCtx with perRow
-
 	useEffect(() => {
 		const handleResize = () => {
 			setContainerWidth(window.innerWidth);
@@ -29,9 +27,9 @@ const VimageGrid: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
-		const fullSize = squareBaseSize * scale;
+		const fullSize = squareBaseSize * scale + 18; // account for css gap
 		const perRow = Math.floor(containerWidth / fullSize);
-		setImagesPerRow(perRow);
+		setImagesPerRow(perRow);	// ctx update
 		setSquaresPerRow(perRow);
 	}, [containerWidth, scale]);
 
@@ -39,25 +37,12 @@ const VimageGrid: React.FC = () => {
 	const squares = Array.from({ length: squaresPerRow * 5 }); // 5 rows worth
 
 	return (
-		<div style={{margin: `1em` }}>
-			<label>
-				Scale: 
-				<input 
-					type="range" 
-					min="0.5" 
-					max="3" 
-					step="0.1" 
-					value={scale} 
-					onChange={(e) => setScale(Number(e.target.value))} 
-				/>
-			</label>
-
+		<div>
 			<div 
 				style={{
 					display: 'grid',
-					gridTemplateColumns: `repeat(${squaresPerRow}, 1fr)`,
-					gap: '10px',
-					marginTop: '20px',
+					gridTemplateColumns: `repeat(${squaresPerRow}, 0fr)`,
+					gap: '9px',
 				}}
 			>
 			{squares.map((_, idx) => (
@@ -74,10 +59,21 @@ const VimageGrid: React.FC = () => {
 						  border: '1px solid #999',
 						}}
 					>
-					<Vimage id={"vimage" + idx} />
+						<Vimage id={"vimage" + idx} />
 					</div>
 				</NavigableItem>
 			))}
+			<label>
+				Scale: 
+				<input 
+					type="range" 
+					min="0.5" 
+					max="3" 
+					step="0.1" 
+					value={scale} 
+					onChange={(e) => setScale(Number(e.target.value))} 
+				/>
+			</label>
 			</div>
 
 			<p>Squares per row: {squaresPerRow}</p>
