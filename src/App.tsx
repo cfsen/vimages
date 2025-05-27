@@ -7,6 +7,7 @@ import "./App.css";
 import { useModalKey } from './keyboard/KeyboardModule';
 import { useCommand } from './context/vimagesCtx';
 import VimageGrid from "./components/VimageGrid";
+import FileSystemBrowser from "./filesystem/FilesystemBrowser";
 
 function App() {
 	const { handleCmd } = useCommand();
@@ -27,11 +28,13 @@ function App() {
 		onSequenceComplete: (seq) => {
 			handleCmd(seq);
 		},
-	}
-	);
+	});
 
 	return (
 		<main className="container">
+			<div className="row">
+				<FileSystemBrowser />
+			</div>
 			<div className="row">
 				<VimageGrid />
 			</div>

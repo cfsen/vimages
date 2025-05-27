@@ -9,9 +9,13 @@ type VimageProps = {
 
 function Vimage(props: VimageProps) {
 	const { cmdLog, handleCmd, updatePwd } = useCommand();
+	const [imageData, setImageData] = useState<ImageData>();
 
 	return(
-		<div className={styles.vimage}>{props.id}</div>
+		<div className={styles.vimage}>
+			<img src={`data:image/png;base64,${imageData}`} />
+			{props.id}
+		</div>
 	);
 }
 
