@@ -85,12 +85,15 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 		}
 
 		// Navigation keys
+		// TODO: error handling
 		let cur = KeyboardCursorHandle(seq, navItemsRef, imagesPerRow, navActiveId);
 		if(cur != null)  {
 			setNavActiveId(navItemsRef.current[cur].id);
 			return;
 		}
-		// TODO: error handling
+		else {
+			setNavActiveId(navItemsRef.current[0].id);
+		}
 	}
 
 	const updatePwd = (dir: string) => {
