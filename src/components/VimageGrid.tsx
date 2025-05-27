@@ -34,7 +34,8 @@ const VimageGrid: React.FC = () => {
 	}, [containerWidth, scale]);
 
 	// TODO: mock source
-	const squares = Array.from({ length: squaresPerRow * 5 }); // 5 rows worth
+	//const squares = Array.from({ length: squaresPerRow * 5 }); // 5 rows worth
+	const squares = Array.from({ length: 50 }); 
 
 	return (
 		<div>
@@ -63,6 +64,7 @@ const VimageGrid: React.FC = () => {
 					</div>
 				</NavigableItem>
 			))}
+			</div>
 			<label>
 				Scale: 
 				<input 
@@ -74,8 +76,6 @@ const VimageGrid: React.FC = () => {
 					onChange={(e) => setScale(Number(e.target.value))} 
 				/>
 			</label>
-			</div>
-
 			<p>Squares per row: {squaresPerRow}</p>
 		</div>
 	);
