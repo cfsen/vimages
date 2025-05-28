@@ -54,7 +54,7 @@ export const NavigableItem: React.FC<{ id: string; children: React.ReactNode }> 
     <div
       ref={ref}
       style={{ 
-        background: navActiveId === id ? 'lightblue' : 'black',
+        backgroundColor: navActiveId === id ? '#4c606d' : '#2f2f2f',
         margin: 'auto',
       }}
     >

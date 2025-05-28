@@ -57,7 +57,7 @@ const VimageGrid: React.FC = () => {
 						  alignItems: 'center',
 						  justifyContent: 'center',
 						  fontSize: '1rem',
-						  border: '1px solid #999',
+						  border: '1px solid #111',
 						}}
 					>
 						<Vimage id={"vimage" + idx} />
