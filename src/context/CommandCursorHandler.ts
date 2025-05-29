@@ -28,11 +28,17 @@ export function KeyboardCursorHandle(
 			break;
 		case Command.CursorUp:
 			if((cur - imagesPerRow) >= 0)
-				cur = (cur - imagesPerRow) % len;
+				cur = cur - imagesPerRow;
 			break;
 		case Command.CursorDown:
 			if((cur + imagesPerRow) < len)
-				cur = (cur + imagesPerRow) % len;
+				cur = cur + imagesPerRow;
+			break;
+		case Command.CursorBOL:
+			cur = cur - (cur % imagesPerRow);
+			break;
+		case Command.CursorEOL:
+			cur = cur + imagesPerRow - 1 - (cur % imagesPerRow);
 			break;
 		case Command.JumpFirst:
 			cur = 0;

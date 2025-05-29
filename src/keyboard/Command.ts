@@ -5,6 +5,9 @@ export function populateCommandMap(): Map<string,Command>{
 	commandMap.set('j', Command.CursorDown);
 	commandMap.set('k', Command.CursorUp);
 	commandMap.set('l', Command.CursorRight);
+	commandMap.set('_', Command.CursorBOL);
+	commandMap.set('$', Command.CursorEOL);
+	commandMap.set('¤', Command.CursorEOL); // TODO: support for custom aliases
 
 	commandMap.set('g', Command.PartialInput);
 	commandMap.set('gg', Command.JumpFirst);
@@ -54,6 +57,8 @@ export enum Command {
 	CursorUp,
 	CursorDown,
 	CursorRight,
+	CursorBOL,
+	CursorEOL,
 
 	JumpFirst,
 	JumpLast,
