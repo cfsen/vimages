@@ -46,24 +46,24 @@ const VimageGrid: React.FC = () => {
 					gap: '9px',
 				}}
 			>
-			{squares.map((_, idx) => (
-				<NavigableItem id={"imgGrid" + idx}>
-					<div 
-						key={idx} 
-						style={{
-						  width: `${squareBaseSize * scale}px`,
-						  height: `${squareBaseSize * scale}px`,
-						  display: 'flex',
-						  alignItems: 'center',
-						  justifyContent: 'center',
-						  fontSize: '1rem',
-						  border: '1px solid #111',
-						}}
-					>
-						<Vimage id={"vimage" + idx} />
-					</div>
-				</NavigableItem>
-			))}
+				{squares.map((_, idx) => (
+					<NavigableItem key={"imgGrid" + idx} id={"imgGrid" + idx}>
+						<div 
+							key={idx} 
+							style={{
+								width: `${squareBaseSize * scale}px`,
+								height: `${squareBaseSize * scale}px`,
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'center',
+								fontSize: '1rem',
+								border: '1px solid #111',
+							}}
+						>
+							<Vimage id={"vimage" + idx} />
+						</div>
+					</NavigableItem>
+				))}
 			</div>
 			<label>
 				Scale: 
