@@ -8,22 +8,10 @@ import { useModalKey } from './keyboard/KeyboardModule';
 import { useCommand } from './context/vimagesCtx';
 import VimageGrid from "./components/VimageGrid";
 import FileSystemBrowser from "./filesystem/FilesystemBrowser";
+import Navbar from "./components/Navbar";
 
 function App() {
 	const { handleCmd } = useCommand();
-	const [fsPwdEntities, setFsPwdEntities] = useState<string>();
-
-	const fs_list = useCallback( async (path: string) => {
-		const res = await invoke("fs_list_directory", { path });
-		setFsPwdEntities(res as string);
-		console.log("fslist");
-	}, []);
-	
-	useEffect(() => {
-		fs_list(".");
-	}, [fs_list]);
-
-
 	useModalKey({
 		onSequenceComplete: (seq) => {
 			handleCmd(seq);
@@ -38,8 +26,8 @@ function App() {
 			<div className="row">
 				<VimageGrid />
 			</div>
-			<div className="row">
-				{fsPwdEntities}
+			<div className="bottom-overlay">
+				<Navbar />
 			</div>
 		</main>
 	);
