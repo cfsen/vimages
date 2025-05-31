@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavigableItem } from "./../context/NavigableItem";
+import { NavigableItem, NavigableItemType } from "./../context/NavigableItem";
 import { useCommand } from "../context/vimagesCtx";
 import Vimage from './Vimage';
 
@@ -47,7 +47,7 @@ const VimageGrid: React.FC = () => {
 				}}
 			>
 				{squares.map((_, idx) => (
-					<NavigableItem key={"imgGrid" + idx} id={"imgGrid" + idx}>
+					<NavigableItem key={"imgGrid" + idx} id={"imgGrid" + idx} itemType={NavigableItemType.Image}>
 						<div 
 							key={idx} 
 							style={{

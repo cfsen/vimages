@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useCommand } from './vimagesCtx';
 
-function scrollToElementCenteredSmoothly(el: HTMLElement, duration = 300) {
+function scrollToElementCenteredSmoothly(el: HTMLElement, duration = 150) {
   const rect = el.getBoundingClientRect();
   const targetY = window.scrollY + rect.top - (window.innerHeight / 2) + (rect.height / 2);
   const startY = window.scrollY;
@@ -29,12 +29,17 @@ function scrollToElementCenteredSmoothly(el: HTMLElement, duration = 300) {
   requestAnimationFrame(step);
 }
 
-export const NavigableItem: React.FC<{ id: string; children: React.ReactNode }> = ({ id, children }) => {
+export enum NavigableItemType {
+  Image,
+  FileBrowser,
+}
+
+export const NavigableItem: React.FC<{ id: string; children: React.ReactNode; itemType: NavigableItemType; }> = ({ id, children, itemType }) => {
   const ref = useRef<HTMLDivElement>(null);
   const { navActiveId , navUnregister , navRegister } = useCommand();
 
   useEffect(() => {
-	navRegister({ id, ref });
+    navRegister({ id, ref, itemType });
     return () => navUnregister(id);
   }, [id]);
 

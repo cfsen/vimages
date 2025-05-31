@@ -1,6 +1,7 @@
-import { createContext, useRef, useContext, useState } from "react";
 import { Command, CommandSequence } from '../keyboard/Command';
+import { createContext, useRef, useContext, useState } from "react";
 import { KeyboardCursorHandle } from "./CommandCursorHandler";
+import { NavigableItemType } from "./NavigableItem";
 
 type vimagesCtxType = {
 	pwd: string;
@@ -23,6 +24,7 @@ type vimagesCtxType = {
 export type NavigationItem = {
 	id: string;
 	ref: React.RefObject<HTMLElement>;
+	itemType: NavigableItemType;
 };
 
 const vimagesCtx = createContext<vimagesCtxType | undefined>(undefined);
@@ -61,7 +63,7 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 	//
 	// Command handling
 	//
-	
+
 	const handleCmd = (seq: CommandSequence) => {
 		setCmdLog(prev => [...prev, seq]);
 
@@ -79,6 +81,7 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 		}
 		if(seq.cmd === Command.Return){
 			console.log("ctx:handleCmd:return");
+			console.log(navItemsRef.current.find((i) => i.id === navActiveId));
 		}
 		if(seq.cmd === Command.Error){
 			console.log("ctx:handleCmd:error");

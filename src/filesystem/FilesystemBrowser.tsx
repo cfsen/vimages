@@ -1,4 +1,4 @@
-import { NavigableItem } from "./../context/NavigableItem";
+import { NavigableItem, NavigableItemType } from "./../context/NavigableItem";
 import { useRustApi, RustApiAction } from "./RustApiBridge";
 
 function FileSystemBrowser(){
@@ -10,8 +10,8 @@ function FileSystemBrowser(){
 	return (
 		<ul>
 			{response.map((entry, index) => (
-				<NavigableItem id={"fileBrowserItem" + index}>
-				<li key={index}>{entry}</li>
+				<NavigableItem key={"fileBrowserItem" + index} id={"fileBrowserItem" + index} itemType={NavigableItemType.FileBrowser}>
+					<li key={"fbrowseridx" + index}>{entry}</li>
 				</NavigableItem>
 			))}
 		</ul>
