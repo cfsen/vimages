@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
-import { useCommand } from "./../context/vimagesCtx";
-import { NavigableItem } from "./../context/NavigableItem";
 import styles from "./Vimage.module.css";
 
 type VimageProps = {
 	id: string;
+	img?: ImageData;
 };
 
 function Vimage(props: VimageProps) {
-	const { cmdLog, handleCmd, updatePwd } = useCommand();
 	const [imageData, setImageData] = useState<ImageData>();
+
+	useEffect(() => {
+		setImageData(imageData);
+	});
 
 	return(
 		<div className={styles.vimage}>
