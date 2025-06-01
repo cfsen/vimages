@@ -17,6 +17,10 @@ enum Modal {
 
 const commandMap = populateCommandMap();
 
+function isStaticCommand(cmd: Command){
+	let statics = [Command.Escape, Command.Return, Command.Console, Command.Leader];
+	return statics.includes(cmd);
+}
 
 export function useModalKey({ onSequenceComplete, isActive = true, mode = 0 }: UseModalKeyOptions = {}) {
 	const [sequence, setSequence] = useState<string>("");
@@ -29,8 +33,10 @@ export function useModalKey({ onSequenceComplete, isActive = true, mode = 0 }: U
 
 			// Check static commands - Esc, leader, etc.
 			let checkStaticCmds = staticCommands(event);
+
 			if(checkStaticCmds === Command.Ignore) return;
-			if(checkStaticCmds === Command.Escape || checkStaticCmds === Command.Leader || checkStaticCmds === Command.Console) {
+
+			if(isStaticCommand(checkStaticCmds)) {
 				if(sequence != ""){ // Esc should revert the input sequence 
 					setSequence("");
 					return;
