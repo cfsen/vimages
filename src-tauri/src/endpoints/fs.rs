@@ -1,8 +1,28 @@
-use std::fs;
-use std::path::PathBuf;
+use std::{env, fs};
+use std::path::{ Path, PathBuf };
 use base64::engine::general_purpose::STANDARD;
 use base64::Engine;
 use infer;
+
+use image::{ImageReader, ImageFormat};
+use std::io::Cursor;
+
+#[tauri::command]
+pub fn fs_get_current_path() -> Result<String, String> {
+    env::current_dir()
+        .map(|path: PathBuf| path.to_string_lossy().to_string())
+        .map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub fn fs_get_parent_path(path: String) -> Result<String, String> {
+    let child_path = Path::new(&path);
+    match child_path.parent() {
+        Some(parent) => Ok(parent.to_string_lossy().to_string()),
+        None => Ok(child_path.to_string_lossy().to_string()),
+    }
+}
+
 
 #[tauri::command]
 pub fn fs_list_directory(path: &str) -> Result<Vec<String>, String> {
@@ -12,12 +32,15 @@ pub fn fs_list_directory(path: &str) -> Result<Vec<String>, String> {
         return Err("Invalid directory path".into());
     }
 
-    let mut entries: Vec<String> = fs::read_dir(path)
-        .map_err(|e| e.to_string())?
-        .filter_map(Result::ok)
-        .filter(|entry| entry.path().is_dir())
-        .filter_map(|entry| entry.file_name().to_str().map(|s| s.to_string()))
-        .collect();
+    let mut entries: Vec<String> = vec![];
+    entries.insert(0, "..".to_string());
+    entries.extend( 
+        fs::read_dir(path)
+            .map_err(|e| e.to_string())?
+            .filter_map(Result::ok)
+            .filter(|entry| entry.path().is_dir())
+            .filter_map(|entry| entry.file_name().to_str().map(|s| s.to_string()))
+    );
 
     entries.sort();
 
@@ -54,19 +77,50 @@ pub fn fs_get_images(path: &str) -> Result<Vec<String>, String> {
     Ok(entries)
 }
 
-#[tauri::command]
-pub fn fs_get_image(path: &str) -> Result<String, String> {
-    let path = PathBuf::from(path);
+//#[tauri::command]
+//pub fn fs_get_image(path: &str) -> Result<String, String> {
+//    let path = PathBuf::from(path);
+//
+//    if !path.exists() || !path.is_file() {
+//        return Err("Invalid image path".into());
+//    }
+//
+//    let bytes = fs::read(path)
+//        .map_err(|e| e.to_string())?;
+//    let encoded = STANDARD.encode(&bytes);
+//
+//    Ok(encoded)
+//}
 
+#[tauri::command]
+pub fn fs_get_image(path: &str) -> Result<Vec<u8>, String> {
+    // Testing code for generating thumbnails
+    let path = PathBuf::from(path);
     if !path.exists() || !path.is_file() {
         return Err("Invalid image path".into());
     }
 
-    let bytes = fs::read(path)
-        .map_err(|e| e.to_string())?;
-    let encoded = STANDARD.encode(&bytes);
+    // Load and decode the image
+    let img = ImageReader::open(&path)
+        .map_err(|e| format!("Failed to open image: {}", e))?
+        .decode()
+        .map_err(|e| format!("Failed to decode image: {}", e))?;
 
-    Ok(encoded)
+    // Resize to max 400px on longest side
+    let thumbnail = img.thumbnail(400, 400);
+
+    // Compress as JPEG
+    let mut buffer = Vec::new();
+    thumbnail.write_to(&mut Cursor::new(&mut buffer), ImageFormat::Jpeg)
+        .map_err(|e| format!("Failed to encode thumbnail: {}", e))?;
+
+    Ok(buffer)
+
+    //let path = PathBuf::from(path);
+    //if !path.exists() || !path.is_file() {
+    //    return Err("Invalid image path".into());
+    //}
+    //fs::read(path).map_err(|e| e.to_string())
 }
 
 
