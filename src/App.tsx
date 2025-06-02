@@ -1,33 +1,31 @@
-import { useState, useCallback, useEffect } from "react";
-
-import { invoke } from "@tauri-apps/api/core";
-
 import "./App.css";
 
 import { useModalKey } from './keyboard/KeyboardModule';
 import { useCommand } from './context/vimagesCtx';
-import VimageGrid from "./components/VimageGrid";
 import FileSystemBrowser from "./filesystem/FilesystemBrowser";
 import Navbar from "./components/Navbar";
+import VimageGrid from "./components/VimageGrid";
 
 function App() {
-	const { handleCmd } = useCommand();
+	const { handleCmd, pwd } = useCommand();
+
 	useModalKey({
 		onSequenceComplete: (seq) => {
 			handleCmd(seq);
 		},
 	});
 
+
 	return (
 		<main className="container">
 			<div className="row">
-				<FileSystemBrowser />
-			</div>
-			<div className="row">
 				<VimageGrid />
 			</div>
+			<div className="row">
+				<FileSystemBrowser pwd={pwd} />
+			</div>
 			<div className="bottom-overlay">
-				<Navbar />
+				<Navbar pwd={pwd} />
 			</div>
 		</main>
 	);
