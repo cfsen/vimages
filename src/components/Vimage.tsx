@@ -1,22 +1,44 @@
-import { useEffect, useState } from 'react';
 import styles from "./Vimage.module.css";
-
 type VimageProps = {
 	id: string;
-	img?: ImageData;
+	src: string | null;
 };
 
-function Vimage(props: VimageProps) {
-	const [imageData, setImageData] = useState<ImageData>();
-
-	useEffect(() => {
-		setImageData(imageData);
-	});
-
-	return(
+// TODO: move styles out
+function Vimage({ id, src }: VimageProps) {
+	return (
 		<div className={styles.vimage}>
-			<img src={`data:image/png;base64,${imageData}`} />
-			{props.id}
+			{src ? (
+				<img
+					src={src}
+					alt={`Image ${id}`}
+					style={{
+						width: '100%', 
+						height: '100%', 
+						display: 'flex', 
+						alignItems: 'center', 
+						justifyContent: 'center',
+						backgroundColor: '#f0f0f0',
+						fontSize: '24px'
+					}}
+					onError={() => {
+						console.error(`Failed to load image: ${id}`);
+					}}
+				/>
+			) : (
+					<div 
+						style={{
+							width: '100%', 
+							height: '100%', 
+							display: 'flex', 
+							alignItems: 'center', 
+							justifyContent: 'center',
+							backgroundColor: '#f0f0f0',
+							fontSize: '24px'
+						}}>
+						No image data
+					</div>
+				)}
 		</div>
 	);
 }

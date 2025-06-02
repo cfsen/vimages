@@ -34,12 +34,12 @@ export enum NavigableItemType {
   FileBrowser,
 }
 
-export const NavigableItem: React.FC<{ id: string; children: React.ReactNode; itemType: NavigableItemType; }> = ({ id, children, itemType }) => {
+export const NavigableItem: React.FC<{ id: string; children: React.ReactNode; itemType: NavigableItemType; data: string; }> = ({ id, children, itemType, data }) => {
   const ref = useRef<HTMLDivElement>(null);
   const { navActiveId , navUnregister , navRegister } = useCommand();
 
   useEffect(() => {
-    navRegister({ id, ref, itemType });
+    navRegister({ id, ref, itemType, data });
     return () => navUnregister(id);
   }, [id]);
 

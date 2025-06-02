@@ -92,7 +92,7 @@ export function useModalKey({ onSequenceComplete, isActive = true, mode = 0 }: U
 				return;
 			}
 
-			console.log("useModalKey: SEND: " + newSeq);
+			//console.log("useModalKey: SEND: " + newSeq);
 
 			onSequenceComplete?.(tmp);
 			setSequence("");

@@ -34,6 +34,8 @@ type RustApiCall = {
 }
 
 export enum RustApiAction {
+	GetCurrentPath = "fs_get_current_path",
+	GetParentPath = "fs_get_parent_path",
 	GetDirectories = "fs_list_directory",
 	GetImages = "fs_get_images",
 	GetImage = "fs_get_image"
@@ -64,4 +66,13 @@ export function useRustApi({ action, path }: RustApiCall) {
 	}, [action, path]);
 
 	return { response, loading, error };
+}
+
+export async function fetchRustApi(action: string, path: string): Promise<string[]> {
+	try {
+		const result = await invoke(action, { path });
+		return Array.isArray(result) ? result : [String(result)];
+	} catch (err) {
+		throw new Error((err as Error).message);
+	}
 }

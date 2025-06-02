@@ -1,11 +1,11 @@
-import { useCommand } from "./../context/vimagesCtx";
+type NavBarProps = {
+	pwd: string;
+};
 
-function Navbar() {
-	const { pwd } = useCommand();
-
+function Navbar(props: NavBarProps) {
 	return(
 		<div>
-			{pwd}
+			{props.pwd}
 		</div>
 	);
 }

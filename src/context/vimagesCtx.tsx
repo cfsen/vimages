@@ -1,7 +1,9 @@
 import { Command, CommandSequence } from '../keyboard/Command';
-import { createContext, useRef, useContext, useState } from "react";
+import { createContext, useEffect, useRef, useContext, useState } from "react";
 import { KeyboardCursorHandle } from "./CommandCursorHandler";
 import { NavigableItemType } from "./NavigableItem";
+import { useRustApi, RustApiAction } from "./../filesystem/RustApiBridge";
+import { invoke } from "@tauri-apps/api/core";
 
 type vimagesCtxType = {
 	pwd: string;
@@ -25,6 +27,7 @@ export type NavigationItem = {
 	id: string;
 	ref: React.RefObject<HTMLElement>;
 	itemType: NavigableItemType;
+	data: string;
 };
 
 const vimagesCtx = createContext<vimagesCtxType | undefined>(undefined);
@@ -34,8 +37,25 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 	const [cmdLog, setCmdLog] = useState<CommandSequence[]>([]);
 	const [showLeader, setShowLeader] = useState<boolean>(false);
 	const [showConsole, setShowConsole] = useState<boolean>(false);
-
 	const [imagesPerRow, setImagesPerRow] = useState<number>(0);
+
+
+	const [isInitialized, setIsInitialized] = useState(false);
+
+	// Only use the API hook for initial setup
+	const { response, loading, error } = useRustApi({
+		action: RustApiAction.GetCurrentPath,
+		path: "." // Use a static path for initialization
+	});
+
+	// Set initial working directory ONCE
+	useEffect(() => {
+		if (!loading && !error && response && !isInitialized) {
+			setPwd(response as any);
+			setIsInitialized(true);
+			console.log("Initial pwd set to:", response);
+		}
+	}, [loading, error, response, isInitialized]);
 
 	//
 	// Navigation
@@ -47,18 +67,12 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 	const navRegister = (navItem: NavigationItem) => {
 		navItemsRef.current?.push(navItem);
 		if (navItemsRef.current?.length === 1) setNavActiveId(navItem.id);
-		//console.log("vimagesCtx:navRegister");
-		//console.log("vimagesCtx:navItemsRef.length:" + navItemsRef.current?.length);
-		//
-		//console.log("vimagesCtx:navActiveId:" + navActiveId);
 	};
 
 	const navUnregister = (id: string) => {
 		navItemsRef.current = navItemsRef.current?.filter((i) => i.id !== id);
 		if (navActiveId === id) setNavActiveId(null);
-		//console.log("vimagesCtx:navUnregister");
 	}
-
 
 	//
 	// Command handling
@@ -81,7 +95,31 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 		}
 		if(seq.cmd === Command.Return){
 			console.log("ctx:handleCmd:return");
-			console.log(navItemsRef.current.find((i) => i.id === navActiveId));
+
+			let item = navItemsRef.current.find((i) => i.id === navActiveId);
+			if(item?.itemType === NavigableItemType.FileBrowser){
+				console.log(pwd);
+				console.log("data:" + item.data);
+
+				if(item.data === ".."){
+					setPwd(currentPwd => {
+						console.log("Current pwd:", currentPwd);
+						invoke(RustApiAction.GetParentPath, { path: currentPwd })
+							.then(response => {
+								setPwd(response as string);
+								console.log("New pwd:", response);
+							})
+							.catch(console.error);
+						return currentPwd; // Return current state unchanged for now
+					});
+					return;
+				}
+
+				setPwd(currentPwd => {
+					setPwd(currentPwd + "\\" + item.data);
+					return currentPwd; 
+				});
+			}
 		}
 		if(seq.cmd === Command.Error){
 			console.log("ctx:handleCmd:error");
