@@ -93,28 +93,70 @@ pub fn fs_get_images(path: &str) -> Result<Vec<String>, String> {
 //}
 
 #[tauri::command]
+pub async fn fs_get_image_async(path: String) -> Result<Vec<u8>, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        use std::{fs::File, io::BufReader};
+        use image::{ImageFormat, imageops::FilterType};
+        use image::codecs::jpeg::JpegEncoder;
+
+        let file = File::open(&path).map_err(|e| format!("File open error: {}", e))?;
+        let reader = image::ImageReader::with_format(BufReader::new(file), ImageFormat::Png);
+        let img = reader.decode().map_err(|e| format!("Decode error: {}", e))?;
+
+        let thumbnail = img.resize(400, 400, FilterType::Triangle);
+
+        let mut buffer = Vec::new();
+        let mut encoder = JpegEncoder::new_with_quality(&mut buffer, 60);
+        encoder.encode_image(&thumbnail).map_err(|e| format!("Encode error: {}", e))?;
+
+        Ok(buffer)
+    })
+    .await
+    .map_err(|e| format!("Task join error: {}", e))?
+}
+
+#[tauri::command]
 pub fn fs_get_image(path: &str) -> Result<Vec<u8>, String> {
-    // Testing code for generating thumbnails
-    let path = PathBuf::from(path);
-    if !path.exists() || !path.is_file() {
-        return Err("Invalid image path".into());
-    }
+    use std::{fs::File, io::BufReader};
+    use image::{ImageFormat, imageops::FilterType};
+    use image::codecs::jpeg::JpegEncoder;
 
-    // Load and decode the image
-    let img = ImageReader::open(&path)
-        .map_err(|e| format!("Failed to open image: {}", e))?
-        .decode()
-        .map_err(|e| format!("Failed to decode image: {}", e))?;
+    let file = File::open(path).map_err(|e| format!("File open error: {e}"))?;
+    let reader = image::ImageReader::with_format(BufReader::new(file), ImageFormat::Png);
+    let img = reader.decode().map_err(|e| format!("Decode error: {e}"))?;
 
-    // Resize to max 400px on longest side
-    let thumbnail = img.thumbnail(400, 400);
+    let thumb = img.resize(400, 400, FilterType::Triangle); // much faster than thumbnail()
 
-    // Compress as JPEG
-    let mut buffer = Vec::new();
-    thumbnail.write_to(&mut Cursor::new(&mut buffer), ImageFormat::Jpeg)
-        .map_err(|e| format!("Failed to encode thumbnail: {}", e))?;
+    let mut buf = Vec::new();
+    let mut encoder = JpegEncoder::new_with_quality(&mut buf, 60); // drop quality for speed
+    encoder.encode_image(&thumb).map_err(|e| format!("Encode error: {e}"))?;
 
-    Ok(buffer)
+    Ok(buf)
+
+
+    //// Testing code for generating thumbnails
+    //let path = PathBuf::from(path);
+    //if !path.exists() || !path.is_file() {
+    //    return Err("Invalid image path".into());
+    //}
+    //
+    //// Load and decode the image
+    //let img = ImageReader::open(&path)
+    //    .map_err(|e| format!("Failed to open image: {}", e))?
+    //    .decode()
+    //    .map_err(|e| format!("Failed to decode image: {}", e))?;
+    //
+    //// Resize to max 400px on longest side
+    //let thumbnail = img.thumbnail(400, 400);
+    //
+    //// Compress as JPEG
+    //let mut buffer = Vec::new();
+    //thumbnail.write_to(&mut Cursor::new(&mut buffer), ImageFormat::Jpeg)
+    //    .map_err(|e| format!("Failed to encode thumbnail: {}", e))?;
+    //
+    //Ok(buffer)
+
+    // ---
 
     //let path = PathBuf::from(path);
     //if !path.exists() || !path.is_file() {

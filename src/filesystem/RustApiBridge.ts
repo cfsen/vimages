@@ -1,33 +1,6 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 
-export function useDirectoryContent(path: string) {
-	const [fsPwdEntities, setFsPwdEntities] = useState<string[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
-
-	useEffect(() => {
-		async function fetchDirectoryContent() {
-			try {
-				setLoading(true);
-				const res = await invoke("fs_list_directory", { path });
-				setFsPwdEntities(res as string[]);
-				setError(null);
-			} 
-			catch (err) {
-				setError((err as Error).message);
-			} 
-			finally {
-				setLoading(false);
-			}
-		}
-
-		fetchDirectoryContent();
-	}, [path]);
-
-	return { fsPwdEntities, loading, error };
-}
-
 type RustApiCall = {
 	action: RustApiAction,
 	path: string
@@ -38,13 +11,21 @@ export enum RustApiAction {
 	GetParentPath = "fs_get_parent_path",
 	GetDirectories = "fs_list_directory",
 	GetImages = "fs_get_images",
-	GetImage = "fs_get_image"
+	GetImage = "fs_get_image_async"
 }
 
 export function useRustApi({ action, path }: RustApiCall) {
 	const [response, setResponse] = useState<string[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+
+	// TODO: this is getting spammed
+	//console.log("rustapicall:action: " + action);
+	//console.log("rustapicall:path: " + path);
+
+	if(action === RustApiAction.GetParentPath){
+		console.log("getting parent path for: " + path);
+	}
 
 	useEffect(() => {
 		async function callRustApi() {

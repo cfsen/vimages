@@ -9,6 +9,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
+            fs_get_image_async,
             fs_get_parent_path,
             fs_get_current_path,
             fs_list_directory,
