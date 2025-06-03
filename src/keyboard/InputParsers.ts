@@ -4,6 +4,7 @@ import { Command, CommandSequence } from './Command.ts';
 export function staticCommands(input: KeyboardEvent): Command {
 	switch(input.key) {
 		case 'Enter':	return Command.Return;
+		case 'Tab': 	return Command.Tab;
 		case 'Escape':	return Command.Escape;
 		case 'Alt':		return Command.Ignore;
 		case 'Shift':	return Command.Ignore;

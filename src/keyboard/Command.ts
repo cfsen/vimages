@@ -37,6 +37,7 @@ export enum Command {
 	Escape,
 	Ignore,
 	Return,
+	Tab,
 
 	Console,
 	Leader,

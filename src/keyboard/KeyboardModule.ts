@@ -18,7 +18,7 @@ enum Modal {
 const commandMap = populateCommandMap();
 
 function isStaticCommand(cmd: Command){
-	let statics = [Command.Escape, Command.Return, Command.Console, Command.Leader];
+	let statics = [Command.Escape, Command.Return, Command.Console, Command.Leader, Command.Tab];
 	return statics.includes(cmd);
 }
 
