@@ -1,48 +1,48 @@
 :root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
+	font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+	font-size: 16px;
+	line-height: 24px;
+	font-weight: 400;
 
-  color: #0f0f0f;
-  background-color: #2f2f2f;
+	color: #0f0f0f;
+	background-color: #2f2f2f;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-  padding-bottom: 40px;
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-text-size-adjust: 100%;
+	padding-bottom: 40px;
 }
 
 .container {
-  padding-top: 1em;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
+	padding-top: 1em;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	text-align: center;
 }
 
 .row {
-  display: flex;
-  justify-content: center;
+	display: flex;
+	justify-content: center;
 }
 
 .bottom-overlay {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: #111;
-  color: #8f8f8f;
-  text-align: left;
-  padding: 0.5em;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background-color: #111;
+	color: #8f8f8f;
+	text-align: left;
+	padding: 0.5em;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
-  padding-bottom: 40px;
-  }
+	:root {
+		color: #f6f6f6;
+		background-color: #2f2f2f;
+		padding-bottom: 40px;
+	}
 }

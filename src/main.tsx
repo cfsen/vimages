@@ -5,9 +5,9 @@ import App from "./App";
 import { VimagesCtxProvider } from './context/vimagesCtx';
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-    <VimagesCtxProvider>
-      <App />
-    </VimagesCtxProvider>
-  </React.StrictMode>,
+	<React.StrictMode>
+		<VimagesCtxProvider>
+			<App />
+		</VimagesCtxProvider>
+	</React.StrictMode>,
 );
