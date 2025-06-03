@@ -1,12 +1,16 @@
 import { NavigableItem, NavigableItemType } from "./../context/NavigableItem";
+import { useCommand } from "./../context/NavigationContext";
 import { useRustApi, RustApiAction } from "./RustApiBridge";
+import styles from "./FilesystemBrowser.module.css";
+import { useEffect } from "react";
 
-type FileSystemBrowserProps = {
-	pwd: string
-};
+function FileSystemBrowser(){
+	const { currentDir, imagesPerRow } = useCommand();
+	const { response, loading, error } = useRustApi({ action: RustApiAction.GetDirectories, path: currentDir.current });
 
-function FileSystemBrowser(props: FileSystemBrowserProps){
-	const { response, loading, error } = useRustApi({ action: RustApiAction.GetDirectories, path: props.pwd });
+	useEffect(() => {
+		imagesPerRow.current = 1;
+	}, []);
 
 	if (loading) return <p>Loading...</p>;
 	if (error) return <p>Error: {error}</p>;
@@ -20,7 +24,7 @@ function FileSystemBrowser(props: FileSystemBrowserProps){
 					itemType={NavigableItemType.FileBrowser}
 					data={entry}
 				>
-					<li key={"fbrowseridx" + index}>{entry}</li>
+					<div key={"fbrowseridx" + index} className={styles.fsElement}>{entry}</div>
 				</NavigableItem>
 			))}
 		</ul>

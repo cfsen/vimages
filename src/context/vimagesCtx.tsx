@@ -1,45 +1,42 @@
 import { Command, CommandSequence } from '../keyboard/Command';
-import { createContext, useEffect, useRef, useContext, useState } from "react";
-import { KeyboardCursorHandle } from "./CommandCursorHandler";
-import { NavigableItemType } from "./NavigableItem";
+import { createContext, useEffect, useRef, useContext, useState, useCallback } from "react";
 import { useRustApi, RustApiAction } from "./../filesystem/RustApiBridge";
-import { invoke } from "@tauri-apps/api/core";
+
+type NavigationHandler = (cmd: CommandSequence) => boolean; // returns true if handled
 
 type vimagesCtxType = {
-	pwd: string;
-	cmdLog: CommandSequence[];
-	handleCmd: (seq: CommandSequence) => void;
-	updatePwd: (dir: string) => void;
-	showLeader: boolean;
+	currentDir: React.MutableRefObject<string>;
+
 	showConsole: boolean;
+	cmdLog: CommandSequence[];
+	showLeader: boolean;
+	updateDirectory: (newPath: string) => void;
 
-	navActiveId: string | null;
-	setNavActiveId: (id: string) => void;
-	navRegister: (navItem: NavigationItem) => void;
-	navUnregister: (id: string) => void;
-	navItemsRef: React.RefObject<NavigationItem[]>;
+	// Navigation container management
+	activeNavigationId: string | null;
+	setActiveNavigationId: (id: string) => void;
+	
+	registerNavigationContainer: (id: string, handler: NavigationHandler) => void;
+	unregisterNavigationContainer: (id: string) => void;
 
-	imagesPerRow: number;
-	setImagesPerRow: (value: number) => void;
+	// Main command handler
+	handleCmd: (seq: CommandSequence) => void;
 };
 
-export type NavigationItem = {
-	id: string;
-	ref: React.RefObject<HTMLElement>;
-	itemType: NavigableItemType;
-	data: string;
-};
-
-const vimagesCtx = createContext<vimagesCtxType | undefined>(undefined);
+export const vimagesCtx = createContext<vimagesCtxType | undefined>(undefined);
 
 export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) => {
-	const [pwd, setPwd] = useState(".");
+	//const [currentDir, setCurrentDir] = useState(".");
+	const currentDir = useRef<string>(".");
 	const [cmdLog, setCmdLog] = useState<CommandSequence[]>([]);
 	const [showLeader, setShowLeader] = useState<boolean>(false);
 	const [showConsole, setShowConsole] = useState<boolean>(false);
-	const [imagesPerRow, setImagesPerRow] = useState<number>(0);
 
+	useEffect(() => {
+		console.log("vimagesCtx:currentDir update", currentDir);
+	}, [currentDir]);
 
+	const [activeNavigationId, setActiveNavigationId] = useState<string | null>(null);
 	const [isInitialized, setIsInitialized] = useState(false);
 
 	// Only use the API hook for initial setup
@@ -48,37 +45,63 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 		path: "." // Use a static path for initialization
 	});
 
+	// TODO: this is janky and needs a proper fix
+	const [forceDraw, setForceDraw] = useState<boolean>(false);
+	const updateDirectory = useCallback((newPath: string) => {
+		console.log("ctx:updateDirectory");
+		currentDir.current = newPath;
+		setForceDraw(prev => !prev);
+	}, []);
+
+	useEffect(() => {
+		console.log("ref changed");
+	}, [currentDir]);
+
 	// Set initial working directory ONCE
 	useEffect(() => {
 		if (!loading && !error && response && !isInitialized) {
-			setPwd(response as any);
+			currentDir.current = response as any;
 			setIsInitialized(true);
-			console.log("Initial pwd set to:", response);
+			console.log("Initial currentDir set to:", response);
 		}
 	}, [loading, error, response, isInitialized]);
 
 	//
-	// Navigation
+	// NavigationContainers
 	//
 
-	const [navActiveId, setNavActiveId] = useState<string | null>(null);
-	const navItemsRef = useRef<NavigationItem[]>([]);
+	const navigationHandlers = useRef<Map<string, NavigationHandler>>(new Map());
 
-	const navRegister = (navItem: NavigationItem) => {
-		navItemsRef.current?.push(navItem);
-		if (navItemsRef.current?.length === 1) setNavActiveId(navItem.id);
+	const registerNavigationContainer = (id: string, handler: NavigationHandler) => {
+		navigationHandlers.current.set(id, handler);
+
+		// If this is the first container, make it active
+		if (navigationHandlers.current.size === 1) {
+			setActiveNavigationId(id);
+		}
 	};
 
-	const navUnregister = (id: string) => {
-		navItemsRef.current = navItemsRef.current?.filter((i) => i.id !== id);
-		if (navActiveId === id) setNavActiveId(null);
-	}
+	const unregisterNavigationContainer = (id: string) => {
+		//console.log("ctx:unregister: " + id);
+		navigationHandlers.current.delete(id);
+
+		// If we removed the active container, pick a new one
+		if (activeNavigationId === id) {
+			const remaining = Array.from(navigationHandlers.current.keys());
+			setActiveNavigationId(remaining[0] || null);
+		}
+	};
 
 	//
 	// Command handling
 	//
 
+//useEffect(() => {
+//    console.log("activeNavigationId changed to:", activeNavigationId);
+//}, [activeNavigationId]);
+
 	const handleCmd = (seq: CommandSequence) => {
+		//console.log("vimagesCtx:handleCmd:", seq);
 		setCmdLog(prev => [...prev, seq]);
 
 		// TODO: refactor out
@@ -93,78 +116,54 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 			console.log("ctx:handleCmd:leader");
 			setShowLeader(!showLeader);
 		}
-		if(seq.cmd === Command.Return){
-			console.log("ctx:handleCmd:return");
-
-			let item = navItemsRef.current.find((i) => i.id === navActiveId);
-			if(item?.itemType === NavigableItemType.FileBrowser){
-				console.log(pwd);
-				console.log("data:" + item.data);
-
-				if(item.data === ".."){
-					setPwd(currentPwd => {
-						console.log("Current pwd:", currentPwd);
-						invoke(RustApiAction.GetParentPath, { path: currentPwd })
-							.then(response => {
-								setPwd(response as string);
-								console.log("New pwd:", response);
-							})
-							.catch(console.error);
-						return currentPwd; // Return current state unchanged for now
-					});
-					return;
-				}
-
-				setPwd(currentPwd => {
-					setPwd(currentPwd + "\\" + item.data);
-					return currentPwd; 
-				});
-			}
-		}
 		if(seq.cmd === Command.Error){
 			console.log("ctx:handleCmd:error");
 		}
+		if(seq.cmd === Command.Tab){
+			console.log("ctx:handleCmd:tab"); 
+			// Cycle activeNavigationId sequentially
+			const handlerIds = Array.from(navigationHandlers.current.keys());
 
-		// Navigation keys
-		// TODO: error handling
-		let cur = KeyboardCursorHandle(seq, navItemsRef, imagesPerRow, navActiveId);
-		if(cur != null)  {
-			setNavActiveId(navItemsRef.current[cur].id);
-			return;
+			if (handlerIds.length > 1) {
+				const currentIndex = activeNavigationId ? handlerIds.indexOf(activeNavigationId) : -1;
+				const nextIndex = (currentIndex + 1) % handlerIds.length;
+				const nextId = handlerIds[nextIndex];
+				setActiveNavigationId(nextId);
+				return; // Exit early to avoid further processing
+			}
 		}
-		else {
-			setNavActiveId(navItemsRef.current[0].id);
+
+		// Navigation commands - delegate to active container
+		if (activeNavigationId) {
+			const handler = navigationHandlers.current.get(activeNavigationId);
+			if (handler) {
+				const wasHandled = handler(seq);
+				if (wasHandled) return;
+			}
 		}
+
+		console.log("Unhandled command:", seq);
 	}
-
-	const updatePwd = (dir: string) => {
-		setPwd(dir);
-	};
 
 	return (
 		<vimagesCtx.Provider value={{ 
-			pwd, 
-			cmdLog, 
+			currentDir, 
+			cmdLog,
 			handleCmd,
-			updatePwd,
 			showLeader,
 			showConsole,
-
-			navRegister,
-			navUnregister,
-			navActiveId,
-			setNavActiveId,
-			navItemsRef,
-
-			imagesPerRow,
-			setImagesPerRow,
+			activeNavigationId,
+			setActiveNavigationId,
+			registerNavigationContainer,
+			unregisterNavigationContainer,
+			updateDirectory,
 		}}>
 			{children}
 		</vimagesCtx.Provider>
 	);
 };
 
-export const useCommand = (): vimagesCtxType => {
+export const useGlobalCtx = (): vimagesCtxType => {
 	const ctx = useContext(vimagesCtx);
 	if (!ctx) throw new Error("useCommand must be used within CommandProvider");
 	return ctx;
@@ -176,5 +175,5 @@ export const useCommand = (): vimagesCtxType => {
 //
 //import { useCommand } from "../context/vimagesCtx";
 //
-//const { cmdLog, navigate, handleCmd, updatePwd } = useCommand();
+//const { cmdLog, navigate, handleCmd, updatecurrentDir } = useCommand();
 //navigate(seq); // shared function, updates state

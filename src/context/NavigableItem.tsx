@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useCommand } from './vimagesCtx';
+import { useCommand } from './NavigationContext';
 
 function scrollToElementCenteredSmoothly(el: HTMLElement, duration = 150) {
   const rect = el.getBoundingClientRect();
@@ -44,7 +44,7 @@ export const NavigableItem: React.FC<{ id: string; children: React.ReactNode; it
   }, [id]);
 
   useEffect(() => {
-    if(navActiveId === id && ref.current){
+    if(navActiveId.current === id && ref.current){
       scrollToElementCenteredSmoothly(ref.current);
       // TODO: allow opt in to no animations:
       //ref.current.scrollIntoView({
@@ -53,13 +53,13 @@ export const NavigableItem: React.FC<{ id: string; children: React.ReactNode; it
       //  inline: 'nearest',
       //});
     }
-  }, [navActiveId]);
+  }, [navActiveId.current]);
 
   return (
     <div
       ref={ref}
       style={{ 
-        backgroundColor: navActiveId === id ? '#4c606d' : '#2f2f2f',
+        backgroundColor: navActiveId.current === id ? '#4c606d' : '#2f2f2f',
         margin: 'auto',
       }}
     >

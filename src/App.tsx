@@ -1,13 +1,14 @@
 import "./App.css";
 
 import { useModalKey } from './keyboard/KeyboardModule';
-import { useCommand } from './context/vimagesCtx';
+import { useGlobalCtx } from './context/vimagesCtx';
 import FileSystemBrowser from "./filesystem/FilesystemBrowser";
 import Navbar from "./components/Navbar";
 import VimageGrid from "./components/VimageGrid";
+import { NavigationProvider } from "./context/NavigationContext";
 
 function App() {
-	const { handleCmd, pwd } = useCommand();
+	const { handleCmd } = useGlobalCtx();
 
 	useModalKey({
 		onSequenceComplete: (seq) => {
@@ -19,13 +20,17 @@ function App() {
 	return (
 		<main className="container">
 			<div className="row">
-				<VimageGrid />
+				<NavigationProvider>
+					<FileSystemBrowser />
+				</NavigationProvider>
 			</div>
 			<div className="row">
-				<FileSystemBrowser pwd={pwd} />
+				<NavigationProvider>
+					<VimageGrid />
+				</NavigationProvider>
 			</div>
 			<div className="bottom-overlay">
-				<Navbar pwd={pwd} />
+				<Navbar />
 			</div>
 		</main>
 	);

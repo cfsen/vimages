@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { NavigableItem, NavigableItemType } from "./../context/NavigableItem";
-import { useCommand } from "./../context/vimagesCtx";
+import { useCommand } from "./../context/NavigationContext";
 import Vimage from './Vimage';
 import { RustApiAction, useRustApi } from "./../filesystem/RustApiBridge";
 import { invoke } from "@tauri-apps/api/core";
@@ -11,20 +11,18 @@ type ThumbnailEntry = {
 	status: 'loading' | 'loaded' | 'failed';
 };
 
-// TODO: async woes with FilesystemBrowser; needs to be refactored
-// TODO: needs performance overhaul after UI/UX is solidified
 const VimageGrid: React.FC = () => {
 	const [scale, setScale] = useState(1);
 	const [containerWidth, setContainerWidth] = useState(window.innerWidth);
 	const [squaresPerRow, setSquaresPerRow] = useState(0);
 	const [thumbnails, setThumbnails] = useState<Map<string, ThumbnailEntry>>(new Map());
 
-	const squareBaseSize = 200;
+	const squareBaseSize = 400;
 	const isLoadingRef = useRef(false);
 
-	const { setImagesPerRow, pwd } = useCommand();
+	const { imagesPerRow, currentDir } = useCommand();
 
-	const { response: imagePaths, loading, error } = useRustApi({ action: RustApiAction.GetImages, path: pwd });
+	const { response: imagePaths, loading, error } = useRustApi({ action: RustApiAction.GetImages, path: currentDir.current });
 
 	// Resize handler
 	useEffect(() => {
@@ -39,7 +37,7 @@ const VimageGrid: React.FC = () => {
 	useEffect(() => {
 		const fullSize = squareBaseSize * scale + 18;
 		const perRow = Math.floor(containerWidth / fullSize);
-		setImagesPerRow(perRow);
+		imagesPerRow.current = perRow;
 		setSquaresPerRow(perRow);
 	}, [containerWidth, scale]);
 
@@ -70,9 +68,9 @@ const VimageGrid: React.FC = () => {
 
 		for (let i = 0; i < paths.length; i++) {
 			const path = paths[i];
-			
+
 			try {
-				const buffer: number[] = await invoke('fs_get_image', { path });
+				const buffer: number[] = await invoke('fs_get_image_async', { path });
 				const uint8Array = new Uint8Array(buffer);
 				const blob = new Blob([uint8Array], { type: 'image/jpeg' });
 				const url = URL.createObjectURL(blob);
