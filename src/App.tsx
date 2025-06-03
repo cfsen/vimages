@@ -18,16 +18,22 @@ function App() {
 
 
 	return (
-		<main className="container">
-			<div className="row">
-				<NavigationProvider>
-					<FileSystemBrowser />
-				</NavigationProvider>
-			</div>
-			<div className="row">
-				<NavigationProvider>
-					<VimageGrid />
-				</NavigationProvider>
+		<main>
+			<div className="colContainer">
+				<div className="fsCol">
+					<div className="navigation-overlay">
+						<NavigationProvider>
+							<FileSystemBrowser />
+						</NavigationProvider>
+					</div>
+				</div>
+				<div className="col">
+					<div className="row">
+						<NavigationProvider>
+							<VimageGrid />
+						</NavigationProvider>
+					</div>
+				</div>
 			</div>
 			<div className="bottom-overlay">
 				<Navbar />

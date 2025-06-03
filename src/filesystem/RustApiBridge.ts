@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 
-type RustApiCall = {
+export type RustApiCall = {
 	action: RustApiAction,
 	path: string
 }
@@ -20,8 +20,9 @@ export function useRustApi({ action, path }: RustApiCall) {
 	const [error, setError] = useState<string | null>(null);
 
 	// TODO: this is getting spammed
-	//console.log("rustapicall:action: " + action);
-	//console.log("rustapicall:path: " + path);
+	console.log("rustapicall:action: " + action);
+	console.log("rustapicall:path: " + path);
+	console.trace();
 
 	if(action === RustApiAction.GetParentPath){
 		console.log("getting parent path for: " + path);
@@ -49,7 +50,7 @@ export function useRustApi({ action, path }: RustApiCall) {
 	return { response, loading, error };
 }
 
-export async function fetchRustApi(action: string, path: string): Promise<string[]> {
+export async function fetchRustApi({action: RustApiAction, path: string}: RustApiCall): Promise<string[]> {
 	try {
 		const result = await invoke(action, { path });
 		return Array.isArray(result) ? result : [String(result)];

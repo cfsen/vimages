@@ -28,6 +28,12 @@
 	justify-content: center;
 }
 
+.navigation-overlay {
+	background-color: rgba(0, 0, 0, 0.3);
+	padding: 0.5em;
+	margin: 0;
+}
+
 .bottom-overlay {
 	position: fixed;
 	bottom: 0;
@@ -37,6 +43,20 @@
 	color: #8f8f8f;
 	text-align: left;
 	padding: 0.5em;
+}
+
+.colContainer {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+}
+.fsCol {
+	width: 250px;
+	flex-shrink: 0;
+}
+.col {
+	text-align: left;
+	flex: 1;
 }
 
 @media (prefers-color-scheme: dark) {

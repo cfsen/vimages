@@ -35,8 +35,8 @@ const VimageGrid: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
-		const fullSize = squareBaseSize * scale + 18;
-		const perRow = Math.floor(containerWidth / fullSize);
+		const fullSize = squareBaseSize * scale + 18; // account for padding between elements
+		const perRow = Math.floor((containerWidth-350) / fullSize); // account for filesystem sidebar
 		imagesPerRow.current = perRow;
 		setSquaresPerRow(perRow);
 	}, [containerWidth, scale]);

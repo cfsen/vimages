@@ -16,7 +16,7 @@ function FileSystemBrowser(){
 	if (error) return <p>Error: {error}</p>;
 
 	return (
-		<ul>
+		<div>
 			{response.map((entry, index) => (
 				<NavigableItem 
 					key={"fileBrowserItem" + index} 
@@ -27,7 +27,7 @@ function FileSystemBrowser(){
 					<div key={"fbrowseridx" + index} className={styles.fsElement}>{entry}</div>
 				</NavigableItem>
 			))}
-		</ul>
+		</div>
 	);
 }
 

@@ -1,6 +1,6 @@
 import { Command, CommandSequence } from '../keyboard/Command';
-import { createContext, useEffect, useRef, useContext, useState, useCallback } from "react";
-import { useRustApi, RustApiAction } from "./../filesystem/RustApiBridge";
+import { createContext, useEffect, useRef, useContext, useState, useCallback, useMemo } from "react";
+import { useRustApi, RustApiAction, RustApiCall } from "./../filesystem/RustApiBridge";
 
 type NavigationHandler = (cmd: CommandSequence) => boolean; // returns true if handled
 
@@ -32,30 +32,22 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 	const [showLeader, setShowLeader] = useState<boolean>(false);
 	const [showConsole, setShowConsole] = useState<boolean>(false);
 
-	useEffect(() => {
-		console.log("vimagesCtx:currentDir update", currentDir);
-	}, [currentDir]);
-
 	const [activeNavigationId, setActiveNavigationId] = useState<string | null>(null);
 	const [isInitialized, setIsInitialized] = useState(false);
 
-	// Only use the API hook for initial setup
-	const { response, loading, error } = useRustApi({
+	const rustApiInitParams = useMemo<RustApiCall>(() => ({
 		action: RustApiAction.GetCurrentPath,
-		path: "." // Use a static path for initialization
-	});
+		path: "."
+	}), []);
+	const { response, loading, error } = useRustApi(rustApiInitParams);
 
 	// TODO: this is janky and needs a proper fix
-	const [forceDraw, setForceDraw] = useState<boolean>(false);
+	const [, setForceDraw] = useState<boolean>(false);
 	const updateDirectory = useCallback((newPath: string) => {
 		console.log("ctx:updateDirectory");
 		currentDir.current = newPath;
 		setForceDraw(prev => !prev);
 	}, []);
-
-	useEffect(() => {
-		console.log("ref changed");
-	}, [currentDir]);
 
 	// Set initial working directory ONCE
 	useEffect(() => {
