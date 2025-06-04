@@ -1,21 +1,11 @@
-import { useEffect, useState } from "react"; 
-import { useGlobalCtx } from "./../context/vimagesCtx";
+import { useGlobalStore } from "../context/store";
 
 function Navbar() {
-	const { currentDir } = useGlobalCtx();
-
-	const [navPath, setNavPath] = useState<string>();
-
-	useEffect(() => {
-		if(navPath !== currentDir.current) {
-			setNavPath(currentDir.current);
-			console.log("update nav path");
-		}
-	});
+	const { currentDir } = useGlobalStore();
 
 	return(
 		<div>
-			{ navPath }
+			{ currentDir }
 		</div>
 	);
 }

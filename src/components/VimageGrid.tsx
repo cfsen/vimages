@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { NavigableItem, NavigableItemType } from "./../context/NavigableItem";
 import { useCommand } from "./../context/NavigationContext";
 import Vimage from './Vimage';
-import { RustApiAction, useRustApi } from "./../filesystem/RustApiBridge";
+import { RustApiAction } from "./../filesystem/RustApiBridge";
 import { invoke } from "@tauri-apps/api/core";
+import { useGlobalStore } from './../context/store';
 
 type ThumbnailEntry = {
 	path: string;
@@ -12,17 +13,29 @@ type ThumbnailEntry = {
 };
 
 const VimageGrid: React.FC = () => {
-	const [scale, setScale] = useState(1);
-	const [containerWidth, setContainerWidth] = useState(window.innerWidth);
-	const [squaresPerRow, setSquaresPerRow] = useState(0);
+	const currentDir = useGlobalStore(state => state.currentDir);
+	const { imagesPerRow } = useCommand();
+
 	const [thumbnails, setThumbnails] = useState<Map<string, ThumbnailEntry>>(new Map());
 
+	const [scale, setScale] = useState(1);		// TODO: move to global state
+	const [containerWidth, setContainerWidth] = useState(window.innerWidth);
+	const [squaresPerRow, setSquaresPerRow] = useState(0);
 	const squareBaseSize = 400;
 	const isLoadingRef = useRef(false);
 
-	const { imagesPerRow, currentDir } = useCommand();
+	const [imagePaths, setImagePaths] = useState<string[]>();
+	const [, setLoading] = useState<boolean>(true);
 
-	const { response: imagePaths, loading, error } = useRustApi({ action: RustApiAction.GetImages, path: currentDir.current });
+	// TODO: #refactor00 redundant
+	useEffect(() => {
+		setLoading(true);
+		invoke(RustApiAction.GetImages, { path: currentDir })
+			.then(res => {
+				setImagePaths(res as string[])
+				setLoading(false);
+			});
+	}, [currentDir]);
 
 	// Resize handler
 	useEffect(() => {
@@ -41,6 +54,7 @@ const VimageGrid: React.FC = () => {
 		setSquaresPerRow(perRow);
 	}, [containerWidth, scale]);
 
+	// TODO: #refactor00 redundant
 	// Initialize thumbnails map and start queue when imagePaths change
 	useEffect(() => {
 		if (!imagePaths || imagePaths.length === 0) return;

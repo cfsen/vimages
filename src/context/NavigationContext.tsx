@@ -4,10 +4,10 @@ import { KeyboardCursorHandle } from "./CommandCursorHandler";
 import { NavigableItemType } from "./NavigableItem";
 import { RustApiAction } from "./../filesystem/RustApiBridge";
 import { invoke } from "@tauri-apps/api/core";
-import { vimagesCtx, useGlobalCtx } from './vimagesCtx';
+import { vimagesCtx } from './vimagesCtx';
+import { useGlobalStore } from "./store";
 
 type NavigationContextType = {
-	currentDir: React.MutableRefObject<string>;
 	cmdLog: CommandSequence[];
 
 	navActiveId: React.RefObject<string | null>;
@@ -29,9 +29,10 @@ const NavigationContext = createContext<NavigationContextType | undefined>(undef
 
 export const NavigationProvider = ({ children }: { children: React.ReactNode }) => {
 	const parentCtx = useContext(vimagesCtx);
-	if (!parentCtx) throw new Error("NavigationProvider must be inside AppProvider");
+	if (!parentCtx) throw new Error("NavigationProvider must be inside VimagesCtxProvider");
 
-	const { currentDir, updateDirectory } = useGlobalCtx();
+	const currentDir 		= useGlobalStore(state => state.currentDir);
+	const setCurrentDir 	= useGlobalStore(state => state.setCurrentDir);
 
 	const [cmdLog, setCmdLog] = useState<CommandSequence[]>([]);
 	const imagesPerRow = useRef<number>(0);
@@ -57,23 +58,20 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 
 			let item = navItemsRef.current.find((i) => i.id === navActiveId.current);
 			if(item?.itemType === NavigableItemType.FileBrowser){
-				//console.log("navctx:handleCmd:currentDir: " + currentDir.current);
-				//console.log("navctx:handleCmd:data: " + item.data);
+				console.log("navctx:handleCmd:currentDir: " + currentDir);
+				console.log("navctx:handleCmd:data: " + item.data);
 
 				if (item.data === "..") {
-					invoke(RustApiAction.GetParentPath, { path: currentDir.current })
+					invoke(RustApiAction.GetParentPath, { path: useGlobalStore.getState().currentDir })
 						.then(response => {
-							//console.log("New currentDir:", response);
-							//currentDir.current = response as string;
-							// TODO: janky and needs a proper fix
-							updateDirectory(response as string);
+							setCurrentDir(response as string);
 						})
 						.catch(console.error);
 					return true;
 				}
 
-				// TODO: platform independent - resolve on rusts end instead
-				currentDir.current = currentDir.current + "\\" + item.data;
+				// TODO: make platform independent - resolve on rusts end instead
+				setCurrentDir(useGlobalStore.getState().currentDir + "\\" + item.data);
 				return true;					
 
 			}
@@ -86,7 +84,7 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 		if(navActiveId.current === null) navActiveId.current = (navItemsRef.current[0].id);
 
 		// Navigation keys
-		// TODO: error handling
+		//
 		let cur = KeyboardCursorHandle(seq, navItemsRef, imagesPerRow, navActiveId);
 		if(cur != null)  {
 			navActiveId.current = (navItemsRef.current[cur].id);
@@ -131,7 +129,6 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 
 	return (
 		<NavigationContext.Provider value={{ 
-			currentDir, 
 			cmdLog, 
 
 			navRegister,

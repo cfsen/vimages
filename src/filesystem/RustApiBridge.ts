@@ -22,7 +22,7 @@ export function useRustApi({ action, path }: RustApiCall) {
 	// TODO: this is getting spammed
 	console.log("rustapicall:action: " + action);
 	console.log("rustapicall:path: " + path);
-	console.trace();
+	//console.trace();
 
 	if(action === RustApiAction.GetParentPath){
 		console.log("getting parent path for: " + path);
@@ -48,13 +48,4 @@ export function useRustApi({ action, path }: RustApiCall) {
 	}, [action, path]);
 
 	return { response, loading, error };
-}
-
-export async function fetchRustApi({action: RustApiAction, path: string}: RustApiCall): Promise<string[]> {
-	try {
-		const result = await invoke(action, { path });
-		return Array.isArray(result) ? result : [String(result)];
-	} catch (err) {
-		throw new Error((err as Error).message);
-	}
 }

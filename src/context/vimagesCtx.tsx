@@ -1,16 +1,16 @@
 import { Command, CommandSequence } from '../keyboard/Command';
-import { createContext, useEffect, useRef, useContext, useState, useCallback, useMemo } from "react";
-import { useRustApi, RustApiAction, RustApiCall } from "./../filesystem/RustApiBridge";
+import { createContext, useEffect, useRef, useContext, useState } from "react";
+import { RustApiAction } from "./../filesystem/RustApiBridge";
+import { useGlobalStore } from "./store";
+import { invoke } from "@tauri-apps/api/core";
+
 
 type NavigationHandler = (cmd: CommandSequence) => boolean; // returns true if handled
 
 type vimagesCtxType = {
-	currentDir: React.MutableRefObject<string>;
-
 	showConsole: boolean;
 	cmdLog: CommandSequence[];
 	showLeader: boolean;
-	updateDirectory: (newPath: string) => void;
 
 	// Navigation container management
 	activeNavigationId: string | null;
@@ -26,43 +26,25 @@ type vimagesCtxType = {
 export const vimagesCtx = createContext<vimagesCtxType | undefined>(undefined);
 
 export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) => {
-	//const [currentDir, setCurrentDir] = useState(".");
-	const currentDir = useRef<string>(".");
+	const setCurrentDir = useGlobalStore(state => state.setCurrentDir);
+
 	const [cmdLog, setCmdLog] = useState<CommandSequence[]>([]);
+
 	const [showLeader, setShowLeader] = useState<boolean>(false);
 	const [showConsole, setShowConsole] = useState<boolean>(false);
 
 	const [activeNavigationId, setActiveNavigationId] = useState<string | null>(null);
-	const [isInitialized, setIsInitialized] = useState(false);
-
-	const rustApiInitParams = useMemo<RustApiCall>(() => ({
-		action: RustApiAction.GetCurrentPath,
-		path: "."
-	}), []);
-	const { response, loading, error } = useRustApi(rustApiInitParams);
-
-	// TODO: this is janky and needs a proper fix
-	const [, setForceDraw] = useState<boolean>(false);
-	const updateDirectory = useCallback((newPath: string) => {
-		console.log("ctx:updateDirectory");
-		currentDir.current = newPath;
-		setForceDraw(prev => !prev);
-	}, []);
-
-	// Set initial working directory ONCE
+	const navigationHandlers = useRef<Map<string, NavigationHandler>>(new Map());
+	
 	useEffect(() => {
-		if (!loading && !error && response && !isInitialized) {
-			currentDir.current = response as any;
-			setIsInitialized(true);
-			console.log("Initial currentDir set to:", response);
-		}
-	}, [loading, error, response, isInitialized]);
+		invoke(RustApiAction.GetCurrentPath)
+			.then(res => {setCurrentDir(res as string)
+			});
+	}, []);
 
 	//
 	// NavigationContainers
 	//
-
-	const navigationHandlers = useRef<Map<string, NavigationHandler>>(new Map());
 
 	const registerNavigationContainer = (id: string, handler: NavigationHandler) => {
 		navigationHandlers.current.set(id, handler);
@@ -87,10 +69,6 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 	//
 	// Command handling
 	//
-
-//useEffect(() => {
-//    console.log("activeNavigationId changed to:", activeNavigationId);
-//}, [activeNavigationId]);
 
 	const handleCmd = (seq: CommandSequence) => {
 		//console.log("vimagesCtx:handleCmd:", seq);
@@ -139,7 +117,6 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 
 	return (
 		<vimagesCtx.Provider value={{ 
-			currentDir, 
 			cmdLog,
 			handleCmd,
 			showLeader,
@@ -148,7 +125,6 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 			setActiveNavigationId,
 			registerNavigationContainer,
 			unregisterNavigationContainer,
-			updateDirectory,
 		}}>
 			{children}
 		</vimagesCtx.Provider>
@@ -157,15 +133,6 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 
 export const useGlobalCtx = (): vimagesCtxType => {
 	const ctx = useContext(vimagesCtx);
-	if (!ctx) throw new Error("useCommand must be used within CommandProvider");
+	if (!ctx) throw new Error("useGlobalCtx must be used within CommandProvider");
 	return ctx;
 };
-
-
-// Reminder:
-// Access context from any nested component:
-//
-//import { useCommand } from "../context/vimagesCtx";
-//
-//const { cmdLog, navigate, handleCmd, updatecurrentDir } = useCommand();
-//navigate(seq); // shared function, updates state

@@ -1,20 +1,36 @@
 import { NavigableItem, NavigableItemType } from "./../context/NavigableItem";
 import { useCommand } from "./../context/NavigationContext";
-import { useRustApi, RustApiAction } from "./RustApiBridge";
+import { RustApiAction } from "./RustApiBridge";
 import styles from "./FilesystemBrowser.module.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useGlobalStore } from "./../context/store";
+import { invoke } from "@tauri-apps/api/core";
 
 function FileSystemBrowser(){
-	const { currentDir, imagesPerRow } = useCommand();
-	const { response, loading, error } = useRustApi({ action: RustApiAction.GetDirectories, path: currentDir.current });
+	const currentDir = useGlobalStore(state => state.currentDir);
+	const { imagesPerRow } = useCommand();
+	const [response, setResponse] = useState<string[]>([]);
+	const [loading, setLoading] = useState<boolean>(true);
 
 	useEffect(() => {
 		imagesPerRow.current = 1;
 	}, []);
 
-	if (loading) return <p>Loading...</p>;
-	if (error) return <p>Error: {error}</p>;
+	useEffect(() => {
+		setLoading(true);
+		invoke(RustApiAction.GetDirectories, { path: currentDir })
+			.then(res => {
+				setResponse(res as string[])
+				setLoading(false);
+			});
+	}, [currentDir]);
 
+	if(loading) {
+		return (
+			<div>Loading</div>
+		);
+	}
+	
 	return (
 		<div>
 			{response.map((entry, index) => (
