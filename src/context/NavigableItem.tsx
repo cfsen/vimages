@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react';
-import { useCommand } from './NavigationContext';
+import { useEffect, useRef } from "react";
+
+import { useCommand } from "./NavigationContext";
 
 function scrollToElementCenteredSmoothly(el: HTMLElement, duration = 150) {
   const rect = el.getBoundingClientRect();

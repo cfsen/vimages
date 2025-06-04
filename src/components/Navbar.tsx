@@ -1,7 +1,7 @@
-import { useGlobalStore } from "../context/store";
+import { useAppState } from "../context/AppContextStore";
 
 function Navbar() {
-	const { currentDir } = useGlobalStore();
+	const { currentDir } = useAppState();
 
 	return(
 		<div>

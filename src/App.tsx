@@ -1,11 +1,14 @@
 import "./App.css";
 
-import { useModalKey } from './keyboard/KeyboardModule';
-import { useGlobalCtx } from './context/vimagesCtx';
-import FileSystemBrowser from "./filesystem/FilesystemBrowser";
-import Navbar from "./components/Navbar";
 import VimageGrid from "./components/VimageGrid";
+import Navbar from "./components/Navbar";
+
+import { useGlobalCtx } from './context/AppContext';
 import { NavigationProvider } from "./context/NavigationContext";
+
+import FileSystemBrowser from "./filesystem/FilesystemBrowser";
+
+import { useModalKey } from './keyboard/KeyboardModule';
 
 function App() {
 	const { handleCmd } = useGlobalCtx();
@@ -15,7 +18,6 @@ function App() {
 			handleCmd(seq);
 		},
 	});
-
 
 	return (
 		<main>

@@ -1,13 +1,14 @@
-import { Command, CommandSequence } from '../keyboard/Command';
-import { createContext, useEffect, useRef, useContext, useState } from "react";
-import { RustApiAction } from "./../filesystem/RustApiBridge";
-import { useGlobalStore } from "./store";
 import { invoke } from "@tauri-apps/api/core";
+import { createContext, useEffect, useRef, useContext, useState } from "react";
 
+import { RustApiAction } from "./../filesystem/RustApiBridge";
+import { Command, CommandSequence } from "./../keyboard/Command";
+
+import { useAppState } from "./AppContextStore";
 
 type NavigationHandler = (cmd: CommandSequence) => boolean; // returns true if handled
 
-type vimagesCtxType = {
+type AppContextType = {
 	showConsole: boolean;
 	cmdLog: CommandSequence[];
 	showLeader: boolean;
@@ -15,7 +16,7 @@ type vimagesCtxType = {
 	// Navigation container management
 	activeNavigationId: string | null;
 	setActiveNavigationId: (id: string) => void;
-	
+
 	registerNavigationContainer: (id: string, handler: NavigationHandler) => void;
 	unregisterNavigationContainer: (id: string) => void;
 
@@ -23,10 +24,10 @@ type vimagesCtxType = {
 	handleCmd: (seq: CommandSequence) => void;
 };
 
-export const vimagesCtx = createContext<vimagesCtxType | undefined>(undefined);
+export const AppContext = createContext<AppContextType | undefined>(undefined);
 
-export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) => {
-	const setCurrentDir = useGlobalStore(state => state.setCurrentDir);
+export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
+	const setCurrentDir = useAppState(state => state.setCurrentDir);
 
 	const [cmdLog, setCmdLog] = useState<CommandSequence[]>([]);
 
@@ -35,7 +36,7 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 
 	const [activeNavigationId, setActiveNavigationId] = useState<string | null>(null);
 	const navigationHandlers = useRef<Map<string, NavigationHandler>>(new Map());
-	
+
 	useEffect(() => {
 		invoke(RustApiAction.GetCurrentPath)
 			.then(res => {setCurrentDir(res as string)
@@ -71,7 +72,7 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 	//
 
 	const handleCmd = (seq: CommandSequence) => {
-		//console.log("vimagesCtx:handleCmd:", seq);
+		//console.log("AppContext:handleCmd:", seq);
 		setCmdLog(prev => [...prev, seq]);
 
 		// TODO: refactor out
@@ -116,7 +117,7 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 	}
 
 	return (
-		<vimagesCtx.Provider value={{ 
+		<AppContext.Provider value={{ 
 			cmdLog,
 			handleCmd,
 			showLeader,
@@ -127,12 +128,12 @@ export const VimagesCtxProvider = ({ children }: { children: React.ReactNode }) 
 			unregisterNavigationContainer,
 		}}>
 			{children}
-		</vimagesCtx.Provider>
+		</AppContext.Provider>
 	);
 };
 
-export const useGlobalCtx = (): vimagesCtxType => {
-	const ctx = useContext(vimagesCtx);
+export const useGlobalCtx = (): AppContextType => {
+	const ctx = useContext(AppContext);
 	if (!ctx) throw new Error("useGlobalCtx must be used within CommandProvider");
 	return ctx;
 };

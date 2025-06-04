@@ -1,11 +1,13 @@
-import { Command, CommandSequence } from '../keyboard/Command';
+import { invoke } from "@tauri-apps/api/core";
 import { createContext, useEffect, useRef, useContext, useState } from "react";
+
+import { Command, CommandSequence } from "../keyboard/Command";
+import { RustApiAction } from "./../filesystem/RustApiBridge";
+
+import { AppContext } from "./AppContext";
+import { useAppState } from "./AppContextStore";
 import { KeyboardCursorHandle } from "./CommandCursorHandler";
 import { NavigableItemType } from "./NavigableItem";
-import { RustApiAction } from "./../filesystem/RustApiBridge";
-import { invoke } from "@tauri-apps/api/core";
-import { vimagesCtx } from './vimagesCtx';
-import { useGlobalStore } from "./store";
 
 type NavigationContextType = {
 	cmdLog: CommandSequence[];
@@ -28,11 +30,11 @@ export type NavigationItem = {
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
 
 export const NavigationProvider = ({ children }: { children: React.ReactNode }) => {
-	const parentCtx = useContext(vimagesCtx);
+	const parentCtx = useContext(AppContext);
 	if (!parentCtx) throw new Error("NavigationProvider must be inside VimagesCtxProvider");
 
-	const currentDir 		= useGlobalStore(state => state.currentDir);
-	const setCurrentDir 	= useGlobalStore(state => state.setCurrentDir);
+	const currentDir 		= useAppState(state => state.currentDir);
+	const setCurrentDir 	= useAppState(state => state.setCurrentDir);
 
 	const [cmdLog, setCmdLog] = useState<CommandSequence[]>([]);
 	const imagesPerRow = useRef<number>(0);
@@ -62,7 +64,7 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 				console.log("navctx:handleCmd:data: " + item.data);
 
 				if (item.data === "..") {
-					invoke(RustApiAction.GetParentPath, { path: useGlobalStore.getState().currentDir })
+					invoke(RustApiAction.GetParentPath, { path: useAppState.getState().currentDir })
 						.then(response => {
 							setCurrentDir(response as string);
 						})
@@ -71,7 +73,7 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 				}
 
 				// TODO: make platform independent - resolve on rusts end instead
-				setCurrentDir(useGlobalStore.getState().currentDir + "\\" + item.data);
+				setCurrentDir(useAppState.getState().currentDir + "\\" + item.data);
 				return true;					
 
 			}

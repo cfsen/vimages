@@ -1,4 +1,5 @@
 import styles from "./Vimage.module.css";
+
 type VimageProps = {
 	id: string;
 	src: string | null;

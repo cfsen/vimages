@@ -1,13 +1,15 @@
-import { NavigableItem, NavigableItemType } from "./../context/NavigableItem";
-import { useCommand } from "./../context/NavigationContext";
-import { RustApiAction } from "./RustApiBridge";
-import styles from "./FilesystemBrowser.module.css";
 import { useEffect, useState } from "react";
-import { useGlobalStore } from "./../context/store";
 import { invoke } from "@tauri-apps/api/core";
 
+import { useAppState } from "./../context/AppContextStore";
+import { NavigableItem, NavigableItemType } from "./../context/NavigableItem";
+import { useCommand } from "./../context/NavigationContext";
+
+import styles from "./FilesystemBrowser.module.css";
+import { RustApiAction } from "./RustApiBridge";
+
 function FileSystemBrowser(){
-	const currentDir = useGlobalStore(state => state.currentDir);
+	const currentDir = useAppState(state => state.currentDir);
 	const { imagesPerRow } = useCommand();
 	const [response, setResponse] = useState<string[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);

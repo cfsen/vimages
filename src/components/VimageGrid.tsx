@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { invoke } from "@tauri-apps/api/core";
+import React, { useState, useEffect, useRef } from "react";
+
+import { useAppState } from "./../context/AppContextStore";
 import { NavigableItem, NavigableItemType } from "./../context/NavigableItem";
 import { useCommand } from "./../context/NavigationContext";
-import Vimage from './Vimage';
 import { RustApiAction } from "./../filesystem/RustApiBridge";
-import { invoke } from "@tauri-apps/api/core";
-import { useGlobalStore } from './../context/store';
+
+import Vimage from "./Vimage";
 
 type ThumbnailEntry = {
 	path: string;
@@ -13,7 +15,7 @@ type ThumbnailEntry = {
 };
 
 const VimageGrid: React.FC = () => {
-	const currentDir = useGlobalStore(state => state.currentDir);
+	const currentDir = useAppState(state => state.currentDir);
 	const { imagesPerRow } = useCommand();
 
 	const [thumbnails, setThumbnails] = useState<Map<string, ThumbnailEntry>>(new Map());

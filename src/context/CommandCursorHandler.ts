@@ -1,6 +1,8 @@
 import { MutableRefObject } from "react";
-import { Command, CommandSequence } from '../keyboard/Command';
-import { NavigationItem } from './NavigationContext';
+
+import { Command, CommandSequence } from "./../keyboard/Command";
+
+import { NavigationItem } from "./NavigationContext";
 
 export function KeyboardCursorHandle(
 	seq: CommandSequence, 
