@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import { createContext, useEffect, useRef, useContext, useState } from "react";
+import { createContext, useEffect, useRef, useContext } from "react";
 
 import { Command, CommandSequence } from "../keyboard/Command";
 import { RustApiAction } from "./../filesystem/RustApiBridge";
@@ -9,15 +9,22 @@ import { useAppState } from "./AppContextStore";
 import { KeyboardCursorHandle } from "./CommandCursorHandler";
 import { NavigableItemType } from "./NavigableItem";
 
-type NavigationContextType = {
-	cmdLog: CommandSequence[];
+import { createNavigationState } from "./NavigationContextStore";
+import { useStore } from "zustand";
 
-	navActiveId: React.RefObject<string | null>;
+type NavigationContextType = {
+	//cmdLog: CommandSequence[];
+
 	navRegister: (navItem: NavigationItem) => void;
 	navUnregister: (id: string) => void;
 	navItemsRef: React.RefObject<NavigationItem[]>;
 
 	imagesPerRow: React.MutableRefObject<number>;
+
+	navItemActive: string | null;
+	
+	itemsPerRow: number;
+	setItemsPerRow: (n: number) => void;
 };
 
 export type NavigationItem = {
@@ -30,14 +37,32 @@ export type NavigationItem = {
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
 
 export const NavigationProvider = ({ children }: { children: React.ReactNode }) => {
+	// Ensure AppContext is available
 	const parentCtx = useContext(AppContext);
 	if (!parentCtx) throw new Error("NavigationProvider must be inside VimagesCtxProvider");
 
-	const currentDir 		= useAppState(state => state.currentDir);
-	const setCurrentDir 	= useAppState(state => state.setCurrentDir);
+	// Set up ref to zustand store for this instance
+	const navigationStateRef = useRef<ReturnType<typeof createNavigationState>>();
+	if (!navigationStateRef.current) {
+	  navigationStateRef.current = createNavigationState();
+	}
+	const navigationState = navigationStateRef.current;	
 
-	const [cmdLog, setCmdLog] = useState<CommandSequence[]>([]);
+	const currentDir = useAppState(state => state.currentDir);
+	const setCurrentDir	= useAppState(state => state.setCurrentDir);
+
+	//const [cmdLog, setCmdLog] = useState<CommandSequence[]>([]);
+	
 	const imagesPerRow = useRef<number>(0);
+
+	const itemsPerRow = useStore(navigationState, s => s.navItemsPerRow);
+	const setItemsPerRow = useStore(navigationState, s => s.setItemsPerRow);
+
+	const navItems = useStore(navigationState, s => s.navItems);
+	const registerNavItem = useStore(navigationState, s => s.registerNavItem);
+	const unregisterNavItem = useStore(navigationState, s => s.unregisterNavItem);
+	const navItemActive = useStore(navigationState, s => s.navItemActive);
+	const setNavItemActive = useStore(navigationState, s => s.setNavItemActive);
 
 	const navActiveId = useRef<string | null>(null);
 	const navItemsRef = useRef<NavigationItem[]>([]);
@@ -45,11 +70,15 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 	// Generate unique ID for this navigation container
 	const navigationId = useRef(Math.random().toString(36).substring(7));
 
+	// Handle navigation-specific commands
 	const handleNavigationCmd = (seq: CommandSequence): boolean => {
-		// Handle navigation-specific commands
 		//console.log("navctx:handleCmd");
 
-		setCmdLog(prev => [...prev, seq]);
+		if(navigationState.getState().navItems.length > 0 && navigationState.getState().navItemActive === null) {
+			console.log("UPDATE CURSOR");
+			setNavItemActive(navigationState.getState().navItems[0].id);
+		}
+		//setCmdLog(prev => [...prev, seq]);
 
 		// TODO: refactor out
 		if(seq.cmd === Command.Escape){
@@ -58,9 +87,14 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 		if(seq.cmd === Command.Return){
 			//console.log("navctx:handleCmd:return");
 
-			let item = navItemsRef.current.find((i) => i.id === navActiveId.current);
+			let item  = navigationState.getState().navItems
+				.find((i) => i.id === navigationState.getState().navItemActive);
+
+			console.log("handleCmd:item:", item);
+
+			// TODO: add vimage type support
 			if(item?.itemType === NavigableItemType.FileBrowser){
-				console.log("navctx:handleCmd:currentDir: " + currentDir);
+				console.log("navctx:handleCmd:currentDir: " + useAppState.getState().currentDir);
 				console.log("navctx:handleCmd:data: " + item.data);
 
 				if (item.data === "..") {
@@ -75,7 +109,6 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 				// TODO: make platform independent - resolve on rusts end instead
 				setCurrentDir(useAppState.getState().currentDir + "\\" + item.data);
 				return true;					
-
 			}
 		}
 		if(seq.cmd === Command.Error){
@@ -86,16 +119,24 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 		if(navActiveId.current === null) navActiveId.current = (navItemsRef.current[0].id);
 
 		// Navigation keys
-		//
-		let cur = KeyboardCursorHandle(seq, navItemsRef, imagesPerRow, navActiveId);
+		console.log("handleCmd", navigationState.getState());
+		
+		let cur = KeyboardCursorHandle(
+			seq, 
+			navigationState.getState().navItems, 
+			navigationState.getState().navItemsPerRow, 
+			navigationState.getState().navItemActive
+		);
 		if(cur != null)  {
-			navActiveId.current = (navItemsRef.current[cur].id);
+			//navActiveId.current = (navItemsRef.current[cur].id);
+
+			navigationState.getState().setNavItemActive(
+				navigationState.getState().navItems[cur].id
+			);
+
 			return true;
 		}
-		else {
-			navActiveId.current = (navItemsRef.current[0].id);
-			return true;
-		}
+		return false;
 	};
 
 	//
@@ -112,15 +153,25 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 	//
 	// Child navigation element registration
 	//
+	
+	useEffect(() => {
+		if(navItems.length > 0) setNavItemActive(navItems[0].id);
+	}, [navItems]);
 
 	const navRegister = (navItem: NavigationItem) => {
-		//console.log("ctx:navRegister:", navItem);
+		registerNavItem(navItem);
+		//console.log("REG", navigationState.getState());
+
+		// TODO: remove after refactoring VimageGrid
 		navItemsRef.current?.push(navItem);
 		if (navItemsRef.current?.length === 1) navActiveId.current = navItem.id;
 	};
 
 	const navUnregister = (id: string) => {
-		//console.log("navctx:unregister: " + id);
+		if(navItems.length === 1) setNavItemActive(null);
+		unregisterNavItem(id);
+
+		// TODO: remove after refactoring VimageGrid
 		navItemsRef.current = navItemsRef.current?.filter((i) => i.id !== id);
 		if (navActiveId.current === id) navActiveId.current = null;
 	}
@@ -131,14 +182,17 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 
 	return (
 		<NavigationContext.Provider value={{ 
-			cmdLog, 
+			//cmdLog, 
 
 			navRegister,
 			navUnregister,
-			navActiveId,
 			navItemsRef,
 
 			imagesPerRow,
+
+			itemsPerRow,
+			setItemsPerRow,
+			navItemActive,
 		}}>
 			{children}
 		</NavigationContext.Provider>

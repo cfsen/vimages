@@ -6,41 +6,44 @@ import { NavigationItem } from "./NavigationContext";
 
 export function KeyboardCursorHandle(
 	seq: CommandSequence, 
-	navItemsRef: MutableRefObject<NavigationItem[]>, 
-	imagesPerRow: MutableRefObject<number>,
-	navActiveId: MutableRefObject<string | null>
+	//navItemsRef: MutableRefObject<NavigationItem[]>, 
+	navItemsRef: NavigationItem[], 
+	//imagesPerRow: MutableRefObject<number>,
+	itemsPerRow: number,
+	//navActiveId: MutableRefObject<string | null>
+	navActiveId: string | null
 ): number | null {
 	
-	if(navItemsRef.current === undefined || navItemsRef.current === null) return null;
+	if(navItemsRef === undefined || navItemsRef === null) return null;
 
-	let nav = navItemsRef.current;
-	let cur = nav.findIndex((i) => i.id === navActiveId.current);
+	let nav = navItemsRef;
+	let cur = nav.findIndex((i) => i.id === navActiveId);
 	let len = nav.length;
 
 	if(cur >= len || cur < 0) return null;
 
 	switch(seq.cmd){
 		case Command.CursorRight:
-			if(!((cur + 1) % imagesPerRow.current === 0) && ((cur + 1) < len))
+			if(!((cur + 1) % itemsPerRow === 0) && ((cur + 1) < len))
 				cur++;
 			break;
 		case Command.CursorLeft:
-			if(!(cur % imagesPerRow.current === 0) && ((cur - 1) >= 0))
+			if(!(cur % itemsPerRow === 0) && ((cur - 1) >= 0))
 				cur = (cur - 1) % len;
 			break;
 		case Command.CursorUp:
-			if((cur - imagesPerRow.current) >= 0)
-				cur = cur - imagesPerRow.current;
+			if((cur - itemsPerRow) >= 0)
+				cur = cur - itemsPerRow;
 			break;
 		case Command.CursorDown:
-			if((cur + imagesPerRow.current) < len)
-				cur = cur + imagesPerRow.current;
+			if((cur + itemsPerRow) < len)
+				cur = cur + itemsPerRow;
 			break;
 		case Command.CursorBOL:
-			cur = cur - (cur % imagesPerRow.current);
+			cur = cur - (cur % itemsPerRow);
 			break;
 		case Command.CursorEOL:
-			cur = cur + imagesPerRow.current - 1 - (cur % imagesPerRow.current);
+			cur = cur + itemsPerRow - 1 - (cur % itemsPerRow);
 			break;
 		case Command.JumpFirst:
 			cur = 0;
@@ -57,5 +60,6 @@ export function KeyboardCursorHandle(
 		default:
 			break;
 	}
+	console.log("setting cursor to: " + cur);
 	return cur;
 }

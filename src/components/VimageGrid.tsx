@@ -16,13 +16,16 @@ type ThumbnailEntry = {
 
 const VimageGrid: React.FC = () => {
 	const currentDir = useAppState(state => state.currentDir);
-	const { imagesPerRow } = useCommand();
+	const { imagesPerRow, setItemsPerRow } = useCommand();
 
 	const [thumbnails, setThumbnails] = useState<Map<string, ThumbnailEntry>>(new Map());
 
 	const [scale, setScale] = useState(1);		// TODO: move to global state
 	const [containerWidth, setContainerWidth] = useState(window.innerWidth);
+
+	// TODO: refactor01 move to zustand
 	const [squaresPerRow, setSquaresPerRow] = useState(0);
+
 	const squareBaseSize = 400;
 	const isLoadingRef = useRef(false);
 
@@ -52,7 +55,11 @@ const VimageGrid: React.FC = () => {
 	useEffect(() => {
 		const fullSize = squareBaseSize * scale + 18; // account for padding between elements
 		const perRow = Math.floor((containerWidth-350) / fullSize); // account for filesystem sidebar
+
+		// TODO: refactor01 move to zustand
 		imagesPerRow.current = perRow;
+		setItemsPerRow(perRow);
+
 		setSquaresPerRow(perRow);
 	}, [containerWidth, scale]);
 
