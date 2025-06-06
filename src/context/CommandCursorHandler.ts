@@ -1,16 +1,11 @@
-import { MutableRefObject } from "react";
-
-import { Command, CommandSequence } from "./../keyboard/Command";
+import { Command, CommandSequence } from "@keyboard/Command";
 
 import { NavigationItem } from "./NavigationContext";
 
 export function KeyboardCursorHandle(
 	seq: CommandSequence, 
-	//navItemsRef: MutableRefObject<NavigationItem[]>, 
 	navItemsRef: NavigationItem[], 
-	//imagesPerRow: MutableRefObject<number>,
 	itemsPerRow: number,
-	//navActiveId: MutableRefObject<string | null>
 	navActiveId: string | null
 ): number | null {
 	

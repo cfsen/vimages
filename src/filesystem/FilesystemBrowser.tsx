@@ -1,9 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
 
-import { useAppState } from "./../context/AppContextStore";
-import { NavigableItem, NavigableItemType } from "./../context/NavigableItem";
-import { useCommand } from "./../context/NavigationContext";
+import { useAppState } from "@context/AppContextStore";
+import { NavigableItem, NavigableItemType } from "@context/NavigableItem";
+import { useCommand } from "@context/NavigationContext";
 
 import styles from "./FilesystemBrowser.module.css";
 import { RustApiAction } from "./RustApiBridge";

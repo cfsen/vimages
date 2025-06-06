@@ -1,8 +1,8 @@
 import { invoke } from "@tauri-apps/api/core";
 import { createContext, useEffect, useRef, useContext, useState } from "react";
 
-import { RustApiAction } from "./../filesystem/RustApiBridge";
-import { Command, CommandSequence } from "./../keyboard/Command";
+import { RustApiAction } from "@filesystem/RustApiBridge";
+import { Command, CommandSequence } from "@keyboard/Command";
 
 import { useAppState } from "./AppContextStore";
 

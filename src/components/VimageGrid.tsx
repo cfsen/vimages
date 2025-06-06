@@ -1,10 +1,10 @@
 import { invoke } from "@tauri-apps/api/core";
 import React, { useState, useEffect, useRef } from "react";
 
-import { useAppState } from "./../context/AppContextStore";
-import { NavigableItem, NavigableItemType } from "./../context/NavigableItem";
-import { useCommand } from "./../context/NavigationContext";
-import { RustApiAction } from "./../filesystem/RustApiBridge";
+import { useAppState } from "@context/AppContextStore";
+import { NavigableItem, NavigableItemType } from "@context/NavigableItem";
+import { useCommand } from "@context/NavigationContext";
+import { RustApiAction } from "@filesystem/RustApiBridge";
 
 import Vimage from "./Vimage";
 

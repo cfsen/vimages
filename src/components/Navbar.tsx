@@ -1,4 +1,4 @@
-import { useAppState } from "../context/AppContextStore";
+import { useAppState } from "@context/AppContextStore";
 
 function Navbar() {
 	const { currentDir } = useAppState();

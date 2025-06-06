@@ -1,14 +1,14 @@
 import "./App.css";
 
-import VimageGrid from "./components/VimageGrid";
-import Navbar from "./components/Navbar";
+import VimageGrid from "@components/VimageGrid";
+import Navbar from "@components/Navbar";
 
-import { useGlobalCtx } from './context/AppContext';
-import { NavigationProvider } from "./context/NavigationContext";
+import { useGlobalCtx } from '@context/AppContext';
+import { NavigationProvider } from "@context/NavigationContext";
 
-import FileSystemBrowser from "./filesystem/FilesystemBrowser";
+import FileSystemBrowser from "@filesystem/FilesystemBrowser";
 
-import { useModalKey } from './keyboard/KeyboardModule';
+import { useModalKey } from '@keyboard/KeyboardModule';
 
 function App() {
 	const { handleCmd } = useGlobalCtx();
