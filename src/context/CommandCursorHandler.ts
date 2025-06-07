@@ -3,17 +3,16 @@ import { Command, CommandSequence } from "@keyboard/Command";
 import { NavigationItem } from "./NavigationContext";
 
 export function KeyboardCursorHandle(
-	seq: CommandSequence, 
-	navItemsRef: NavigationItem[], 
+	seq: CommandSequence,
+	navItems: NavigationItem[],
 	itemsPerRow: number,
 	navActiveId: string | null
 ): number | null {
-	
-	if(navItemsRef === undefined || navItemsRef === null) return null;
 
-	let nav = navItemsRef;
-	let cur = nav.findIndex((i) => i.id === navActiveId);
-	let len = nav.length;
+	if(navItems === undefined || navItems === null) return null;
+
+	let cur = navItems.findIndex((i) => i.id === navActiveId);
+	let len = navItems.length;
 
 	if(cur >= len || cur < 0) return null;
 
@@ -46,6 +45,11 @@ export function KeyboardCursorHandle(
 		case Command.JumpLast:
 			cur = len-1;
 			break;
+		/*
+		 * TODO: ctrl+u, ctrl+d half page scrolling
+		 * needs amount of visible elements/rows
+		 * scroll should equal half the visible elements
+		 **/
 		case Command.PageUp:
 			console.log("ctx.handleCmd:pageup");
 			break;
@@ -55,6 +59,5 @@ export function KeyboardCursorHandle(
 		default:
 			break;
 	}
-	console.log("setting cursor to: " + cur);
 	return cur;
 }
