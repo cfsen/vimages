@@ -38,9 +38,7 @@ export function possibleCommands(input: string, commandMap: Map<string,Command>)
 export function assembleCommand(input: string, commandMap: Map<string,Command>): CommandSequence {
 	let lastNumberIdx = getNumberEndsIdx(input);
 	let modInt = 0;
-	if(lastNumberIdx != 0){
-		modInt = parseInt(input.substring(0, lastNumberIdx+1)) || 0;
-	}
+	if(lastNumberIdx != -1) modInt = parseInt(input.substring(0, lastNumberIdx+1)) || 0;
 
 	const tmp: CommandSequence = {
 		modInt: modInt,
