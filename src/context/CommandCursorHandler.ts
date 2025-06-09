@@ -13,25 +13,48 @@ export function KeyboardCursorHandle(
 
 	let cur = navItems.findIndex((i) => i.id === navActiveId);
 	let len = navItems.length;
+	let n = seq.modInt;
 
 	if(cur >= len || cur < 0) return null;
 
 	switch(seq.cmd){
 		case Command.CursorRight:
-			if(!((cur + 1) % itemsPerRow === 0) && ((cur + 1) < len))
+			// no repeat count, allow movement if inside bounds of column/array
+			if(n <= 0 && !((cur + 1) % itemsPerRow === 0) && ((cur + 1) < len))
 				cur++;
+			// repeat count inside column bounds
+			else if(n > 0 && ((cur % itemsPerRow) + n) < (itemsPerRow))
+				cur += n;
+			// repeat count exceeds column bounds
+			else if(n > 0)
+				cur = cur - (cur % itemsPerRow) + itemsPerRow - 1;
 			break;
 		case Command.CursorLeft:
-			if(!(cur % itemsPerRow === 0) && ((cur - 1) >= 0))
+			// no repeat count, allow movement if inside bounds of column/array
+			if(n <= 0 && !(cur % itemsPerRow === 0) && ((cur - 1) >= 0))
 				cur = (cur - 1) % len;
+			// repeat count inside column bounds
+			else if(n > 0 && ((cur % itemsPerRow) - n) >= 0)
+				cur -= n;
+			// repeat count exceeds column bounds
+			else if(n > 0)
+				cur = cur - (cur % itemsPerRow);
 			break;
 		case Command.CursorUp:
-			if((cur - itemsPerRow) >= 0)
-				cur = cur - itemsPerRow;
+			// no repeat count, allow movement if inside bounds of rows/array
+			if(n <= 0 && (cur - itemsPerRow) >= 0)
+				cur -= itemsPerRow;
+			// repeat count inside row bounds
+			else if(n > 0 && (cur-(n*itemsPerRow) >= 0))
+				cur -= n*itemsPerRow;
 			break;
 		case Command.CursorDown:
-			if((cur + itemsPerRow) < len)
-				cur = cur + itemsPerRow;
+			// no repeat count, allow movement if inside bounds of rows/array
+			if(n <= 0 && (cur + itemsPerRow) < len)
+				cur += itemsPerRow;
+			// repeat count inside row bounds
+			else if(n > 0 && (cur+(n*itemsPerRow) < len))
+				cur += n*itemsPerRow;
 			break;
 		case Command.CursorBOL:
 			cur = cur - (cur % itemsPerRow);
