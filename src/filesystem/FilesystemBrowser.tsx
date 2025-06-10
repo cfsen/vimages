@@ -32,9 +32,7 @@ function FileSystemBrowser(){
 	}, [currentDir]);
 
 	if(loading) {
-		return (
-			<div>Fetching directories.<br /><i>If this takes a while, something has gone wrong.</i></div>
-		);
+		return (<div></div>);
 	}
 	
 	return (
