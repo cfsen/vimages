@@ -1,6 +1,6 @@
 import styles from "./Vimage.module.css";
 
-type VimageProps = {
+export type VimageProps = {
 	id: string;
 	src: string | null;
 };
@@ -8,35 +8,20 @@ type VimageProps = {
 // TODO: move styles out
 function Vimage({ id, src }: VimageProps) {
 	return (
-		<div className={styles.vimage}>
+		<div className={styles.vimageContainer}>
 			{src ? (
 				<img
 					src={src}
 					alt={`Image ${id}`}
-					style={{
-						width: '100%', 
-						height: '100%', 
-						display: 'flex', 
-						alignItems: 'center', 
-						justifyContent: 'center',
-						backgroundColor: '#f0f0f0',
-						fontSize: '24px'
-					}}
+					className={styles.vimageImg} 
 					onError={() => {
 						console.error(`Failed to load image: ${id}`);
 					}}
 				/>
 			) : (
 					<div 
-						style={{
-							width: '100%', 
-							height: '100%', 
-							display: 'flex', 
-							alignItems: 'center', 
-							justifyContent: 'center',
-							backgroundColor: '#f0f0f0',
-							fontSize: '24px'
-						}}>
+						className={styles.vimageImg} 
+					>
 						No image data
 					</div>
 				)}
