@@ -4,8 +4,6 @@ use base64::engine::general_purpose::STANDARD;
 use base64::Engine;
 use infer;
 
-use image::{ImageReader, ImageFormat};
-use std::io::Cursor;
 
 #[tauri::command]
 pub fn fs_get_current_path() -> Result<String, String> {
@@ -68,7 +66,6 @@ pub fn fs_get_images(path: &str) -> Result<Vec<String>, String> {
             .map(|ext| allowed_exts.contains(&ext.to_lowercase().as_str()))
             .unwrap_or(false)
         })
-        //.filter_map(|entry| entry.file_name().to_str().map(|s| s.to_string()))
         .map(|entry| entry.path().to_string_lossy().into_owned())
         .collect();
 
@@ -76,21 +73,6 @@ pub fn fs_get_images(path: &str) -> Result<Vec<String>, String> {
 
     Ok(entries)
 }
-
-//#[tauri::command]
-//pub fn fs_get_image(path: &str) -> Result<String, String> {
-//    let path = PathBuf::from(path);
-//
-//    if !path.exists() || !path.is_file() {
-//        return Err("Invalid image path".into());
-//    }
-//
-//    let bytes = fs::read(path)
-//        .map_err(|e| e.to_string())?;
-//    let encoded = STANDARD.encode(&bytes);
-//
-//    Ok(encoded)
-//}
 
 #[tauri::command]
 pub async fn fs_get_image_async(path: String) -> Result<Vec<u8>, String> {
@@ -111,8 +93,8 @@ pub async fn fs_get_image_async(path: String) -> Result<Vec<u8>, String> {
 
         Ok(buffer)
     })
-    .await
-    .map_err(|e| format!("Task join error: {}", e))?
+        .await
+        .map_err(|e| format!("Task join error: {}", e))?
 }
 
 #[tauri::command]
@@ -132,37 +114,6 @@ pub fn fs_get_image(path: &str) -> Result<Vec<u8>, String> {
     encoder.encode_image(&thumb).map_err(|e| format!("Encode error: {e}"))?;
 
     Ok(buf)
-
-
-    //// Testing code for generating thumbnails
-    //let path = PathBuf::from(path);
-    //if !path.exists() || !path.is_file() {
-    //    return Err("Invalid image path".into());
-    //}
-    //
-    //// Load and decode the image
-    //let img = ImageReader::open(&path)
-    //    .map_err(|e| format!("Failed to open image: {}", e))?
-    //    .decode()
-    //    .map_err(|e| format!("Failed to decode image: {}", e))?;
-    //
-    //// Resize to max 400px on longest side
-    //let thumbnail = img.thumbnail(400, 400);
-    //
-    //// Compress as JPEG
-    //let mut buffer = Vec::new();
-    //thumbnail.write_to(&mut Cursor::new(&mut buffer), ImageFormat::Jpeg)
-    //    .map_err(|e| format!("Failed to encode thumbnail: {}", e))?;
-    //
-    //Ok(buffer)
-
-    // ---
-
-    //let path = PathBuf::from(path);
-    //if !path.exists() || !path.is_file() {
-    //    return Err("Invalid image path".into());
-    //}
-    //fs::read(path).map_err(|e| e.to_string())
 }
 
 
