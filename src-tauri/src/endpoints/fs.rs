@@ -4,9 +4,11 @@ use base64::engine::general_purpose::STANDARD;
 use base64::Engine;
 use infer;
 
+use crate::img_cache;
 
 #[tauri::command]
 pub fn fs_get_current_path() -> Result<String, String> {
+    img_cache::get_cache_path();
     env::current_dir()
         .map(|path: PathBuf| path.to_string_lossy().to_string())
         .map_err(|e| e.to_string())
@@ -49,6 +51,11 @@ pub fn fs_list_directory(path: &str) -> Result<Vec<String>, String> {
 pub fn fs_get_images(path: &str) -> Result<Vec<String>, String> {
     let path = PathBuf::from(path);
 
+    // NOTE: debug
+    let path_hash = img_cache::get_dir_hash(&path); 
+    println!("Opening path: {:?}", path);
+    println!("Path hash: {:?}", path_hash);
+
     if !path.exists() || !path.is_dir() {
         return Err("Invalid directory path".into());
     }
@@ -76,6 +83,13 @@ pub fn fs_get_images(path: &str) -> Result<Vec<String>, String> {
 
 #[tauri::command]
 pub async fn fs_get_image_async(path: String) -> Result<Vec<u8>, String> {
+
+    // NOTE: debug
+    let p = Path::new(&path);
+    let h = img_cache::get_file_hash(p);
+    println!("Img: {}", path);
+    println!(" -> with hash: {:?}", h);
+
     tauri::async_runtime::spawn_blocking(move || {
         use std::{fs::File, io::BufReader};
         use image::{ImageFormat, imageops::FilterType};

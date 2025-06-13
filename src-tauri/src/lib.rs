@@ -1,6 +1,7 @@
 mod endpoints {
     pub mod fs;
 }
+pub mod img_cache;
 
 use endpoints::fs::*;
 
