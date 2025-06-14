@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 
 import { useAppState } from "@context/AppContextStore";
