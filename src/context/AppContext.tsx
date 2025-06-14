@@ -29,6 +29,7 @@ export const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 	const setCurrentDir = useAppState(state => state.setCurrentDir);
 
+	// TODO: refactor, move to zustand
 	const [cmdLog, setCmdLog] = useState<CommandSequence[]>([]);
 
 	const [showLeader, setShowLeader] = useState<boolean>(false);
