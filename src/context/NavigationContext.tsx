@@ -48,15 +48,21 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 	}
 	const navigationState = navigationStateRef.current;	
 
-	const currentDir = useAppState(state => state.currentDir);
-	const setCurrentDir	= useAppState(state => state.setCurrentDir);
+	//
+	// State
+	//
 
-	//const [cmdLog, setCmdLog] = useState<CommandSequence[]>([]);
+	// global state
+	const setCurrentDir	= useAppState(state => state.setCurrentDir);
 	
+	// navigation context state
 	const imagesPerRow = useRef<number>(0);
 
 	const itemsPerRow = useStore(navigationState, s => s.navItemsPerRow);
 	const setItemsPerRow = useStore(navigationState, s => s.setItemsPerRow);
+
+	// TODO: decide if mementos should be per navcontainer or managed globally
+	//const [cmdLog, setCmdLog] = useState<CommandSequence[]>([]);
 
 	const navItems = useStore(navigationState, s => s.navItems);
 	const registerNavItem = useStore(navigationState, s => s.registerNavItem);
@@ -64,39 +70,40 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 	const navItemActive = useStore(navigationState, s => s.navItemActive);
 	const setNavItemActive = useStore(navigationState, s => s.setNavItemActive);
 
+	// TODO: refactor, move dependencies to zustand
 	const navActiveId = useRef<string | null>(null);
 	const navItemsRef = useRef<NavigationItem[]>([]);
 
 	// Generate unique ID for this navigation container
 	const navigationId = useRef(Math.random().toString(36).substring(7));
 
-	// Handle navigation-specific commands
+	//
+	// Command handler
+	// 
+
 	const handleNavigationCmd = (seq: CommandSequence): boolean => {
-		//console.log("navctx:handleCmd");
 
 		if(navigationState.getState().navItems.length > 0 && navigationState.getState().navItemActive === null) {
-			console.log("UPDATE CURSOR");
 			setNavItemActive(navigationState.getState().navItems[0].id);
 		}
+
 		//setCmdLog(prev => [...prev, seq]);
 
 		// TODO: refactor out
 		if(seq.cmd === Command.Escape){
-			console.log("navctx:handleCmd:escape");
+			//console.log("navctx:handleCmd:escape");
+
+			if(useAppState.getState().fullscreenImage)
+				setFullscreenImage(false);
 		}
 		if(seq.cmd === Command.Return){
-			//console.log("navctx:handleCmd:return");
+			//console.log("navctx:handleCmd:return:item:", item);
+			//console.log("navctx:handleCmd:return:currentDir: " + useAppState.getState().currentDir);
 
 			let item  = navigationState.getState().navItems
 				.find((i) => i.id === navigationState.getState().navItemActive);
 
-			console.log("handleCmd:item:", item);
-
-			// TODO: add vimage type support
 			if(item?.itemType === NavigableItemType.FileBrowser){
-				console.log("navctx:handleCmd:currentDir: " + useAppState.getState().currentDir);
-				console.log("navctx:handleCmd:data: " + item.data);
-
 				if (item.data === "..") {
 					invoke(RustApiAction.GetParentPath, { path: useAppState.getState().currentDir })
 						.then(response => {
@@ -113,14 +120,14 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 		}
 		if(seq.cmd === Command.Error){
 			console.log("navctx:handleCmd:error");
+
 			return false;
 		}
 
+		// TODO: refactor
 		if(navActiveId.current === null) navActiveId.current = (navItemsRef.current[0].id);
 
 		// Navigation keys
-		console.log("handleCmd", navigationState.getState());
-		
 		let cur = KeyboardCursorHandle(
 			seq, 
 			navigationState.getState().navItems, 
@@ -128,8 +135,6 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 			navigationState.getState().navItemActive
 		);
 		if(cur != null)  {
-			//navActiveId.current = (navItemsRef.current[cur].id);
-
 			navigationState.getState().setNavItemActive(
 				navigationState.getState().navItems[cur].id
 			);
