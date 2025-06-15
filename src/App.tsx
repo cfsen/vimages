@@ -2,6 +2,7 @@ import "./App.css";
 
 import VimageGrid from "@components/VimageGrid";
 import Navbar from "@components/Navbar";
+import VimageFullscreen from "@components/VimageFullscreen";
 
 import { useGlobalCtx } from '@context/AppContext';
 import { NavigationProvider } from "@context/NavigationContext";
@@ -30,6 +31,7 @@ function App() {
 					</div>
 				</div>
 				<div className="col">
+					<VimageFullscreen />
 					<div className="row">
 						<NavigationProvider>
 							<VimageGrid />

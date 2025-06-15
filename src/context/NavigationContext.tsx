@@ -54,6 +54,8 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 
 	// global state
 	const setCurrentDir	= useAppState(state => state.setCurrentDir);
+	const setFullscreenImage = useAppState(state => state.setFullscreenImage);
+	const setFullscreenImagePath = useAppState(state => state.setFullscreenImagePath);
 	
 	// navigation context state
 	const imagesPerRow = useRef<number>(0);
@@ -116,6 +118,11 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 				// TODO: make platform independent - resolve on rusts end instead
 				setCurrentDir(useAppState.getState().currentDir + "\\" + item.data);
 				return true;					
+			}
+			else if(item?.itemType === NavigableItemType.Image){
+				setFullscreenImage(true);
+				console.log("Setting fullscreen image path to: " + item.data);
+				setFullscreenImagePath(item.data);
 			}
 		}
 		if(seq.cmd === Command.Error){
