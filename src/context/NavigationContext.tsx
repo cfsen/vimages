@@ -160,6 +160,7 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 
 	useEffect(() => {
 		setNavCtxId(navigationId.current);
+		console.log("navctx:register_navctx_id", navigationState.getState().navigationContextId);
 		parentCtx.registerNavigationContainer(navigationId.current, handleNavigationCmd);
 		return () => {
 			parentCtx.unregisterNavigationContainer(navigationId.current);

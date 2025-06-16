@@ -133,6 +133,7 @@ pub fn fs_get_image(path: &str) -> Result<Vec<u8>, String> {
 
 #[tauri::command]
 pub fn fs_get_image_data_uri(path: &str) -> Result<String, String> {
+    let start = std::time::Instant::now();
     let path = PathBuf::from(path);
 
     if !path.exists() || !path.is_file() {
@@ -161,5 +162,6 @@ pub fn fs_get_image_data_uri(path: &str) -> Result<String, String> {
     let encoded = STANDARD.encode(&bytes);
     let data_uri = format!("data:{};base64,{}", mime, encoded);
 
+    println!("init: fetched image in: {:?}", start.elapsed());
     Ok(data_uri)
 }

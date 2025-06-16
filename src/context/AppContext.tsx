@@ -29,6 +29,7 @@ export const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 	const setCurrentDir = useAppState(state => state.setCurrentDir);
 
+	const activeNavigationId = useAppState(state => state.activeNavigationContext);
 	const setActiveNavigationId = useAppState(state => state.setActiveNavigationContext);
 
 	// TODO: refactor, move to zustand
@@ -102,6 +103,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 				const nextIndex = (currentIndex + 1) % handlerIds.length;
 				const nextId = handlerIds[nextIndex];
 				setActiveNavigationId(nextId);
+				console.log("ctx:active nav context changed:" + nextId);
 				return; // Exit early to avoid further processing
 			}
 		}
