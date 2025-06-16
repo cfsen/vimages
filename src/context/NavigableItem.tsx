@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 
+import { useAppState } from "@context/AppContextStore";
 import { useCommand } from "./NavigationContext";
 
 function scrollToElementCenteredSmoothly(el: HTMLElement, duration = 150) {
@@ -35,7 +36,22 @@ export enum NavigableItemType {
 	FileBrowser,
 }
 
-export const NavigableItem: React.FC<{ id: string; children: React.ReactNode; itemType: NavigableItemType; data: string; }> = ({ id, children, itemType, data }) => {
+interface NavigableItemProps {
+	id: string;
+	children: React.ReactNode;
+	itemType: NavigableItemType;
+	data: string;
+	parentNavCtxId: string;
+}
+
+export const NavigableItem: React.FC<NavigableItemProps> = ({ 
+	id, 
+	children, 
+	itemType, 
+	data,
+	parentNavCtxId
+}) => {
+	const activeNavigationContext = useAppState(state => state.activeNavigationContext);
 	const ref = useRef<HTMLDivElement>(null);
 	const { navItemActive , navUnregister , navRegister } = useCommand();
 
@@ -57,11 +73,20 @@ export const NavigableItem: React.FC<{ id: string; children: React.ReactNode; it
 		}
 	}, [navItemActive]);
 
+	// TODO: move to css
+	const getItemColor = (): string => { 
+		if(navItemActive === id && activeNavigationContext === parentNavCtxId)
+			return '#4c606d';
+		if(navItemActive === id)
+			return '#353c41';
+		return '#2f2f2f';
+	};
+
 	return (
 		<div
 			ref={ref}
 			style={{ 
-				backgroundColor: navItemActive === id ? '#4c606d' : '#2f2f2f',
+				backgroundColor: getItemColor(),
 				margin: 'auto',
 			}}
 		>
