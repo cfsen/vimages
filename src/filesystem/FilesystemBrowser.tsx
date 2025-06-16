@@ -10,12 +10,10 @@ import { RustApiAction } from "./RustApiBridge";
 
 function FileSystemBrowser(){
 	const currentDir = useAppState(state => state.currentDir);
-	const { imagesPerRow, setItemsPerRow } = useCommand();
+	const { imagesPerRow, setItemsPerRow, navCtxId } = useCommand();
 
 	const [response, setResponse] = useState<string[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
-	
-
 
 	useEffect(() => {
 		imagesPerRow.current = 1;
@@ -43,6 +41,7 @@ function FileSystemBrowser(){
 					id={"fileBrowserItem" + index}
 					itemType={NavigableItemType.FileBrowser}
 					data={entry}
+					parentNavCtxId={navCtxId} 
 				>
 					<div key={"fbrowseridx" + index} className={styles.fsElement}>{entry}</div>
 				</NavigableItem>
