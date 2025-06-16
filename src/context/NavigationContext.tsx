@@ -14,6 +14,7 @@ import { useStore } from "zustand";
 
 type NavigationContextType = {
 	//cmdLog: CommandSequence[];
+	navCtxId: string;
 
 	navRegister: (navItem: NavigationItem) => void;
 	navUnregister: (id: string) => void;
@@ -66,6 +67,8 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 	// TODO: decide if mementos should be per navcontainer or managed globally
 	//const [cmdLog, setCmdLog] = useState<CommandSequence[]>([]);
 
+	const navCtxId = useStore(navigationState, s => s.navigationContextId);
+	const setNavCtxId = useStore(navigationState, s => s.setNavigationContextId);
 	const navItems = useStore(navigationState, s => s.navItems);
 	const registerNavItem = useStore(navigationState, s => s.registerNavItem);
 	const unregisterNavItem = useStore(navigationState, s => s.unregisterNavItem);
@@ -156,6 +159,7 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 	//
 
 	useEffect(() => {
+		setNavCtxId(navigationId.current);
 		parentCtx.registerNavigationContainer(navigationId.current, handleNavigationCmd);
 		return () => {
 			parentCtx.unregisterNavigationContainer(navigationId.current);
@@ -195,6 +199,7 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 	return (
 		<NavigationContext.Provider value={{ 
 			//cmdLog, 
+			navCtxId,
 
 			navRegister,
 			navUnregister,
