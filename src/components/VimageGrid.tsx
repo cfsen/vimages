@@ -16,7 +16,7 @@ type ThumbnailEntry = {
 
 const VimageGrid: React.FC = () => {
 	const currentDir = useAppState(state => state.currentDir);
-	const { imagesPerRow, setItemsPerRow } = useCommand();
+	const { imagesPerRow, setItemsPerRow, navCtxId } = useCommand();
 
 	const [thumbnails, setThumbnails] = useState<Map<string, ThumbnailEntry>>(new Map());
 
@@ -151,6 +151,7 @@ const VimageGrid: React.FC = () => {
 							id={"imgGrid" + idx}
 							itemType={NavigableItemType.Image}
 							data={path}
+							parentNavCtxId={navCtxId}
 						>
 							<div
 								style={{
