@@ -3,6 +3,10 @@ import { create } from 'zustand';
 interface IAppState {
 	currentDir: string
 	setCurrentDir: (dir: string) => void
+
+	activeNavigationContext: string | null
+	setActiveNavigationContext: (id: string | null) => void
+
 	fullscreenImage: boolean
 	setFullscreenImage: (bool: boolean) => void
 	fullscreenImagePath: string
@@ -12,6 +16,10 @@ interface IAppState {
 export const useAppState = create<IAppState>((set) => ({
 	currentDir: ".",
 	setCurrentDir: (dir) => set({ currentDir: dir }),
+
+	activeNavigationContext: "",
+	setActiveNavigationContext: (id) => set({ activeNavigationContext: id }),
+
 	fullscreenImage: false,
 	setFullscreenImage: (bool) => set({ fullscreenImage: bool }),
 	fullscreenImagePath: ".",
