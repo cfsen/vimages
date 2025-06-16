@@ -29,13 +29,14 @@ export const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 	const setCurrentDir = useAppState(state => state.setCurrentDir);
 
+	const setActiveNavigationId = useAppState(state => state.setActiveNavigationContext);
+
 	// TODO: refactor, move to zustand
 	const [cmdLog, setCmdLog] = useState<CommandSequence[]>([]);
 
 	const [showLeader, setShowLeader] = useState<boolean>(false);
 	const [showConsole, setShowConsole] = useState<boolean>(false);
 
-	const [activeNavigationId, setActiveNavigationId] = useState<string | null>(null);
 	const navigationHandlers = useRef<Map<string, NavigationHandler>>(new Map());
 
 	useEffect(() => {
