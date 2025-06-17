@@ -5,6 +5,7 @@ use base64::Engine;
 use infer;
 
 use crate::img_cache;
+use crate::{get_server_state, server::set_serve_directory};
 
 #[tauri::command]
 pub fn fs_get_current_path() -> Result<String, String> {
@@ -31,6 +32,10 @@ pub fn fs_list_directory(path: &str) -> Result<Vec<String>, String> {
     if !path.exists() || !path.is_dir() {
         return Err("Invalid directory path".into());
     }
+
+    // update http server dir
+    let server_state = get_server_state();
+    set_serve_directory(server_state, &path)?;
 
     let mut entries: Vec<String> = vec![];
     entries.insert(0, "..".to_string());
@@ -134,6 +139,7 @@ pub fn fs_get_image(path: &str) -> Result<Vec<u8>, String> {
 #[tauri::command]
 pub fn fs_get_image_data_uri(path: &str) -> Result<String, String> {
     let start = std::time::Instant::now();
+
     let path = PathBuf::from(path);
 
     if !path.exists() || !path.is_file() {
