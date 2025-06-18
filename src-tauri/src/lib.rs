@@ -1,8 +1,6 @@
 mod server;
-mod endpoints {
-    pub mod fs;
-}
-pub mod img_cache;
+mod endpoints;
+mod img_cache;
 use endpoints::fs::*;
 use std::{path::PathBuf, sync::{Arc, RwLock, OnceLock}};
 use server::{ServerState, spawn_server};
