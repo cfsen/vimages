@@ -12,6 +12,7 @@ use std::{
     sync::{Arc, RwLock},
 };
 use tokio::fs;
+use mime_guess::from_path;
 
 pub type ServerState = Arc<RwLock<PathBuf>>;
 
@@ -20,29 +21,36 @@ pub fn set_serve_directory(server_state: &ServerState, path: &Path) -> Result<()
     *current_dir = path.to_path_buf();
     Ok(())
 }
-
 async fn serve_image(
     State(server_state): State<ServerState>,
     Query(params): Query<HashMap<String, String>>,
 ) -> impl IntoResponse {
+   // Get ?file=... parameter
     let filename = params.get("file").ok_or(StatusCode::BAD_REQUEST)?;
     let base_dir = server_state.read().unwrap().clone();
     let file_path = base_dir.join(filename);
 
-    // Basic security check
+    // Prevent directory traversal
     if !file_path.starts_with(&base_dir) {
         return Err(StatusCode::FORBIDDEN);
     }
 
-    let file_data = fs::read(&file_path).await.map_err(|_| StatusCode::NOT_FOUND)?;
+    // Try to read the file
+    let file_data = fs::read(&file_path)
+        .await
+        .map_err(|_| StatusCode::NOT_FOUND)?;
 
+    // Guess the MIME type
+    let mime_guess = from_path(&file_path).first_or_octet_stream();
+    let mime = mime_guess.essence_str();
+
+    // Build response
     let response = Response::builder()
-        .header("content-type", "image/*")
+        .header("content-type", mime)
         .body(Body::from(file_data))
         .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
 
-    Ok(response)
-}
+    Ok(response)}
 
 async fn start_server(server_state: ServerState) {
     let app = Router::new()
