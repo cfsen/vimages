@@ -1,6 +1,6 @@
 import { Command, CommandSequence } from "@keyboard/Command";
 
-import { NavigationItem } from "./NavigationContext";
+import { NavigationItem } from "./NavigationContextTypes";
 
 export function KeyboardCursorHandle(
 	seq: CommandSequence,

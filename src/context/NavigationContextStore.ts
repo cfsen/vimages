@@ -1,5 +1,5 @@
 import { createStore } from 'zustand';
-import { NavigationItem } from "./NavigationContext";
+import { NavigationItem } from "./NavigationContextTypes";
 
 interface INavigationStateProps {
 	navigationContextId: string,
