@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { EntityDirectory, EntityImage } from "./ContextTypes";
 
 interface IAppProps {
 	currentDir: string
@@ -7,6 +8,9 @@ interface IAppProps {
 
 	fullscreenImage: boolean
 	fullscreenImagePath: string
+
+	directories: EntityDirectory[]
+	images: EntityImage[]
 }
 
 export interface IAppState extends IAppProps {
@@ -16,6 +20,8 @@ export interface IAppState extends IAppProps {
 	setFullscreenImage: (bool: boolean) => void
 	setFullscreenImagePath: (path: string) => void
 
+	setDirectories: (dirs: EntityDirectory[]) => void
+	setImages: (images: EntityImage[]) => void
 }
 
 export const useAppState = create<IAppState>((set) => ({
@@ -30,5 +36,11 @@ export const useAppState = create<IAppState>((set) => ({
 
 	fullscreenImagePath: ".",
 	setFullscreenImagePath: (path) => set({ fullscreenImagePath: path }),
+
+	directories: [],
+	setDirectories: (dirs) => set({ directories: dirs }),
+
+	images: [],
+	setImages: (images) => set({ images: images }),
 }))
 
