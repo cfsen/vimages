@@ -1,49 +1,44 @@
-import { useEffect, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
-
+import { useEffect } from "react";
 import { useAppState } from "@context/AppContextStore";
 import { NavigableItem, NavigableItemType } from "@context/NavigableItem";
 import { useCommand } from "@context/NavigationContext";
-
 import styles from "./FilesystemBrowser.module.css";
-import { RustApiAction } from "./RustApiBridge";
 
 function FileSystemBrowser(){
-	const currentDir = useAppState(state => state.currentDir);
-	const { imagesPerRow, setItemsPerRow, navCtxId } = useCommand();
-
-	const [response, setResponse] = useState<string[]>([]);
-	const [loading, setLoading] = useState<boolean>(true);
+	const directories = useAppState(state => state.directories);
+	const { setItemsPerRow, navCtxId } = useCommand();
 
 	useEffect(() => {
-		imagesPerRow.current = 1;
 		setItemsPerRow(1);
 	}, []);
 
-	useEffect(() => {
-		setLoading(true);
-		invoke(RustApiAction.GetDirectories, { path: currentDir })
-			.then(res => {
-				setResponse(res as string[])
-				setLoading(false);
-			});
-	}, [currentDir]);
-
-	if(loading) {
-		return (<div></div>);
-	}
-	
 	return (
 		<div>
-			{response.map((entry, index) => (
+			<NavigableItem
+				key={"fileBrowserItemGoParentDir"}
+				id={"fileBrowserItemGoParentDir"}
+				itemType={NavigableItemType.FileBrowser}
+				data={".."}
+				parentNavCtxId={navCtxId} 
+			>
+				<div key={"fbrowseridxGoParentDir"} className={styles.fsElement}>
+					..
+				</div>
+			</NavigableItem>
+
+			{directories.map((entry, index) => (
 				<NavigableItem
-					key={"fileBrowserItem" + index}
-					id={"fileBrowserItem" + index}
+					key={"fileBrowserItem" + index + "_" + entry.path_hash}
+					id={"fileBrowserItem" + index + "_" + entry.path_hash}
 					itemType={NavigableItemType.FileBrowser}
-					data={entry}
+					data={entry.name}
 					parentNavCtxId={navCtxId} 
 				>
-					<div key={"fbrowseridx" + index} className={styles.fsElement}>{entry}</div>
+					<div 
+						key={"fbrowseridx" + index + "_" + entry.path_hash} 
+						className={styles.fsElement}>
+						{entry.name}
+					</div>
 				</NavigableItem>
 			))}
 		</div>
