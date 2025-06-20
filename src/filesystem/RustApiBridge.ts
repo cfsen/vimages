@@ -11,7 +11,8 @@ export enum RustApiAction {
 	GetParentPath = "fs_get_parent_path",
 	GetDirectories = "fs_list_directory",
 	GetImages = "fs_get_images",
-	GetImage = "fs_get_image_async"
+	GetImage = "fs_get_image_async",
+	GetDir = "fsx_get_dir"
 }
 
 export function useRustApi({ action, path }: RustApiCall) {
