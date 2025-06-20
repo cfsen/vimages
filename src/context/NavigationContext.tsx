@@ -8,6 +8,7 @@ import { AppContext } from "./AppContext";
 import { useAppState } from "./AppContextStore";
 import { KeyboardCursorHandle } from "./CommandCursorHandler";
 import { NavigableItemType } from "./NavigableItem";
+import { EntityDirectory } from "./ContextTypes";
 
 import { createNavigationState } from "./NavigationContextStore";
 import { NavigationContextType, NavigationItem } from "./NavigationContextTypes";
@@ -32,9 +33,12 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 	//
 
 	// global state
-	const setCurrentDir	= useAppState(state => state.setCurrentDir);
+	const setCurrentDir = useAppState(state => state.setCurrentDir);
+	const setImages = useAppState(state => state.setImages);
+	const setDirectories = useAppState(state => state.setDirectories);
 	const setFullscreenImage = useAppState(state => state.setFullscreenImage);
 	const setFullscreenImagePath = useAppState(state => state.setFullscreenImagePath);
+	//const activeNavigationContext = useAppState(state => state.activeNavigationContext);
 	
 	// navigation context state
 	const imagesPerRow = useRef<number>(0);
@@ -74,31 +78,36 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 
 		// TODO: refactor out
 		if(seq.cmd === Command.Escape){
-			//console.log("navctx:handleCmd:escape");
-
 			if(useAppState.getState().fullscreenImage)
 				setFullscreenImage(false);
 		}
 		if(seq.cmd === Command.Return){
-			//console.log("navctx:handleCmd:return:item:", item);
-			//console.log("navctx:handleCmd:return:currentDir: " + useAppState.getState().currentDir);
+			console.log("navctx:handleCmd:return:currentDir: " + useAppState.getState().currentDir);
 
 			let item  = navigationState.getState().navItems
 				.find((i) => i.id === navigationState.getState().navItemActive);
 
 			if(item?.itemType === NavigableItemType.FileBrowser){
-				if (item.data === "..") {
-					invoke(RustApiAction.GetParentPath, { path: useAppState.getState().currentDir })
-						.then(response => {
-							setCurrentDir(response as string);
-						})
-						.catch(console.error);
-					return true;
-				}
+				invoke(RustApiAction.GetDir, { 
+					path: useAppState.getState().currentDir, 
+					relPath: item.data 
+				})
+					.then(response => {
+						const res = response as EntityDirectory;
+						setCurrentDir(res.path);
+						setImages(res.images);
+						setDirectories(res.sub_dirs);
 
-				// TODO: make platform independent - resolve on rusts end instead
-				setCurrentDir(useAppState.getState().currentDir + "\\" + item.data);
-				return true;					
+						// NOTE: debug
+						console.log(">>> RESPONSE: ", response);
+					})
+					.then(() => {
+
+						// NOTE: debug
+						console.log(">>> STATE: ", useAppState.getState());
+					})
+					.catch(console.error);
+				return true;
 			}
 			else if(item?.itemType === NavigableItemType.Image){
 				setFullscreenImage(true);
