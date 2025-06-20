@@ -1,4 +1,3 @@
-use dirs;
 use sha2::{Sha256, Digest};
 #[allow(unused_imports)]
 use std::{ 
@@ -8,7 +7,7 @@ use std::{
 };
 
 // get the cache path, creating the directory if it does not exist
-pub fn get_cache_path() ->Option<PathBuf> {
+pub fn get_cache_path() -> Option<PathBuf> {
     if let Some(cache_dir) = dirs::cache_dir() {
 
         let mut cache_path = cache_dir;
@@ -34,17 +33,15 @@ pub fn get_cache_path() ->Option<PathBuf> {
 /*
 * TODO:
 * Cache structure:
-* ./cache/[path_hash]/files.json
 * ./cache/[path_hash]/tn_[hash].png
 *
-* TODO:
-* caching images:
+* hashing images:
 * (filename + last modified + file size)
 *
 * TODO: cleanup routine for cache
 */
 
-pub fn get_dir_hash(path: &Path) -> String {
+pub fn get_path_hash(path: &Path) -> String {
     let mut hasher = Sha256::new();
     hasher.update(path.to_string_lossy().as_bytes());
     format!("{:x}", hasher.finalize())
