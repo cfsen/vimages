@@ -37,6 +37,7 @@ pub fn run() {
             fs_get_image_data_uri,
             fs_get_image,
             fs_get_images,
+            fsx_get_dir,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
