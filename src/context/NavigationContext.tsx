@@ -24,7 +24,7 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 	// Set up ref to zustand store for this instance
 	const navigationStateRef = useRef<ReturnType<typeof createNavigationState>>();
 	if (!navigationStateRef.current) {
-	  navigationStateRef.current = createNavigationState();
+		navigationStateRef.current = createNavigationState();
 	}
 	const navigationState = navigationStateRef.current;	
 
@@ -38,16 +38,10 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 	const setDirectories = useAppState(state => state.setDirectories);
 	const setFullscreenImage = useAppState(state => state.setFullscreenImage);
 	const setFullscreenImagePath = useAppState(state => state.setFullscreenImagePath);
-	//const activeNavigationContext = useAppState(state => state.activeNavigationContext);
-	
-	// navigation context state
-	const imagesPerRow = useRef<number>(0);
 
+	// navigation context instanced state
 	const itemsPerRow = useStore(navigationState, s => s.navItemsPerRow);
 	const setItemsPerRow = useStore(navigationState, s => s.setItemsPerRow);
-
-	// TODO: decide if mementos should be per navcontainer or managed globally
-	//const [cmdLog, setCmdLog] = useState<CommandSequence[]>([]);
 
 	const navCtxId = useStore(navigationState, s => s.navigationContextId);
 	const setNavCtxId = useStore(navigationState, s => s.setNavigationContextId);
@@ -57,19 +51,14 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 	const navItemActive = useStore(navigationState, s => s.navItemActive);
 	const setNavItemActive = useStore(navigationState, s => s.setNavItemActive);
 
-	// TODO: refactor, move dependencies to zustand
-	const navActiveId = useRef<string | null>(null);
-	const navItemsRef = useRef<NavigationItem[]>([]);
-
 	// Generate unique ID for this navigation container
 	const navigationId = useRef(Math.random().toString(36).substring(7));
 
 	//
 	// Command handler
-	// 
+	//
 
 	const handleNavigationCmd = (seq: CommandSequence): boolean => {
-
 		if(navigationState.getState().navItems.length > 0 && navigationState.getState().navItemActive === null) {
 			setNavItemActive(navigationState.getState().navItems[0].id);
 		}
@@ -85,7 +74,7 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 			console.log("navctx:handleCmd:return:currentDir: " + useAppState.getState().currentDir);
 
 			let item  = navigationState.getState().navItems
-				.find((i) => i.id === navigationState.getState().navItemActive);
+			.find((i) => i.id === navigationState.getState().navItemActive);
 
 			if(item?.itemType === NavigableItemType.FileBrowser){
 				invoke(RustApiAction.GetDir, { 
@@ -97,14 +86,6 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 						setCurrentDir(res.path);
 						setImages(res.images);
 						setDirectories(res.sub_dirs);
-
-						// NOTE: debug
-						console.log(">>> RESPONSE: ", response);
-					})
-					.then(() => {
-
-						// NOTE: debug
-						console.log(">>> STATE: ", useAppState.getState());
 					})
 					.catch(console.error);
 				return true;
@@ -121,8 +102,10 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 			return false;
 		}
 
-		// TODO: refactor
-		if(navActiveId.current === null) navActiveId.current = (navItemsRef.current[0].id);
+		// Handle no available elements being selected: move cursor to first element.
+		if(navigationState.getState().navItemActive === null && navItems.length > 0) {
+			setNavItemActive(navItems[0].id);
+		}
 
 		// Navigation keys
 		let cur = KeyboardCursorHandle(
@@ -157,31 +140,22 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 	//
 	// Child navigation element registration
 	//
-	
+
 	useEffect(() => {
 		if(navItems.length > 0) setNavItemActive(navItems[0].id);
 	}, [navItems]);
 
 	const navRegister = (navItem: NavigationItem) => {
 		registerNavItem(navItem);
-		//console.log("REG", navigationState.getState());
-
-		// TODO: remove after refactoring VimageGrid
-		navItemsRef.current?.push(navItem);
-		if (navItemsRef.current?.length === 1) navActiveId.current = navItem.id;
 	};
 
 	const navUnregister = (id: string) => {
 		if(navItems.length === 1) setNavItemActive(null);
 		unregisterNavItem(id);
-
-		// TODO: remove after refactoring VimageGrid
-		navItemsRef.current = navItemsRef.current?.filter((i) => i.id !== id);
-		if (navActiveId.current === id) navActiveId.current = null;
 	}
 
 	//
-	// Command handling
+	// Exports
 	//
 
 	return (
@@ -191,12 +165,10 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 
 			navRegister,
 			navUnregister,
-			navItemsRef,
-
-			imagesPerRow,
 
 			itemsPerRow,
 			setItemsPerRow,
+
 			navItemActive,
 		}}>
 			{children}

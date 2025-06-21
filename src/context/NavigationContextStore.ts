@@ -9,7 +9,6 @@ interface INavigationStateProps {
 }
 
 export interface INavigationState extends INavigationStateProps {
-	navigationContextId: string,
 	setNavigationContextId: (id: string) => void,
 
 	registerNavItem: (item: NavigationItem) => void,

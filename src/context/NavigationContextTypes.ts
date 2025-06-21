@@ -6,9 +6,6 @@ export type NavigationContextType = {
 
 	navRegister: (navItem: NavigationItem) => void;
 	navUnregister: (id: string) => void;
-	navItemsRef: React.RefObject<NavigationItem[]>;
-
-	imagesPerRow: React.MutableRefObject<number>;
 
 	navItemActive: string | null;
 	
