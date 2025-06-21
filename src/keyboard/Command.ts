@@ -23,6 +23,8 @@ export function populateCommandMap(): Map<string,Command>{
 	commandMap.set('I', Command.ModeInsertPrefix);
 	commandMap.set('A', Command.ModeInsertSuffix);
 
+	commandMap.set('q', Command.Debug);
+
 	return commandMap;
 }
 
@@ -32,6 +34,8 @@ export type CommandSequence = {
 }
 
 export enum Command {
+	Debug,
+
 	None,
 	Cancel,
 	Escape,

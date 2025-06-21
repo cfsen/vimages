@@ -77,8 +77,12 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 	const handleCmd = (seq: CommandSequence) => {
 		//console.log("AppContext:handleCmd:", seq);
 		setCmdLog(prev => [...prev, seq]);
-
-		// TODO: refactor out
+		
+		if(seq.cmd === Command.Debug){
+			console.log("[DEBUG] AppContext:");
+			console.log("> Zustand store:", useAppState.getState());
+			console.log("> Navigation handlers:", navigationHandlers.current);
+		}
 		if(seq.cmd === Command.Escape){
 			console.log("ctx:handleCmd:escape");
 		}

@@ -65,6 +65,11 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 
 		//setCmdLog(prev => [...prev, seq]);
 
+		if(seq.cmd === Command.Debug){
+			console.log(">>> Active NavigationContext (" + navigationId.current + ")");
+			console.log("> Instanced Zustand store:", navigationState.getState());
+		}
+
 		// TODO: refactor out
 		if(seq.cmd === Command.Escape){
 			if(useAppState.getState().fullscreenImage)
