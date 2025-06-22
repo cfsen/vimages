@@ -1,14 +1,11 @@
-#[allow(unused_imports)]
 use std::{ 
     fs,
     path::{Path, PathBuf},
-    time::SystemTime
 };
 
 /*
-* TODO:
 * Cache structure:
-* ./cache/[path_hash]/tn_[hash].png
+* ./cache/[path_hash]/[hash].png
 *
 * hashing images:
 * (filename + last modified + file size)
@@ -17,25 +14,47 @@ use std::{
 */
 
 // get the cache path, creating the directory if it does not exist
+pub fn get_vimages_path() -> Option<PathBuf> {
+    let mut vimages_path = dirs::cache_dir()?;
+    vimages_path.push(".vimages");
+
+    if !Path::exists(&vimages_path) {
+        println!(".vimages does not exist, creating: {:?}", vimages_path);
+
+        fs::create_dir(&vimages_path)
+            .unwrap_or_else(|e| panic!("Error creating .vimages dir: {}", e));
+    }
+
+    Some(vimages_path)
+}
+
 pub fn get_cache_path() -> Option<PathBuf> {
-    if let Some(cache_dir) = dirs::cache_dir() {
+    let mut cache_path = get_vimages_path()?;
+    cache_path.push("cache");
 
-        let mut cache_path = cache_dir;
-        cache_path.push("vimages");
+    if !Path::exists(&cache_path) {
+        println!("cache directory does not exist, creating: {:?}", cache_path);
 
-        if !Path::exists(&cache_path) {
-            println!("Cache directory does not exist, creating: {:?}", cache_path);
-
-            fs::create_dir(&cache_path)
-                .unwrap_or_else(|e| panic!("Error creating cache dir: {}", e));
-        }
-        else {
-            println!("Cache directory: {:?}", cache_path);
-        }
-
-        Some(cache_path)
+        fs::create_dir(&cache_path)
+            .unwrap_or_else(|e| panic!("Error creating cache directory: {}", e));
     }
-    else {
-        panic!("Unable to determine cache path.");
+
+    Some(cache_path)
+}
+
+pub fn check_cache(path_hash: &str, file_hash: &str) -> Option<bool> {
+    let mut cache_path = get_cache_path()?;
+
+    cache_path.push(path_hash);
+    if !Path::exists(&cache_path) {
+        return None;
     }
+
+    cache_path.push(format!("{}.webp", file_hash));
+    if !Path::exists(&cache_path) {
+        return None;
+    }
+
+    println!("Cache hit for: {:?}", cache_path);
+    Some(true)
 }
