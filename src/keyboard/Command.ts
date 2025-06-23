@@ -16,12 +16,15 @@ export function populateCommandMap(): Map<string,Command>{
 	commandMap.set('z', Command.PartialInput);
 	commandMap.set('zz', Command.CenterView);
 
-	commandMap.set('V', Command.ModeVisual);
+	commandMap.set('v', Command.ModeVisual);
+	commandMap.set('V', Command.ModeVisualLine);
 
 	commandMap.set('i', Command.ModeInsert);
 	commandMap.set('a', Command.ModeInsertAppend);
 	commandMap.set('I', Command.ModeInsertPrefix);
 	commandMap.set('A', Command.ModeInsertSuffix);
+
+	commandMap.set(':', Command.Console);
 
 	commandMap.set('q', Command.Debug);
 
@@ -52,7 +55,9 @@ export enum Command {
 	ModeInsertPrefix,
 	ModeInsertSuffix,
 	ModeInsertAppend,
+
 	ModeVisual,
+	ModeVisualLine,
 
 	Input,
 	PartialInput,
