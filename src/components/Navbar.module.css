@@ -1,0 +1,17 @@
+.navbar_container {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.navbar_text {
+}
+.navbar_mode {
+	color: #dfdfdf;
+	width: 6em;
+	padding-left: 0.25em;
+	padding-bottom: 0.025em;
+	padding-top: 0.05em;
+	font-weight: 700;
+	text-transform: uppercase;
+}
