@@ -9,16 +9,32 @@ import { NavigationProvider } from "@context/NavigationContext";
 
 import FileSystemBrowser from "@filesystem/FilesystemBrowser";
 
-import { useModalKey } from '@keyboard/KeyboardModule';
+import { modalKeyboard } from '@keyboard/KeyboardModule';
+import { useAppState } from "./context/AppContextStore";
 
 function App() {
-	const { handleCmd } = useGlobalCtx();
+	const { handleModeVisual, handleModeNormal, handleModeInsert, handleModeCommand } = useGlobalCtx();
+	const keyboardMode = useAppState(state => state.mode);
+	const setKeyboardMode = useAppState(state => state.setMode);
 
-	useModalKey({
-		onSequenceComplete: (seq) => {
-			handleCmd(seq);
+	modalKeyboard(
+		{
+			callback: handleModeNormal
 		},
-	});
+		{
+			callback: handleModeVisual
+		},
+		{
+			callback: handleModeInsert
+		},
+		{
+			callback: handleModeCommand
+		},
+		{
+			callback: setKeyboardMode,
+			Mode: keyboardMode,
+		}
+	);
 
 	return (
 		<main>
