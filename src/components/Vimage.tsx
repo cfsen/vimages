@@ -11,7 +11,7 @@ function Vimage({ id, src }: VimageProps) {
 		<div className={styles.vimageContainer}>
 			{src ? (
 				<img
-					src={"http://127.0.0.1:8080/image?file=" + src}
+					src={src}
 					alt={`Image ${id}`}
 					className={styles.vimageImg} 
 					onError={() => {

@@ -6,9 +6,18 @@ import { useCommand } from "@context/NavigationContext";
 import Vimage from "./Vimage";
 
 import styles from "./Vimage.module.css";
+import { EntityImage } from "@/context/ContextTypes";
+
+function fromCache(img: EntityImage, path_hash: string | null) {
+	if(!img.has_thumbnail || path_hash === null) {
+		return "http://127.0.0.1:8080/image?file=" + img.filename;
+	}
+	return "http://127.0.0.1:8080/cache/" + path_hash + "/" + img.img_hash;
+}
 
 const VimageGrid: React.FC = () => {
 	const images = useAppState(state => state.images);
+	const path_hash = useAppState(state => state.currentDirHash);
 
 	const { itemsPerRow, setItemsPerRow, navCtxId } = useCommand();
 	const [containerWidth, setContainerWidth] = useState(window.innerWidth);
@@ -68,7 +77,7 @@ const VimageGrid: React.FC = () => {
 									border: '1px solid #111',
 								}}
 							>
-								<Vimage id={"vimage" + idx} src={img.filename} />
+								<Vimage id={"vimage" + idx} src={fromCache(img, path_hash)} />
 								<div className={styles.imgFilename}>
 									{img.filename}
 								</div>
