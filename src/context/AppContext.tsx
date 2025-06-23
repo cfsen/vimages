@@ -5,6 +5,7 @@ import { RustApiAction } from "@filesystem/RustApiBridge";
 import { Command, CommandSequence } from "@keyboard/Command";
 
 import { useAppState } from "./AppContextStore";
+import { Modal } from "@/keyboard/KeyboardTypes";
 
 type NavigationHandler = (cmd: CommandSequence) => boolean; // returns true if handled
 
@@ -20,14 +21,18 @@ type AppContextType = {
 	registerNavigationContainer: (id: string, handler: NavigationHandler) => void;
 	unregisterNavigationContainer: (id: string) => void;
 
-	// Main command handler
-	handleCmd: (seq: CommandSequence) => void;
+	// Main command handlers
+	handleModeNormal: (sequence: CommandSequence) => void;
+	handleModeVisual: (selection: string[], sequence: CommandSequence) => void;
+	handleModeInsert: (input: string, sequence: CommandSequence) => void;
+	handleModeCommand: (input: string, sequence: CommandSequence) => void;
 };
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 	const setCurrentDir = useAppState(state => state.setCurrentDir);
+	const setMode = useAppState(state => state.setMode);
 
 	const activeNavigationId = useAppState(state => state.activeNavigationContext);
 	const setActiveNavigationId = useAppState(state => state.setActiveNavigationContext);
@@ -74,15 +79,39 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 	// Command handling
 	//
 
-	const handleCmd = (seq: CommandSequence) => {
+	const handleModeVisual = (selection: string[], sequence: CommandSequence) => {
+
+	}
+	const handleModeInsert = (input: string, sequence: CommandSequence) => {
+
+	}
+	const handleModeCommand = (input: string, sequence: CommandSequence) => {
+
+	}
+
+	const handleModeNormal = (seq: CommandSequence) => {
 		//console.log("AppContext:handleCmd:", seq);
 		setCmdLog(prev => [...prev, seq]);
+
+		if(seq.cmd === Command.ModeVisual) {
+			console.log("MODE SWAP -> Visual");
+			setMode(Modal.Visual);
+		}
+		if(seq.cmd === Command.ModeInsert) {
+			console.log("MODE SWAP -> Insert");
+			setMode(Modal.Insert);
+		}
+		if(seq.cmd === Command.Console) {
+			console.log("MODE SWAP -> Commmand");
+			setMode(Modal.Command);
+		}
 		
 		if(seq.cmd === Command.Debug){
 			console.log("[DEBUG] AppContext:");
-			console.log("> Zustand store:", useAppState.getState());
-			console.log("> Navigation handlers:", navigationHandlers.current);
+			console.log("Zustand store:", useAppState.getState());
+			console.log("Navigation handlers:", navigationHandlers.current);
 		}
+
 		if(seq.cmd === Command.Escape){
 			console.log("ctx:handleCmd:escape");
 		}
@@ -127,7 +156,10 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 	return (
 		<AppContext.Provider value={{ 
 			cmdLog,
-			handleCmd,
+			handleModeNormal,
+			handleModeVisual,
+			handleModeInsert,
+			handleModeCommand,
 			showLeader,
 			showConsole,
 			activeNavigationId,
