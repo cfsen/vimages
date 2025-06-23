@@ -34,6 +34,7 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 
 	// global state
 	const setCurrentDir = useAppState(state => state.setCurrentDir);
+	const setCurrentDirHash = useAppState(state => state.setCurrentDirHash);
 	const setImages = useAppState(state => state.setImages);
 	const setDirectories = useAppState(state => state.setDirectories);
 	const setFullscreenImage = useAppState(state => state.setFullscreenImage);
@@ -89,6 +90,7 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 					.then(response => {
 						const res = response as EntityDirectory;
 						setCurrentDir(res.path);
+						setCurrentDirHash(res.path_hash);
 						setImages(res.images);
 						setDirectories(res.sub_dirs);
 					})

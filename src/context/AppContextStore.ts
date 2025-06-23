@@ -3,6 +3,7 @@ import { EntityDirectory, EntityImage } from "./ContextTypes";
 
 interface IAppProps {
 	currentDir: string
+	currentDirHash: string | null
 
 	activeNavigationContext: string | null
 
@@ -15,6 +16,7 @@ interface IAppProps {
 
 export interface IAppState extends IAppProps {
 	setCurrentDir: (dir: string) => void
+	setCurrentDirHash: (hash: string | null) => void
 	setActiveNavigationContext: (id: string | null) => void
 
 	setFullscreenImage: (bool: boolean) => void
@@ -27,6 +29,9 @@ export interface IAppState extends IAppProps {
 export const useAppState = create<IAppState>((set) => ({
 	currentDir: ".",
 	setCurrentDir: (dir) => set({ currentDir: dir }),
+
+	currentDirHash: null,
+	setCurrentDirHash: (hash) => set({ currentDirHash: hash }),
 
 	activeNavigationContext: "",
 	setActiveNavigationContext: (id) => set({ activeNavigationContext: id }),
