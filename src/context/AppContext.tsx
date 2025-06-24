@@ -34,6 +34,11 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 	const setCurrentDir = useAppState(state => state.setCurrentDir);
 	const setMode = useAppState(state => state.setMode);
 
+	const showHelp = useAppState(state => state.showHelp);
+	const setShowHelp = useAppState(state => state.setShowHelp);
+
+	const setInputBufferModeCommand = useAppState(state => state.setInputBufferCommand);
+
 	const activeNavigationId = useAppState(state => state.activeNavigationContext);
 	const setActiveNavigationId = useAppState(state => state.setActiveNavigationContext);
 
@@ -77,6 +82,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
 	//
 	// Command handling
+	// Input handling
 	//
 
 	const handleModeVisual = (selection: string[], sequence: CommandSequence) => {
@@ -85,8 +91,34 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 	const handleModeInsert = (input: string, sequence: CommandSequence) => {
 
 	}
-	const handleModeCommand = (input: string, sequence: CommandSequence) => {
 
+	const handleModeCommand = (input: string, sequence: CommandSequence) => {
+		//console.log("AppContext:handleModeCommand:Return" + input);
+		//console.log(sequence);
+
+		// update buffer
+		setInputBufferModeCommand(input);
+
+		if(sequence.cmd !== Command.Return) return;
+
+		// TODO:
+		// use cmd to filter actions with parameters, like :set, :e, etc
+
+		switch(input){
+			case ":q":
+				console.log("exit vimages");
+				break;
+			case ":help":
+				setShowHelp(true);
+				break;
+			default:
+				console.log("invalid command");
+				break;
+		};
+
+		// reset to normal, clear buffer
+		setMode(Modal.Normal);
+		setInputBufferModeCommand(":");
 	}
 
 	const handleModeNormal = (seq: CommandSequence) => {
