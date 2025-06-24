@@ -5,6 +5,16 @@ import styles from "./Navbar.module.css";
 function Navbar() {
 	const currentDir = useAppState(state => state.currentDir);
 	const mode = useAppState(state => state.mode);
+	const inputBufferCommand = useAppState(state => state.inputBufferCommand);
+
+	const outputText = (): string => {
+		switch(mode){
+			case Modal.Command:
+				return inputBufferCommand;
+			default:
+				return currentDir;
+		};
+	};
 
 	return(
 		<div className={styles.navbar_container}>
@@ -14,7 +24,7 @@ function Navbar() {
 				{ Modal[mode] } 
 			</div>
 			<div className={styles.navbar_text}>
-				{ currentDir }
+				{ outputText() }
 			</div>
 		</div>
 	);
