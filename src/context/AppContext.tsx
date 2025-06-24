@@ -81,7 +81,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 	};
 
 	//
-	// Command handling
 	// Input handling
 	//
 
@@ -125,52 +124,56 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 		//console.log("AppContext:handleCmd:", seq);
 		setCmdLog(prev => [...prev, seq]);
 
-		if(seq.cmd === Command.ModeVisual) {
-			console.log("MODE SWAP -> Visual");
-			setMode(Modal.Visual);
-		}
-		if(seq.cmd === Command.ModeInsert) {
-			console.log("MODE SWAP -> Insert");
-			setMode(Modal.Insert);
-		}
-		if(seq.cmd === Command.Console) {
-			console.log("MODE SWAP -> Commmand");
-			setMode(Modal.Command);
-		}
-		
-		if(seq.cmd === Command.Debug){
-			console.log("[DEBUG] AppContext:");
-			console.log("Zustand store:", useAppState.getState());
-			console.log("Navigation handlers:", navigationHandlers.current);
-		}
+		switch(seq.cmd){
+			case Command.ModeVisual:
+				console.log("MODE SWAP -> Visual");
+				setMode(Modal.Visual);
+				break;
 
-		if(seq.cmd === Command.Escape){
-			console.log("ctx:handleCmd:escape");
-		}
-		if(seq.cmd === Command.Console){
-			console.log("ctx:handleCmd:console");
-			setShowConsole(!showConsole);
-		}
-		if(seq.cmd === Command.Leader){ 
-			console.log("ctx:handleCmd:leader");
-			setShowLeader(!showLeader);
-		}
-		if(seq.cmd === Command.Error){
-			console.log("ctx:handleCmd:error");
-		}
-		if(seq.cmd === Command.Tab){
-			console.log("ctx:handleCmd:tab"); 
-			// Cycle activeNavigationId sequentially
-			const handlerIds = Array.from(navigationHandlers.current.keys());
+			case Command.ModeInsert:
+				console.log("MODE SWAP -> Insert");
+				setMode(Modal.Insert);
+				break;
 
-			if (handlerIds.length > 1) {
-				const currentIndex = activeNavigationId ? handlerIds.indexOf(activeNavigationId) : -1;
-				const nextIndex = (currentIndex + 1) % handlerIds.length;
-				const nextId = handlerIds[nextIndex];
-				setActiveNavigationId(nextId);
-				console.log("ctx:active nav context changed:" + nextId);
-				return; // Exit early to avoid further processing
-			}
+			case Command.Console:
+				console.log("MODE SWAP -> Commmand");
+				setMode(Modal.Command);
+				break;
+
+			case Command.Debug:
+				console.log("[DEBUG] AppContext:");
+				console.log("Zustand store:", useAppState.getState());
+				console.log("Navigation handlers:", navigationHandlers.current);
+				break;
+
+			case Command.Escape:
+				if(showHelp) setShowHelp(false);
+				console.log("ctx:handleCmd:escape");
+				break;
+
+			case Command.Leader:
+				console.log("ctx:handleCmd:leader");
+				setShowLeader(!showLeader);
+				break;
+
+			case Command.Error:
+				console.log("ctx:handleCmd:error");
+				break;
+
+			case Command.Tab:
+				console.log("ctx:handleCmd:tab"); 
+				// Cycle activeNavigationId sequentially
+				const handlerIds = Array.from(navigationHandlers.current.keys());
+
+				if (handlerIds.length > 1) {
+					const currentIndex = activeNavigationId ? handlerIds.indexOf(activeNavigationId) : -1;
+					const nextIndex = (currentIndex + 1) % handlerIds.length;
+					const nextId = handlerIds[nextIndex];
+					setActiveNavigationId(nextId);
+					console.log("ctx:active nav context changed:" + nextId);
+					return; // Exit early to avoid further processing
+				}
+				break;
 		}
 
 		// Navigation commands - delegate to active container
