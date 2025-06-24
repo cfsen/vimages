@@ -11,6 +11,7 @@ import FileSystemBrowser from "@filesystem/FilesystemBrowser";
 
 import { modalKeyboard } from '@keyboard/KeyboardModule';
 import { useAppState } from "./context/AppContextStore";
+import HelpOverlay from "./components/HelpOverlay";
 
 function App() {
 	const { handleModeVisual, handleModeNormal, handleModeInsert, handleModeCommand } = useGlobalCtx();
@@ -47,6 +48,7 @@ function App() {
 					</div>
 				</div>
 				<div className="col">
+					<HelpOverlay />
 					<VimageFullscreen />
 					<div className="row">
 						<NavigationProvider>
