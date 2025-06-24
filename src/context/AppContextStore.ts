@@ -13,6 +13,8 @@ interface IAppProps {
 	fullscreenImage: boolean
 	fullscreenImagePath: string
 
+	showHelp: boolean
+
 	directories: EntityDirectory[]
 	images: EntityImage[]
 
@@ -29,6 +31,8 @@ export interface IAppState extends IAppProps {
 
 	setFullscreenImage: (bool: boolean) => void
 	setFullscreenImagePath: (path: string) => void
+
+	setShowHelp: (_: boolean) => void
 
 	setDirectories: (dirs: EntityDirectory[]) => void
 	setImages: (images: EntityImage[]) => void
@@ -54,6 +58,9 @@ export const useAppState = create<IAppState>((set) => ({
 
 	fullscreenImagePath: ".",
 	setFullscreenImagePath: (path) => set({ fullscreenImagePath: path }),
+
+	showHelp: false,
+	setShowHelp: (_) => set({ showHelp: _ }),
 
 	directories: [],
 	setDirectories: (dirs) => set({ directories: dirs }),
