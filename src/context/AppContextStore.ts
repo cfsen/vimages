@@ -15,6 +15,8 @@ interface IAppProps {
 
 	directories: EntityDirectory[]
 	images: EntityImage[]
+
+	inputBufferCommand: string
 }
 
 export interface IAppState extends IAppProps {
@@ -30,6 +32,8 @@ export interface IAppState extends IAppProps {
 
 	setDirectories: (dirs: EntityDirectory[]) => void
 	setImages: (images: EntityImage[]) => void
+
+	setInputBufferCommand: (_: string) => void
 }
 
 export const useAppState = create<IAppState>((set) => ({
@@ -56,5 +60,8 @@ export const useAppState = create<IAppState>((set) => ({
 
 	images: [],
 	setImages: (images) => set({ images: images }),
+
+	inputBufferCommand: ":",
+	setInputBufferCommand: (_) => set({ inputBufferCommand: _ }),
 }))
 
