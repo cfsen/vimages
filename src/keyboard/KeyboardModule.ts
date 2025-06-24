@@ -18,7 +18,7 @@ export function modalKeyboard(
 	const [normalSequence, setNormalSequence] = useState<string>("");
 	const [visualSequence, setVisualSequence] = useState<string>("");
 	const [insertSequence, setInsertSequence] = useState<string>("");
-	const [commandSequence, setCommandSequence] = useState<string>("");
+	const [commandSequence, setCommandSequence] = useState<string>(":");
 
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
@@ -34,7 +34,7 @@ export function modalKeyboard(
 				setNormalSequence("");
 				setVisualSequence("");
 				setInsertSequence("");
-				setCommandSequence("");
+				setCommandSequence(":");
 				return;
 			}
 
@@ -154,6 +154,19 @@ function handleModeCommand(
 	setSequence: (seq: string) => void
 ) {
 	let _ = sequence;
+
+	let allowed = ['Enter', 'Backspace'];
+	if(event.key.length > 1 && !allowed.includes(event.key)){
+		handler.callback?.(_, { modInt: 0, cmd: Command.Error });
+		return;
+	}
+
+	if(event.key === 'Enter') {
+		handler.callback?.(_, { modInt: 0, cmd: Command.Return });
+		setSequence(":");
+		return;
+	}
+	
 	if(event.key === 'Backspace') {
 		_ = sequence.substring(0, sequence.length-1);
 		setSequence(_);
