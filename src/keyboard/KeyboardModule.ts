@@ -134,8 +134,8 @@ function handleModeVisual(
 	sequence: string,
 	setSequence: (seq: string) => void
 ) {
+	console.log("handleModeVisual", handler, event, sequence, setSequence);
 	//handler.callback?.
-	console.log("Visual mode handler!");
 }
 
 function handleModeInsert(
@@ -144,7 +144,7 @@ function handleModeInsert(
 	sequence: string,
 	setSequence: (seq: string) => void
 ) {
-	console.log("Insert mode handler!");
+	console.log("handleModeInsert", handler, event, sequence, setSequence);
 }
 
 function handleModeCommand(
@@ -153,28 +153,33 @@ function handleModeCommand(
 	sequence: string,
 	setSequence: (seq: string) => void
 ) {
-	let _ = sequence;
+	let seq = sequence;
 
+	// filter F1->F..., Shift, Alt, ArrowLeft, etc.
 	let allowed = ['Enter', 'Backspace'];
 	if(event.key.length > 1 && !allowed.includes(event.key)){
-		handler.callback?.(_, { modInt: 0, cmd: Command.Error });
+		handler.callback?.(seq, { modInt: 0, cmd: Command.Ignore });
 		return;
 	}
 
+	// return buffer and indicate command is ready for parsing and execution
 	if(event.key === 'Enter') {
-		handler.callback?.(_, { modInt: 0, cmd: Command.Return });
+		handler.callback?.(seq, { modInt: 0, cmd: Command.Return });
 		setSequence(":");
 		return;
 	}
 	
+	// remove last character from the buffer
 	if(event.key === 'Backspace') {
-		_ = sequence.substring(0, sequence.length-1);
-		setSequence(_);
+		seq = sequence.substring(0, sequence.length-1);
+		setSequence(seq);
 	}
 	else {
-		_ += event.key;
-		setSequence(_);
+		seq += event.key;
+		setSequence(seq);
 	}
-	handler.callback?.(_, { modInt: 0, cmd: Command.None });
-	console.log("Command mode handler: " + _);
+
+	// callback
+	handler.callback?.(seq, { modInt: 0, cmd: Command.None });
+	//console.log("Command mode handler: " + seq);
 }
