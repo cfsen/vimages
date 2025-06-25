@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { EntityDirectory, EntityImage } from "./ContextTypes";
 import { Modal } from "@keyboard/KeyboardTypes";
+import { NavigationHandler } from './AppContext';
 
 interface IAppProps {
 	currentDir: string
@@ -8,6 +9,7 @@ interface IAppProps {
 
 	mode: Modal
 
+	navigationHandlers: Map<string, NavigationHandler>
 	activeNavigationContext: string | null
 
 	fullscreenImage: boolean
@@ -28,6 +30,8 @@ export interface IAppState extends IAppProps {
 	setMode: (mode: Modal) => void
 
 	setActiveNavigationContext: (id: string | null) => void
+	registerNavigationHandler: (id: string, handler: NavigationHandler) => void
+	unregisterNavigationHandler: (id: string) => void
 
 	setFullscreenImage: (bool: boolean) => void
 	setFullscreenImagePath: (path: string) => void
@@ -38,6 +42,7 @@ export interface IAppState extends IAppProps {
 	setImages: (images: EntityImage[]) => void
 
 	setInputBufferCommand: (_: string) => void
+
 }
 
 export const useAppState = create<IAppState>((set) => ({
@@ -70,5 +75,34 @@ export const useAppState = create<IAppState>((set) => ({
 
 	inputBufferCommand: ":",
 	setInputBufferCommand: (_) => set({ inputBufferCommand: _ }),
+
+	// Navigation handlers Map
+	navigationHandlers: new Map<string, NavigationHandler>(),
+	registerNavigationHandler: (id: string, handler: NavigationHandler) => set((state) => {
+		const newMap = new Map(state.navigationHandlers);
+		newMap.set(id, handler);
+
+		// If this is the first container, make it active
+		const updates: Partial<IAppState> = { navigationHandlers: newMap };
+		if (newMap.size === 1 && !state.activeNavigationContext) {
+			updates.activeNavigationContext = id;
+		}
+
+		return updates;
+	}),
+	unregisterNavigationHandler: (id: string) => set((state) => {
+		const newMap = new Map(state.navigationHandlers);
+		newMap.delete(id);
+
+		const updates: Partial<IAppState> = { navigationHandlers: newMap };
+
+		// If we removed the active container, pick a new one
+		if (state.activeNavigationContext === id) {
+			const remaining = Array.from(newMap.keys());
+			updates.activeNavigationContext = remaining[0] || null;
+		}
+
+		return updates;
+	}),
 }))
 
