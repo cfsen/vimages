@@ -6,7 +6,10 @@ use std::{path::PathBuf, sync::{Arc, RwLock, OnceLock}};
 use server::{ServerState, start_server};
 use queue::Queue;
 
-use crate::endpoints::fs::{fsx_get_dir, fs_get_current_path};
+use crate::endpoints::{ 
+    fs::{fsx_get_dir, fs_get_current_path},
+    runtime::rt_get_axum_port
+};
 use crate::img_cache::queue;
 
 static GLOBAL_SERVER_STATE: OnceLock<ServerState> = OnceLock::new();
@@ -49,6 +52,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             fs_get_current_path,
             fsx_get_dir,
+            rt_get_axum_port,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
