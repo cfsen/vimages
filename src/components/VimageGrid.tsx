@@ -8,16 +8,22 @@ import Vimage from "./Vimage";
 import styles from "./Vimage.module.css";
 import { EntityImage } from "@/context/ContextTypes";
 
-function fromCache(img: EntityImage, path_hash: string | null) {
-	if(!img.has_thumbnail || path_hash === null) {
-		return "http://127.0.0.1:8080/image?file=" + img.filename;
+function fromCache(img: EntityImage, path_hash: string | null, axum_port: string | null) {
+	if(axum_port === null) {
+		// TODO: error handling, show to user
+		console.log("axum unavailable!");
 	}
-	return "http://127.0.0.1:8080/cache/" + path_hash + "/" + img.img_hash;
+
+	if(!img.has_thumbnail || path_hash === null) {
+		return `http://127.0.0.1:${axum_port}/image?file=${img.filename}`;
+	}
+	return `http://127.0.0.1:${axum_port}/cache/${path_hash}/${img.img_hash}`;
 }
 
 const VimageGrid: React.FC = () => {
 	const images = useAppState(state => state.images);
 	const path_hash = useAppState(state => state.currentDirHash);
+	const axum_port = useAppState(state => state.axum_port);
 
 	const { itemsPerRow, setItemsPerRow, navCtxId } = useCommand();
 	const [containerWidth, setContainerWidth] = useState(window.innerWidth);
@@ -77,7 +83,7 @@ const VimageGrid: React.FC = () => {
 									border: '1px solid #111',
 								}}
 							>
-								<Vimage id={"vimage" + idx} src={fromCache(img, path_hash)} />
+								<Vimage id={"vimage" + idx} src={fromCache(img, path_hash, axum_port)} />
 								<div className={styles.imgFilename}>
 									{img.filename}
 								</div>
