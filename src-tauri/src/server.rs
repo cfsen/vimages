@@ -87,18 +87,27 @@ async fn serve_cache(
     Ok(response)
 }
 
-async fn start_server(server_state: ServerState) {
+pub async fn start_server(server_state: ServerState) -> u16 {
     let app = Router::new()
         .route("/image", get(serve_image))
         .route("/cache/{dir}/{file}", get(serve_cache))
         .with_state(server_state);
 
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:8080").await.unwrap();
-    axum::serve(listener, app).await.unwrap();
-}
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0")
+        .await
+        .expect("Failed to bind axum to localhost.");
 
-pub async fn spawn_server(server_state: ServerState) {
+    let port = listener.local_addr()
+        .expect("Failed to get local address for axum.")
+        .port();
+
+    println!("axum listening on port: {}", port);
+
     tokio::spawn(async move {
-        start_server(server_state).await;
+        axum::serve(listener, app)
+            .await
+            .unwrap_or_else(|e| panic!("axum crashed: {}", e));
     });
+
+    port
 }
