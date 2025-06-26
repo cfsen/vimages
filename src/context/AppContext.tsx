@@ -28,8 +28,11 @@ export const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 	const setCurrentDir = useAppState(state => state.setCurrentDir);
+	const setAxumPort = useAppState(state => state.setAxumPort);
 
 	useEffect(() => {
+		invoke(RustApiAction.GetAxumPort)
+			.then(res => {setAxumPort(res as string)});
 		invoke(RustApiAction.GetCurrentPath)
 			.then(res => {setCurrentDir(res as string)
 			});

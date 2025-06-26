@@ -1,4 +1,5 @@
 export enum RustApiAction {
 	GetCurrentPath = "fs_get_current_path",
-	GetDir = "fsx_get_dir"
+	GetDir = "fsx_get_dir",
+	GetAxumPort = "rt_get_axum_port",
 }

@@ -4,6 +4,8 @@ import { Modal } from "@keyboard/KeyboardTypes";
 import { NavigationHandler } from './AppContext';
 
 interface IAppProps {
+	axum_port: string | null
+
 	currentDir: string
 	currentDirHash: string | null
 
@@ -24,6 +26,8 @@ interface IAppProps {
 }
 
 export interface IAppState extends IAppProps {
+	setAxumPort: (port: string) => void
+
 	setCurrentDir: (dir: string) => void
 	setCurrentDirHash: (hash: string | null) => void
 
@@ -46,6 +50,9 @@ export interface IAppState extends IAppProps {
 }
 
 export const useAppState = create<IAppState>((set) => ({
+	axum_port: null,
+	setAxumPort: (port) => set({ axum_port: port }),
+
 	currentDir: ".",
 	setCurrentDir: (dir) => set({ currentDir: dir }),
 
