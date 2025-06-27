@@ -83,6 +83,7 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 			.find((i) => i.id === navigationState.getState().navItemActive);
 
 			if(item?.itemType === NavigableItemType.FileBrowser){
+				// TODO: reused code, see: TODO_REUSE_PATH
 				invoke(RustApiAction.GetDir, { 
 					path: useAppState.getState().currentDir, 
 					relPath: item.data 
@@ -122,9 +123,14 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 			navigationState.getState().navItemActive
 		);
 		if(cur != null)  {
+			// update cursor position
 			navigationState.getState().setNavItemActive(
 				navigationState.getState().navItems[cur].id
 			);
+			// Swap images in fullscreen
+			if(useAppState.getState().fullscreenImage){
+				setFullscreenImagePath(navigationState.getState().navItems[cur].data);
+			}
 
 			return true;
 		}
