@@ -32,10 +32,9 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
 	useEffect(() => {
 		invoke(RustApiAction.GetAxumPort)
-			.then(res => {setAxumPort(res as string)});
+			.then(res => { setAxumPort(res as string) });
 		invoke(RustApiAction.GetCurrentPath)
-			.then(res => {setCurrentDir(res as string)
-			});
+			.then(res => { setCurrentDir(res as string) });
 	}, []);
 
 	//

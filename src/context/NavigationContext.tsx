@@ -99,8 +99,8 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 				return true;
 			}
 			else if(item?.itemType === NavigableItemType.Image){
-				setFullscreenImage(true);
 				console.log("Setting fullscreen image path to: " + item.data);
+				setFullscreenImage(true);
 				setFullscreenImagePath(item.data);
 			}
 		}

@@ -21,7 +21,7 @@ function Navbar() {
 			<div
 				className={styles.navbar_mode}
 			>
-				{ Modal[mode] } 
+				{ Modal[mode] }
 			</div>
 			<div className={styles.navbar_text}>
 				{ outputText() }

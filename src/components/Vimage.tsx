@@ -5,7 +5,6 @@ export type VimageProps = {
 	src: string | null;
 };
 
-// TODO: move styles out
 function Vimage({ id, src }: VimageProps) {
 	return (
 		<div className={styles.vimageContainer}>
