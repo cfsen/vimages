@@ -47,6 +47,9 @@ export function KeyboardCursorHandle(
 			// repeat count inside row bounds
 			else if(n > 0 && (cur-(n*itemsPerRow) >= 0))
 				cur -= n*itemsPerRow;
+			// repeat count outside row bounds
+			else if(n > 0)
+				cur = cur % itemsPerRow;
 			break;
 		case Command.CursorDown:
 			// no repeat count, allow movement if inside bounds of rows/array
@@ -55,6 +58,9 @@ export function KeyboardCursorHandle(
 			// repeat count inside row bounds
 			else if(n > 0 && (cur+(n*itemsPerRow) < len))
 				cur += n*itemsPerRow;
+			// repeat count outside row bounds
+			else if(n > 0)
+				cur = Math.min(Math.floor(len / itemsPerRow)*itemsPerRow + (cur % itemsPerRow), len-1);
 			break;
 		case Command.CursorBOL:
 			cur = cur - (cur % itemsPerRow);
