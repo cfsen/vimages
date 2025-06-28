@@ -68,6 +68,12 @@ export function KeyboardCursorHandle(
 		case Command.CursorEOL:
 			cur = cur + itemsPerRow - 1 - (cur % itemsPerRow);
 			break;
+		case Command.CursorNext:
+			cur = Math.min(cur+Math.max(1, n), len-1);
+			break;
+		case Command.CursorBack:
+			cur = Math.max(cur-Math.max(1, n), 0);
+			break;
 		case Command.JumpFirst:
 			cur = 0;
 			break;
