@@ -27,7 +27,7 @@ export function KeyboardCursorHandle(
 				cur += n;
 			// repeat count exceeds column bounds
 			else if(n > 0)
-				cur = cur - (cur % itemsPerRow) + itemsPerRow - 1;
+				cur = Math.min(cur - (cur % itemsPerRow) + itemsPerRow - 1, len-1);
 			break;
 		case Command.CursorLeft:
 			// no repeat count, allow movement if inside bounds of column/array
