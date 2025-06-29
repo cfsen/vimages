@@ -1,5 +1,6 @@
 use std::{env, fs};
 use std::path::{ Path, PathBuf };
+use log::{ info, error, debug };
 
 use crate::img_cache;
 use crate::{get_server_state, server::set_serve_directory};
@@ -9,6 +10,8 @@ use crate::endpoints::types::{ EntityDirectory, EntityImage };
 #[tauri::command]
 pub fn fsx_get_dir(path: &str, rel_path: Option<&str>) -> Result<EntityDirectory, String> {
     let path_buf = PathBuf::from(path);
+
+    info!("fsx_get_dir: {} -> {}", path, rel_path.unwrap_or("None"));
 
     if !path_buf.exists() || !path_buf.is_dir() {
         return Err("Invalid path".into());
@@ -33,7 +36,7 @@ pub fn fsx_get_dir(path: &str, rel_path: Option<&str>) -> Result<EntityDirectory
     };
 
     if !final_path.exists() || !final_path.is_dir() {
-        println!("Invalid rel_path: {:?}", final_path);
+        error!("Invalid rel_path: {:?}", final_path);
         return Err("Invalid rel_path".into());
     }
 
@@ -51,9 +54,9 @@ pub fn fsx_get_dir(path: &str, rel_path: Option<&str>) -> Result<EntityDirectory
     set_serve_directory(server_state, &final_path)?;
 
     // NOTE: debug
-    println!("Opening: {:?}", final_path);
-    println!(" -> Path hash: {:?}", path_hash);
-    println!(" -> Parent dir: {:?}", parent_dir);
+    debug!("Opening: {:?}", final_path);
+    debug!(" -> Path hash: {:?}", path_hash);
+    debug!(" -> Parent dir: {:?}", parent_dir);
 
     let directory = EntityDirectory { 
         name: final_path
@@ -74,9 +77,6 @@ pub fn fsx_get_dir(path: &str, rel_path: Option<&str>) -> Result<EntityDirectory
 fn fsx_get_images(path: &Path, path_hash: &str) -> Result<Vec<EntityImage>, String> {
     let allowed_exts = ["png", "jpg", "jpeg", "webp", "gif", "svg", "bmp"];
 
-    // NOTE: debug
-    println!("--- EntityImage:");
-
     let mut images: Vec<EntityImage> = fs::read_dir(path)
         .map_err(|e| e.to_string())?
         .filter_map(Result::ok)
@@ -93,7 +93,10 @@ fn fsx_get_images(path: &Path, path_hash: &str) -> Result<Vec<EntityImage>, Stri
             let full_path = entry.path();
             let filename = entry.file_name().to_string_lossy().to_string();
             let file_hash = img_cache::hash::get_file_hash(&full_path)
-                .map_err(|e| format!("Failed to hash: {}: {}", filename, e))?;
+                .map_err(|e| {
+                    error!("Failed to hash: {}: {}", filename, e);
+                    format!("Failed to hash: {}: {}", filename, e) 
+                })?;
 
             // TODO: 
             // thumbnails should only be generated for larger files
@@ -109,16 +112,15 @@ fn fsx_get_images(path: &Path, path_hash: &str) -> Result<Vec<EntityImage>, Stri
                 };
                 tauri::async_runtime::spawn(async move {
                     if let Err(e) = get_queue().enqueue(queue_item).await {
-                        eprintln!("Failed to enqueue thumbnail job: {}", e);
+                        error!("Failed to enqueue thumbnail job: {}", e);
                     }
                 });
             }
 
-            // NOTE: debug
-            println!("EntityImage:");
-            println!("full_path: {:?}", full_path);
-            println!("filename: {:?}", filename);
-            println!("file_hash: {:?}\n", file_hash);
+            debug!("EntityImage:");
+            debug!("full_path: {:?}", full_path);
+            debug!("filename: {:?}", filename);
+            debug!("file_hash: {:?}\n", file_hash);
 
             Ok(EntityImage {
                 full_path: full_path.to_string_lossy().to_string(),
@@ -128,9 +130,6 @@ fn fsx_get_images(path: &Path, path_hash: &str) -> Result<Vec<EntityImage>, Stri
             })
         })
         .collect::<Result<Vec<_>, String>>()?;
-
-    // NOTE: debug
-    println!("\n");
 
     images.sort_by(|a, b| a.filename.cmp(&b.filename));
 

@@ -1,7 +1,8 @@
-use std::{ 
+use std::{
     fs,
     path::{Path, PathBuf},
 };
+use log::{ info, error, debug };
 
 /*
 * Cache structure:
@@ -19,10 +20,13 @@ pub fn get_vimages_path() -> Option<PathBuf> {
     vimages_path.push(".vimages");
 
     if !Path::exists(&vimages_path) {
-        println!(".vimages does not exist, creating: {:?}", vimages_path);
+        info!(".vimages does not exist, creating: {:?}", vimages_path);
 
         fs::create_dir(&vimages_path)
-            .unwrap_or_else(|e| panic!("Error creating .vimages dir: {}", e));
+            .unwrap_or_else(|e| {
+                error!("Error creating .vimages dir: {}", e);
+                panic!("Error creating .vimages dir: {}", e)
+            });
     }
 
     Some(vimages_path)
@@ -33,7 +37,7 @@ pub fn get_cache_path() -> Option<PathBuf> {
     cache_path.push("cache");
 
     if !Path::exists(&cache_path) {
-        println!("cache directory does not exist, creating: {:?}", cache_path);
+        info!("cache directory does not exist, creating: {:?}", cache_path);
 
         fs::create_dir(&cache_path)
             .unwrap_or_else(|e| panic!("Error creating cache directory: {}", e));
@@ -45,16 +49,20 @@ pub fn get_cache_path() -> Option<PathBuf> {
 pub fn check_cache(path_hash: &str, file_hash: &str) -> Option<bool> {
     let mut cache_path = get_cache_path()?;
 
+    debug!("Checking cache for: path_hash={} | file_has={}", path_hash, file_hash);
+
     cache_path.push(path_hash);
     if !Path::exists(&cache_path) {
+        debug!("No matching path in cache.");
         return None;
     }
 
     cache_path.push(format!("{}.webp", file_hash));
     if !Path::exists(&cache_path) {
+        debug!("No matching file in cache.");
         return None;
     }
 
-    println!("Cache hit for: {:?}", cache_path);
+    debug!("Cache hit for: {:?}", cache_path);
     Some(true)
 }
