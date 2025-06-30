@@ -25,14 +25,11 @@ const VimageGrid: React.FC = () => {
 	const path_hash = useAppState(state => state.currentDirHash);
 	const axum_port = useAppState(state => state.axum_port);
 
+	const squareBaseSize = useAppState(state => state.imageGridSize);
+	const scale = useAppState(state => state.imageGridScale);
+
 	const { itemsPerRow, setItemsPerRow, navCtxId } = useCommand();
 	const [containerWidth, setContainerWidth] = useState(window.innerWidth);
-
-	// TODO: move to state
-	const squareBaseSize = 400;
-
-	// TODO: move to state
-	const [scale, setScale] = useState(1);
 
 	// Resize handler
 	useEffect(() => {
@@ -92,18 +89,21 @@ const VimageGrid: React.FC = () => {
 					);
 				})}
 			</div>
-			<label>
-				Scale:
-				<input
-					type="range"
-					min="0.5"
-					max="3"
-					step="0.1"
-					value={scale}
-					onChange={(e) => setScale(Number(e.target.value))}
-				/>
-			</label>
-			<p>Squares per row: {itemsPerRow}</p>
+			{
+				// TODO: should be settable via :set imgscale 
+				//<label>
+				//	Scale:
+				//	<input
+				//		type="range"
+				//		min="0.5"
+				//		max="3"
+				//		step="0.1"
+				//		value={scale}
+				//		onChange={(e) => setScale(Number(e.target.value))}
+				//	/>
+				//</label>
+				//<p>Squares per row: {itemsPerRow}</p>
+			}
 		</div>
 	);
 };
