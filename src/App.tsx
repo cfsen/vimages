@@ -12,6 +12,7 @@ import FileSystemBrowser from "@filesystem/FilesystemBrowser";
 import { modalKeyboard } from '@keyboard/KeyboardModule';
 import { useAppState } from "./context/AppContextStore";
 import HelpOverlay from "./components/HelpOverlay";
+import TitleBar from "./components/Titlebar";
 
 function App() {
 	const { handleModeVisual, handleModeNormal, handleModeInsert, handleModeCommand } = useGlobalCtx();
@@ -39,6 +40,7 @@ function App() {
 
 	return (
 		<main>
+			<TitleBar />
 			<div className="colContainer">
 				<div className="fsCol">
 					<div className="navigation-overlay">
