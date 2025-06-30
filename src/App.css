@@ -4,8 +4,8 @@
 	line-height: 24px;
 	font-weight: 400;
 
-	color: #f6f6f6;
-	background-color: #2f2f2f;
+	color: var(--neutral-300);
+	background-color: var(--neutral-900);
 
 	font-synthesis: none;
 	text-rendering: optimizeLegibility;
@@ -13,12 +13,60 @@
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-text-size-adjust: 100%;
 	padding-bottom: 40px;
+
+	/* Primary: Singapore Orchid */
+	--primary-100: #FDF2FF;
+	--primary-200: #F1BEFF;
+	--primary-300: #DE89FD;
+	--primary-400: #C353F9;
+	--primary-500: #A01FF0;
+	--primary-600: #6E0ABD;
+	--primary-700: #47028B;
+	--primary-800: #270059;
+	--primary-900: #0F0026;
+
+	/* Accent: Caribbean Blue */
+	--accent-100: #F2FBFF;
+	--accent-200: #BBEBFE;
+	--accent-300: #82DEFB;
+	--accent-400: #49D3F0;
+	--accent-500: #14C4DB;
+	--accent-600: #07A4AE;
+	--accent-700: #018181;
+	--accent-800: #00544F;
+	--accent-900: #002622;
+
+	/* Neutral */
+	--neutral-100: #FCFAFC;
+	--neutral-200: #EAE6EB;
+	--neutral-300: #D7D2DA;
+	--neutral-400: #C5BFC9;
+	--neutral-500: #B3ADB8;
+	--neutral-600: #8E8993;
+	--neutral-700: #6A666F;
+	--neutral-800: #46444B;
+	--neutral-900: #242226;
+
+	/* Dark BG */
+	--dark-1: #111;
 }
 
 body {
 	margin: 0;
 }
+::-webkit-scrollbar {
+	width: 1em;
+}
 
+::-webkit-scrollbar-track {
+	background: var(--neutral-900);
+}
+::-webkit-scrollbar-thumb {
+	background: var(--primary-700);
+}
+::-webkit-scrollbar-thumb:hover {
+	background: var(--primary-600);
+}
 .container {
 	padding-top: 1em;
 	display: flex;
@@ -43,8 +91,8 @@ body {
 	bottom: 0;
 	left: 0;
 	width: 100%;
-	background-color: #111;
-	color: #8f8f8f;
+	background-color: var(--dark-1);
+	color: var(--neutral-600);
 	text-align: left;
 	padding: 0.5em;
 }

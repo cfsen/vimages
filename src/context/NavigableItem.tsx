@@ -76,10 +76,11 @@ export const NavigableItem: React.FC<NavigableItemProps> = ({
 	// TODO: move to css
 	const getItemColor = (): string => { 
 		if(navItemActive === id && activeNavigationContext === parentNavCtxId)
-			return '#4c606d';
+			return 'var(--primary-700)';
+			//return '#4c606d';
 		if(navItemActive === id)
-			return '#353c41';
-		return '#2f2f2f';
+			return 'var(--neutral-800)';
+		return 'var(--neutral-900)';
 	};
 
 	return (

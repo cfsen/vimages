@@ -19,11 +19,11 @@ function Navbar() {
 	return(
 		<div className={styles.navbar_container}>
 			<div
-				className={styles.navbar_mode}
+				className={mode !== Modal.Normal ? styles.navbar_mode_active : styles.navbar_mode}
 			>
 				{ Modal[mode] }
 			</div>
-			<div className={styles.navbar_text}>
+			<div className={mode === Modal.Command ? styles.navbar_text_command : styles.navbar_text}>
 				{ outputText() }
 			</div>
 		</div>

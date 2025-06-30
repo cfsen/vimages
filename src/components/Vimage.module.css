@@ -1,5 +1,5 @@
 .vimageContainer {
-	color: #dfdfdf;
+	color: var(--neutral-100);
 	margin: 1em;
 	flex: 1;
 	display: flex;
@@ -22,12 +22,12 @@
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	background: rgba(0, 0, 0, 0.3);
+	background: rgba(0, 0, 0, 0.8);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	z-index: 1000;
-}
+	transition: opacity 0.2s ease-in-out;}
 
 .fullscreenImg {
 	max-width: 90vw;

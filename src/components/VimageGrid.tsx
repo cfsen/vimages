@@ -77,7 +77,7 @@ const VimageGrid: React.FC = () => {
 									alignItems: 'center',
 									justifyContent: 'center',
 									fontSize: '1rem',
-									border: '1px solid #111',
+									border: '1px solid rgba(0,0,0,0.3)',
 								}}
 							>
 								<Vimage id={"vimage" + idx} src={fromCache(img, path_hash, axum_port)} />
