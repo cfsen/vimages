@@ -4,84 +4,133 @@ import { Modal } from "@keyboard/KeyboardTypes";
 import { NavigationHandler } from './AppContext';
 
 interface IAppProps {
+	//
+	// Backend
+	// key_backend
 	axum_port: string | null
 
+	//
+	// Current directory, subdirectories and images
+	// key_dirstate
 	currentDir: string
 	currentDirHash: string | null
+	directories: EntityDirectory[]
+	images: EntityImage[]
 
+	//
+	// UI state
+	// key_uistate
 	mode: Modal
-
-	navigationHandlers: Map<string, NavigationHandler>
-	activeNavigationContext: string | null
 
 	fullscreenImage: boolean
 	fullscreenImagePath: string
 
 	showHelp: boolean
 
-	directories: EntityDirectory[]
-	images: EntityImage[]
-
 	inputBufferCommand: string
+
+	//
+	// Image grid UI
+	// key_imgrid
+	imageGridSize: number
+	imageGridScale: number
+
+	//
+	// Navigation contexts
+	// key_navctx
+	navigationHandlers: Map<string, NavigationHandler>
+	activeNavigationContext: string | null
 }
 
 export interface IAppState extends IAppProps {
+	//
+	// Backend
+	// key_backend
 	setAxumPort: (port: string) => void
 
+	//
+	// Current directory, subdirectories and images
+	// key_dirstate
 	setCurrentDir: (dir: string) => void
 	setCurrentDirHash: (hash: string | null) => void
+	setDirectories: (dirs: EntityDirectory[]) => void
+	setImages: (images: EntityImage[]) => void
 
+	//
+	// UI state
+	// key_uistate
 	setMode: (mode: Modal) => void
-
-	setActiveNavigationContext: (id: string | null) => void
-	registerNavigationHandler: (id: string, handler: NavigationHandler) => void
-	unregisterNavigationHandler: (id: string) => void
 
 	setFullscreenImage: (bool: boolean) => void
 	setFullscreenImagePath: (path: string) => void
 
 	setShowHelp: (_: boolean) => void
 
-	setDirectories: (dirs: EntityDirectory[]) => void
-	setImages: (images: EntityImage[]) => void
-
 	setInputBufferCommand: (_: string) => void
+	
+	//
+	// Image grid UI
+	// key_imgrid
+	setImageGridSize: (pixels: number) => void
+	setImageGridScale: (scalar: number) => void
 
+	//
+	// Navigation contexts
+	// key_navctx
+	setActiveNavigationContext: (id: string | null) => void
+	registerNavigationHandler: (id: string, handler: NavigationHandler) => void
+	unregisterNavigationHandler: (id: string) => void
 }
 
 export const useAppState = create<IAppState>((set) => ({
+	//
+	// Backend
+	// key_backend
 	axum_port: null,
 	setAxumPort: (port) => set({ axum_port: port }),
 
+	//
+	// Current directory, subdirectories and images
+	// key_dirstate
 	currentDir: ".",
 	setCurrentDir: (dir) => set({ currentDir: dir }),
+	currentDirHash: null,
+	setCurrentDirHash: (hash) => set({ currentDirHash: hash }),
+	directories: [],
+	setDirectories: (dirs) => set({ directories: dirs }),
+	images: [],
+	setImages: (images) => set({ images: images }),
 
+	//
+	// UI state
+	// key_uistate
 	mode: Modal.Normal,
 	setMode: (mode) => set({ mode: mode }),
 
-	currentDirHash: null,
-	setCurrentDirHash: (hash) => set({ currentDirHash: hash }),
-
-	activeNavigationContext: "",
-	setActiveNavigationContext: (id) => set({ activeNavigationContext: id }),
-
 	fullscreenImage: false,
 	setFullscreenImage: (bool) => set({ fullscreenImage: bool }),
-
 	fullscreenImagePath: ".",
 	setFullscreenImagePath: (path) => set({ fullscreenImagePath: path }),
 
 	showHelp: false,
 	setShowHelp: (_) => set({ showHelp: _ }),
 
-	directories: [],
-	setDirectories: (dirs) => set({ directories: dirs }),
-
-	images: [],
-	setImages: (images) => set({ images: images }),
-
 	inputBufferCommand: ":",
 	setInputBufferCommand: (_) => set({ inputBufferCommand: _ }),
+
+	//
+	// Image grid UI
+	// key_imgrid
+	imageGridSize: 400,
+	setImageGridSize: (pixels) => set({ imageGridSize: pixels }),
+	imageGridScale: 1,
+	setImageGridScale: (scalar) => set({ imageGridScale: scalar }),
+
+	//
+	// Navigation contexts
+	// key_navctx
+	activeNavigationContext: "",
+	setActiveNavigationContext: (id) => set({ activeNavigationContext: id }),
 
 	// Navigation handlers Map
 	navigationHandlers: new Map<string, NavigationHandler>(),
