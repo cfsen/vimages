@@ -41,7 +41,6 @@ function VimageFullscreen() {
 	useEffect(() => {
 		// exiting fullscreen, clean up
 		if(!componentEnable) {
-			setTimeout(() => {}, 200);
 			setImgBuf0(undefined);
 			setImgBuf1(undefined);
 			setImagePath("");
