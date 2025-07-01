@@ -39,7 +39,10 @@ function App() {
 	);
 
 	return (
-		<main>
+		<main
+			className="tauriDragRegion"
+			data-tauri-drag-region
+		>
 			<TitleBar />
 			<div className="colContainer">
 				<div className="fsCol">

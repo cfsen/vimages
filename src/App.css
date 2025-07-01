@@ -54,6 +54,12 @@
 body {
 	margin: 0;
 }
+
+.tauriDragRegion {
+	user-select: none;
+	-webkit-app-region: drag;
+}
+
 ::-webkit-scrollbar {
 	width: 1em;
 }
