@@ -1,3 +1,4 @@
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { invoke } from "@tauri-apps/api/core";
 import { RustApiAction } from "@filesystem/RustApiBridge";
 import { EntityDirectory } from "@context/ContextTypes";
@@ -10,6 +11,9 @@ const paramCommands = [":set", ":e"];
 
 export function CommandModeHandler(input: string, sequence: CommandSequence){
 	const {
+		imageGridScale,
+		setImageGridScale,
+
 		setMode,
 		setShowHelp,
 		setInputBufferCommand,
@@ -28,7 +32,9 @@ export function CommandModeHandler(input: string, sequence: CommandSequence){
 	// check for parameterless commands
 	switch(input){
 		case ":q":
-			console.log("exit vimages");
+			// TODO: save any pending thumbnail tasks
+			// TODO: confirm close on unsaved changes
+			getCurrentWindow().close();
 			break;
 		case ":help":
 			setShowHelp(true);
@@ -61,6 +67,29 @@ export function CommandModeHandler(input: string, sequence: CommandSequence){
 					})
 					// TODO: error handling on invalid paths
 					.catch(console.error);
+				break;
+			case ":set":
+				// TODO: further implementation blocked by config file/unified command type TODO_CONFIG_FILE
+				console.log(split);
+				if(split.param.length === 0) {
+					console.log("no keyword");
+					break;
+				}
+				
+				if(split.param[0] !== "imgscale") {
+					console.log("incorrect keyword");
+					break;
+				}
+
+				// output value 
+				if(split.param.length === 1) {
+					console.log("No value for param, output current value: " + imageGridScale);
+					break;
+				}
+
+				// set value
+				console.log(`Setting value: ${input}`);
+				setImageGridScale(Number(split.param[1]));
 				break;
 		};
 	}
