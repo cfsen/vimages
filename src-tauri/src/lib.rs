@@ -8,7 +8,7 @@ use queue::Queue;
 
 use crate::endpoints::{ 
     fs::{fsx_get_dir, fs_get_current_path},
-    runtime::rt_get_axum_port
+    runtime::{rt_get_axum_port, rt_get_queue_size}
 };
 use crate::img_cache::queue;
 
@@ -53,6 +53,7 @@ pub fn run() {
             fs_get_current_path,
             fsx_get_dir,
             rt_get_axum_port,
+            rt_get_queue_size,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
