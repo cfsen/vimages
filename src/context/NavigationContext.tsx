@@ -8,7 +8,7 @@ import { AppContext } from "./AppContext";
 import { useAppState } from "./AppContextStore";
 import { KeyboardCursorHandle } from "./CommandCursorHandler";
 import { NavigableItemType } from "./NavigableItem";
-import { EntityDirectory } from "./ContextTypes";
+import { EntityDirectory, UIComponent } from "./ContextTypes";
 
 import { createNavigationState } from "./NavigationContextStore";
 import { NavigationContextType, NavigationItem } from "./NavigationContextTypes";
@@ -16,7 +16,7 @@ import { useStore } from "zustand";
 
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
 
-export const NavigationProvider = ({ children }: { children: React.ReactNode }) => {
+export const NavigationProvider = ({ children, component, active }: { children: React.ReactNode, component: UIComponent, active: boolean }) => {
 	// Ensure AppContext is available
 	const parentCtx = useContext(AppContext);
 	if (!parentCtx) throw new Error("NavigationProvider must be inside VimagesCtxProvider");
@@ -144,7 +144,13 @@ export const NavigationProvider = ({ children }: { children: React.ReactNode }) 
 	useEffect(() => {
 		setNavCtxId(navigationId.current);
 		console.log("navctx:register_navctx_id", navigationState.getState().navigationContextId);
-		parentCtx.registerNavigationContainer(navigationId.current, handleNavigationCmd);
+		parentCtx.registerNavigationContainer(navigationId.current, {
+			id: navigationId.current,
+			component,
+			handleNavCmd: handleNavigationCmd,
+			active
+		});
+		//parentCtx.registerNavigationContainer(navigationId.current, handleNavigationCmd);
 		return () => {
 			parentCtx.unregisterNavigationContainer(navigationId.current);
 		};

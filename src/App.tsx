@@ -13,6 +13,7 @@ import { modalKeyboard } from '@keyboard/KeyboardModule';
 import { useAppState } from "./context/AppContextStore";
 import HelpOverlay from "./components/HelpOverlay";
 import TitleBar from "./components/Titlebar";
+import { UIComponent } from "./context/ContextTypes";
 
 function App() {
 	const { handleModeVisual, handleModeNormal, handleModeInsert, handleModeCommand } = useGlobalCtx();
@@ -45,18 +46,14 @@ function App() {
 		>
 			<TitleBar />
 			<div className="colContainer">
-				<div className="fsCol">
-					<div className="navigation-overlay">
-						<NavigationProvider>
-							<FileSystemBrowser />
-						</NavigationProvider>
-					</div>
-				</div>
+				<NavigationProvider component={UIComponent.fsBrowser} active={true}>
+					<FileSystemBrowser />
+				</NavigationProvider>
 				<div className="col">
 					<HelpOverlay />
 					<VimageFullscreen />
 					<div className="row">
-						<NavigationProvider>
+						<NavigationProvider component={UIComponent.imgGrid} active={true}>
 							<VimageGrid />
 						</NavigationProvider>
 					</div>

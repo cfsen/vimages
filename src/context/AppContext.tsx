@@ -9,12 +9,13 @@ import { NormalModeHandler } from "./ModeHandlers/NormalModeHandler";
 import { CommandModeHandler } from "./ModeHandlers/CommandModeHandler";
 import { VisualModeHandler } from "./ModeHandlers/VisualModeHandler";
 import { InsertModeHandler } from "./ModeHandlers/InsertModeHandler";
+import { NavigationHandle } from "./ContextTypes";
 
 export type NavigationHandler = (cmd: CommandSequence) => boolean; // returns true if handled
 
 type AppContextType = {
 	// Navigation container management
-	registerNavigationContainer: (id: string, handler: NavigationHandler) => void;
+	registerNavigationContainer: (id: string, handler: NavigationHandle) => void;
 	unregisterNavigationContainer: (id: string) => void;
 
 	// Main command handlers
@@ -41,7 +42,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 	// NavigationContainers
 	//
 
-	const registerNavigationContainer = (id: string, handler: NavigationHandler) => {
+	const registerNavigationContainer = (id: string, handler: NavigationHandle) => {
 		useAppState.getState().registerNavigationHandler(id, handler);
 	};
 

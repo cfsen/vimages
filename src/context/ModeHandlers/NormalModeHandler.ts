@@ -69,7 +69,7 @@ export function NormalModeHandler(seq: CommandSequence){
 	if (activeNavigationContext) {
 		const handler = useAppState.getState().navigationHandlers.get(activeNavigationContext);
 		if (handler) {
-			const wasHandled = handler(seq);
+			const wasHandled = handler.handleNavCmd(seq);
 			if (wasHandled) return;
 		}
 	}		
