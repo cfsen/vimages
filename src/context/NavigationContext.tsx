@@ -1,18 +1,16 @@
 import { invoke } from "@tauri-apps/api/core";
 import { createContext, useEffect, useRef, useContext } from "react";
-
-import { Command, CommandSequence } from "@keyboard/Command";
-import { RustApiAction } from "@filesystem/RustApiBridge";
+import { useStore } from "zustand";
 
 import { AppContext } from "./AppContext";
 import { useAppState } from "./AppContextStore";
 import { KeyboardCursorHandle } from "./CommandCursorHandler";
 import { NavigableItemType } from "./NavigableItem";
-import { EntityDirectory, UIComponent } from "./ContextTypes";
-
+import { EntityDirectory, UIComponent, RustApiAction } from "./ContextTypes";
 import { createNavigationState } from "./NavigationContextStore";
 import { NavigationContextType, NavigationItem } from "./NavigationContextTypes";
-import { useStore } from "zustand";
+
+import { Command, CommandSequence } from "@keyboard/Command";
 
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
 

@@ -7,7 +7,7 @@ import VimageFullscreen from "@components/VimageFullscreen";
 import { useGlobalCtx } from '@context/AppContext';
 import { NavigationProvider } from "@context/NavigationContext";
 
-import FileSystemBrowser from "@filesystem/FilesystemBrowser";
+import FileSystemBrowser from "@components/FilesystemBrowser";
 
 import { modalKeyboard } from '@keyboard/KeyboardModule';
 import { useAppState } from "./context/AppContextStore";
@@ -45,13 +45,13 @@ function App() {
 			data-tauri-drag-region
 		>
 			<TitleBar />
+			<HelpOverlay />
+			<VimageFullscreen />
 			<div className="colContainer">
 				<NavigationProvider component={UIComponent.fsBrowser} active={true}>
 					<FileSystemBrowser />
 				</NavigationProvider>
 				<div className="col">
-					<HelpOverlay />
-					<VimageFullscreen />
 					<div className="row">
 						<NavigationProvider component={UIComponent.imgGrid} active={true}>
 							<VimageGrid />

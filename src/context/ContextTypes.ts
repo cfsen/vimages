@@ -1,5 +1,12 @@
 import { CommandSequence } from "@/keyboard/Command";
 
+export enum RustApiAction {
+	GetCurrentPath = "fs_get_current_path",
+	GetDir = "fsx_get_dir",
+	GetAxumPort = "rt_get_axum_port",
+	GetQueueSize = "rt_get_queue_size",
+}
+
 export type EntityImage = {
 	full_path: string;
 	filename: string;

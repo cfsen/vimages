@@ -1,17 +1,14 @@
 import { invoke } from "@tauri-apps/api/core";
 import { createContext, useEffect, useContext } from "react";
 
-import { RustApiAction } from "@filesystem/RustApiBridge";
-import { CommandSequence } from "@keyboard/Command";
-
 import { useAppState } from "./AppContextStore";
 import { NormalModeHandler } from "./ModeHandlers/NormalModeHandler";
 import { CommandModeHandler } from "./ModeHandlers/CommandModeHandler";
 import { VisualModeHandler } from "./ModeHandlers/VisualModeHandler";
 import { InsertModeHandler } from "./ModeHandlers/InsertModeHandler";
-import { NavigationHandle } from "./ContextTypes";
+import { NavigationHandle, RustApiAction } from "./ContextTypes";
 
-export type NavigationHandler = (cmd: CommandSequence) => boolean; // returns true if handled
+import { CommandSequence } from "@keyboard/Command";
 
 type AppContextType = {
 	// Navigation container management

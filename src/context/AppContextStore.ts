@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { EntityDirectory, EntityImage, NavigationHandle } from "./ContextTypes";
 import { Modal } from "@keyboard/KeyboardTypes";
-import { NavigationHandler } from './AppContext';
 
 interface IAppProps {
 	//
@@ -133,7 +132,6 @@ export const useAppState = create<IAppState>((set) => ({
 	setActiveNavigationContext: (id) => set({ activeNavigationContext: id }),
 
 	// Navigation handlers Map
-	//navigationHandlers: new Map<string, NavigationHandler>(),
 	navigationHandlers: new Map<string, NavigationHandle>(),
 	registerNavigationHandler: (id: string, handler: NavigationHandle) => set((state) => {
 		const newMap = new Map(state.navigationHandlers);
