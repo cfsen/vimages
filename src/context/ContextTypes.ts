@@ -1,3 +1,5 @@
+import { CommandSequence } from "@/keyboard/Command";
+
 export type EntityImage = {
 	full_path: string;
 	filename: string;
@@ -12,4 +14,17 @@ export type EntityDirectory = {
 	path_hash: string;
 	images: EntityImage[];
 	sub_dirs: EntityDirectory[];
+}
+
+export type NavigationHandle = {
+	id: string;
+	component: UIComponent;
+	active: boolean;
+	handleNavCmd: (cmd: CommandSequence) => boolean;
+}
+
+export enum UIComponent {
+	fsParentView,
+	fsBrowser,
+	imgGrid,
 }
