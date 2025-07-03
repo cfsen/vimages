@@ -8,7 +8,7 @@ export function NormalModeHandler(seq: CommandSequence){
 		showHelp, 
 		setShowHelp, 
 		activeNavigationContext, 
-		navigationHandlers, 
+		navigationHandlersArray,
 		setActiveNavigationContext 
 	} = useAppState.getState();
 
@@ -51,8 +51,11 @@ export function NormalModeHandler(seq: CommandSequence){
 			console.log("ctx:handleCmd:tab"); 
 			
 			// Cycle registered navigation contexts sequentially
-			const handlerIds = Array.from(navigationHandlers.keys());
+			const handlerIds = navigationHandlersArray
+			.filter((a) => a.active())
+			.map((key) => key.id);
 
+			// TODO: review TODO_NAVCTX_DS
 			if (handlerIds.length > 1) {
 				const currentIndex = activeNavigationContext ? handlerIds.indexOf(activeNavigationContext) : -1;
 				const nextIndex = (currentIndex + 1) % handlerIds.length;
@@ -61,6 +64,9 @@ export function NormalModeHandler(seq: CommandSequence){
 
 				console.log("ctx:active nav context changed:" + nextId);
 				return;
+			}
+			else {
+				console.error("ctx:no active navigation context available!");
 			}
 			break;
 	}
