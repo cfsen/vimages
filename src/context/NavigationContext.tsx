@@ -14,7 +14,7 @@ import { Command, CommandSequence } from "@keyboard/Command";
 
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
 
-export const NavigationProvider = ({ children, component, active }: { children: React.ReactNode, component: UIComponent, active: boolean }) => {
+export const NavigationProvider = ({ children, component, initActive, tabOrder }: { children: React.ReactNode, component: UIComponent, initActive: boolean, tabOrder: number }) => {
 	// Ensure AppContext is available
 	const parentCtx = useContext(AppContext);
 	if (!parentCtx) throw new Error("NavigationProvider must be inside VimagesCtxProvider");
@@ -52,6 +52,13 @@ export const NavigationProvider = ({ children, component, active }: { children: 
 
 	// Generate unique ID for this navigation container
 	const navigationId = useRef(Math.random().toString(36).substring(7));
+
+	//
+	// Active handler
+	//
+	const active = useStore(navigationState, s => s.active);
+	const setActive = useStore(navigationState, s => s.setActive);
+	const isActive = (): boolean => { return navigationState.getState().active; }
 
 	//
 	// Command handler
@@ -140,13 +147,16 @@ export const NavigationProvider = ({ children, component, active }: { children: 
 	//
 
 	useEffect(() => {
+		setActive(initActive);
 		setNavCtxId(navigationId.current);
 		console.log("navctx:register_navctx_id", navigationState.getState().navigationContextId);
 		parentCtx.registerNavigationContainer(navigationId.current, {
 			id: navigationId.current,
 			component,
 			handleNavCmd: handleNavigationCmd,
-			active
+			active: isActive,
+			setActive,
+			tabOrder,
 		});
 		//parentCtx.registerNavigationContainer(navigationId.current, handleNavigationCmd);
 		return () => {
@@ -188,7 +198,11 @@ export const NavigationProvider = ({ children, component, active }: { children: 
 
 			navItemActive,
 		}}>
-			{children}
+			<div style={{
+				display: active ? 'block' : 'none'
+			}}>
+				{children}
+			</div>
 		</NavigationContext.Provider>
 	);
 };
