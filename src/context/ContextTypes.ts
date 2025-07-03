@@ -26,7 +26,9 @@ export type EntityDirectory = {
 export type NavigationHandle = {
 	id: string;
 	component: UIComponent;
-	active: boolean;
+	active: () => boolean;
+	tabOrder: number;
+	setActive: (state: boolean) => boolean;
 	handleNavCmd: (cmd: CommandSequence) => boolean;
 }
 
