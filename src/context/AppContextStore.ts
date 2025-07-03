@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { EntityDirectory, EntityImage, NavigationHandle } from "./ContextTypes";
+import { EntityDirectory, EntityImage, NavigationHandle, UIComponent } from "./ContextTypes";
 import { Modal } from "@keyboard/KeyboardTypes";
 
 interface IAppProps {
@@ -38,6 +38,8 @@ interface IAppProps {
 	// Navigation contexts
 	// key_navctx
 	navigationHandlers: Map<string, NavigationHandle>
+	navigationHandlersByComp: Map<UIComponent, NavigationHandle>
+	navigationHandlersArray: NavigationHandle[]
 	activeNavigationContext: string | null
 }
 
@@ -131,25 +133,50 @@ export const useAppState = create<IAppState>((set) => ({
 	activeNavigationContext: "",
 	setActiveNavigationContext: (id) => set({ activeNavigationContext: id }),
 
-	// Navigation handlers Map
+	// Navigation handlers maps and arrays
+	// TODO: review TODO_NAVCTX_DS
+	// sub-optimal approach to accessing navctx based on different properties
+	// performant, but sub-par readability
+	// leaving as is for now to unblock progress on workspaces
 	navigationHandlers: new Map<string, NavigationHandle>(),
+	navigationHandlersArray: [],
+	navigationHandlersByComp: new Map<UIComponent, NavigationHandle>(),
 	registerNavigationHandler: (id: string, handler: NavigationHandle) => set((state) => {
 		const newMap = new Map(state.navigationHandlers);
+		const newCompMap = new Map(state.navigationHandlersByComp);
+		const newArray = [...state.navigationHandlersArray, handler]
+		.sort((a, b) => a.tabOrder - b.tabOrder);
+
 		newMap.set(id, handler);
+		newCompMap.set(handler.component, handler);
 
 		// If this is the first container, make it active
-		const updates: Partial<IAppState> = { navigationHandlers: newMap };
+		const updates: Partial<IAppState> = { 
+			navigationHandlers: newMap,
+			navigationHandlersByComp: newCompMap,
+			navigationHandlersArray: newArray
+		};
 		if (newMap.size === 1 && !state.activeNavigationContext) {
 			updates.activeNavigationContext = id;
 		}
-
 		return updates;
 	}),
 	unregisterNavigationHandler: (id: string) => set((state) => {
-		const newMap = new Map(state.navigationHandlers);
-		newMap.delete(id);
+		const handler = state.navigationHandlers.get(id);
+		if (!handler) return state;
 
-		const updates: Partial<IAppState> = { navigationHandlers: newMap };
+		const newMap = new Map(state.navigationHandlers);
+		const newCompMap = new Map(state.navigationHandlersByComp);
+		const newArray = state.navigationHandlersArray.filter(h => h !== handler);
+
+		newMap.delete(id);
+		newCompMap.delete(handler.component);
+
+		const updates: Partial<IAppState> = { 
+			navigationHandlers: newMap,
+			navigationHandlersByComp: newCompMap,
+			navigationHandlersArray: newArray
+		};
 
 		// If we removed the active container, pick a new one
 		if (state.activeNavigationContext === id) {
