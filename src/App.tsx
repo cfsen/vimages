@@ -48,12 +48,22 @@ function App() {
 			<HelpOverlay />
 			<VimageFullscreen />
 			<div className="colContainer">
-				<NavigationProvider component={UIComponent.fsBrowser} active={true}>
+				<NavigationProvider 
+					key="np_fsBrowser" 
+					component={UIComponent.fsBrowser} 
+					initActive={true} 
+					tabOrder={0}
+				>
 					<FileSystemBrowser />
 				</NavigationProvider>
 				<div className="col">
 					<div className="row">
-						<NavigationProvider component={UIComponent.imgGrid} active={true}>
+						<NavigationProvider 
+							key="np_imgGrid" 
+							component={UIComponent.imgGrid} 
+							initActive={true} 
+							tabOrder={1}
+						>
 							<VimageGrid />
 						</NavigationProvider>
 					</div>
