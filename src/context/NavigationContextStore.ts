@@ -6,6 +6,7 @@ interface INavigationStateProps {
 	navItems: NavigationItem[],
 	navItemsPerRow: number,
 	navItemActive: string | null,
+	active: boolean,
 }
 
 export interface INavigationState extends INavigationStateProps {
@@ -18,6 +19,7 @@ export interface INavigationState extends INavigationStateProps {
 	setNavItemActive: (item: string | null) => void,
 
 	setItemsPerRow: (perRow: number) => void,
+	setActive: (state: boolean) => boolean,
 }
 
 export type NavigationState = ReturnType<typeof createNavigationState>
@@ -27,7 +29,8 @@ export const createNavigationState = (initProps?: Partial<INavigationState>) => 
 		navigationContextId: "",
 		navItems: [],
 		navItemsPerRow: 1,
-		navItemActive: null
+		navItemActive: null,
+		active: true,
 	}
 	return createStore<INavigationState>()((set) => ({
 		...DEFAULT_PROPS,
@@ -50,5 +53,10 @@ export const createNavigationState = (initProps?: Partial<INavigationState>) => 
 		setNavItemActive: (item: string | null) => set(() => ({ navItemActive: item })),
 
 		setItemsPerRow: (perRow: number) => set({ navItemsPerRow: perRow }),
+
+		setActive: (state: boolean) => { 
+			set({active: state});
+			return state;
+		}
 	}));
 }
