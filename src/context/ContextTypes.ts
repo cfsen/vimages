@@ -38,3 +38,8 @@ export enum UIComponent {
 	fsBrowser,
 	imgGrid,
 }
+
+export type Workspaces = {
+	DirBrowser: boolean;
+	ImgGrid: boolean;
+}

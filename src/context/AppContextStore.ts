@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { EntityDirectory, EntityImage, NavigationHandle, UIComponent } from "./ContextTypes";
+import { EntityDirectory, EntityImage, NavigationHandle, UIComponent, Workspaces } from "./ContextTypes";
 import { Modal } from "@keyboard/KeyboardTypes";
 
 interface IAppProps {
@@ -21,6 +21,7 @@ interface IAppProps {
 	// UI state
 	// key_uistate
 	mode: Modal
+	workspace: Workspaces
 
 	fullscreenImage: boolean
 	fullscreenImagePath: string
@@ -63,6 +64,8 @@ export interface IAppState extends IAppProps {
 	// UI state
 	// key_uistate
 	setMode: (mode: Modal) => void
+	setWorkspace: (ws: keyof Workspaces, active: boolean) => void
+	toggleWorkspace: (ws: keyof Workspaces) => void
 
 	setFullscreenImage: (bool: boolean) => void
 	setFullscreenImagePath: (path: string) => void
@@ -111,6 +114,26 @@ export const useAppState = create<IAppState>((set) => ({
 	// key_uistate
 	mode: Modal.Normal,
 	setMode: (mode) => set({ mode: mode }),
+	workspace: {
+		DirBrowser: false,
+		ImgGrid: false,
+	},
+	setWorkspace: (ws, active) => {
+		set((state) => ({
+			workspace: {
+				...state.workspace,
+				[ws]: active
+			},
+		}));
+	},
+	toggleWorkspace: (ws) => {
+		set((state) => ({
+			workspace: {
+				...state.workspace,
+				[ws]: !state.workspace[ws] 
+			},
+		}));
+	},
 
 	fullscreenImage: false,
 	setFullscreenImage: (bool) => set({ fullscreenImage: bool }),
