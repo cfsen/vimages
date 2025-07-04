@@ -21,6 +21,7 @@ export type EntityDirectory = {
 	path_hash: string;
 	images: EntityImage[];
 	sub_dirs: EntityDirectory[];
+	sibling_dirs: EntityDirectory[];
 }
 
 export type NavigationHandle = {

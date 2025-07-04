@@ -14,6 +14,7 @@ interface IAppProps {
 	currentDir: string
 	currentDirHash: string | null
 	directories: EntityDirectory[]
+	siblingDirs: EntityDirectory[]
 	images: EntityImage[]
 
 	//
@@ -55,6 +56,7 @@ export interface IAppState extends IAppProps {
 	setCurrentDir: (dir: string) => void
 	setCurrentDirHash: (hash: string | null) => void
 	setDirectories: (dirs: EntityDirectory[]) => void
+	setSiblingDirs: (dirs: EntityDirectory[]) => void
 	setImages: (images: EntityImage[]) => void
 
 	//
@@ -99,6 +101,8 @@ export const useAppState = create<IAppState>((set) => ({
 	setCurrentDirHash: (hash) => set({ currentDirHash: hash }),
 	directories: [],
 	setDirectories: (dirs) => set({ directories: dirs }),
+	siblingDirs: [],
+	setSiblingDirs: (dirs) => set({ siblingDirs: dirs }),
 	images: [],
 	setImages: (images) => set({ images: images }),
 
