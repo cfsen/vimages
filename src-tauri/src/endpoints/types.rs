@@ -6,8 +6,9 @@ pub struct EntityDirectory {
     pub path: String,
     pub parent_path: Option<String>,
     pub path_hash: String,
-    pub images: Option<Vec<EntityImage>>,
-    pub sub_dirs: Option<Vec<EntityDirectory>>,
+    pub images: Vec<EntityImage>,
+    pub sub_dirs: Vec<EntityDirectory>,
+    pub sibling_dirs: Vec<EntityDirectory>,
 }
 
 #[derive(Serialize, Deserialize)]

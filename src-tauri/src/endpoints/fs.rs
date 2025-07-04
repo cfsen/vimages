@@ -40,14 +40,18 @@ pub fn fsx_get_dir(path: &str, rel_path: Option<&str>) -> Result<EntityDirectory
         return Err("Invalid rel_path".into());
     }
 
-    let parent_dir = match final_path.parent() {
-        Some(parent) => Some(parent.to_string_lossy().to_string()),
-        None => Some("Drives".to_string()),
-    };
-
+    // prepare response
+    let parent_path = final_path.parent()
+        .map(|s| s.to_string_lossy().to_string());
+    let sibling_dirs = final_path.parent()
+        .map(fs_get_directories)
+        .unwrap_or(Ok(Vec::new()))
+        .unwrap_or(Vec::new());
     let path_hash = img_cache::hash::get_path_hash(&final_path);
-    let images = fsx_get_images(&final_path, &path_hash);
-    let sub_dirs = fs_get_directories(&final_path);
+    let images = fsx_get_images(&final_path, &path_hash)
+        .unwrap_or_default();
+    let sub_dirs = fs_get_directories(&final_path)
+        .unwrap_or_default();
 
     // update axum
     let server_state = get_server_state();
@@ -56,7 +60,7 @@ pub fn fsx_get_dir(path: &str, rel_path: Option<&str>) -> Result<EntityDirectory
     // NOTE: debug
     debug!("Opening: {:?}", final_path);
     debug!(" -> Path hash: {:?}", path_hash);
-    debug!(" -> Parent dir: {:?}", parent_dir);
+    debug!(" -> Parent dir: {:?}", parent_path);
 
     let directory = EntityDirectory { 
         name: final_path
@@ -65,10 +69,11 @@ pub fn fsx_get_dir(path: &str, rel_path: Option<&str>) -> Result<EntityDirectory
             .unwrap_or("Unknown")
             .to_string(),
         path: final_path.to_string_lossy().to_string(),
-        parent_path: parent_dir,
+        parent_path,
         path_hash,
-        images: Some(images?),
-        sub_dirs: Some(sub_dirs?),
+        images,
+        sub_dirs,
+        sibling_dirs,
     };
 
     Ok(directory)
@@ -153,8 +158,9 @@ fn fs_get_directories(path: &Path) -> Result<Vec<EntityDirectory>, String> {
                 path: dir_path.to_string_lossy().to_string(),
                 path_hash: img_cache::hash::get_path_hash(&dir_path),
                 parent_path: Some(path.to_string_lossy().to_string()),
-                images: None,
-                sub_dirs: None,
+                images: Vec::new(),
+                sub_dirs: Vec::new(),
+                sibling_dirs: Vec::new(),
             })
         })
         .collect::<Result<Vec<_>, String>>()?;
