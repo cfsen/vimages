@@ -1,8 +1,14 @@
-use std::{path::{ Path, PathBuf }, sync::Arc};
-use tokio::{fs, sync::{mpsc, Mutex}};
-use log::{ info, error, debug };
+use log::{debug, error, info};
+use std::{
+    path::{Path, PathBuf},
+    sync::Arc,
+};
+use tokio::{
+    fs,
+    sync::{mpsc, Mutex},
+};
 
-use crate::img_cache::{ cache, img };
+use crate::img_cache::{cache, img};
 
 #[derive(Debug, Clone)]
 pub struct QueueItem {
@@ -22,10 +28,7 @@ impl Queue {
         let (sender, receiver) = mpsc::unbounded_channel();
         let size = Arc::new(Mutex::new(0));
 
-        let queue = Queue {
-            sender,
-            size,
-        };
+        let queue = Queue { sender, size };
 
         (queue, receiver)
     }
@@ -51,11 +54,10 @@ pub struct QueueWorker;
 
 impl QueueWorker {
     pub async fn start(mut receiver: mpsc::UnboundedReceiver<QueueItem>, size: Arc<Mutex<usize>>) {
-        let cache_path = cache::get_cache_path()
-            .unwrap_or_else(|| {
-                error!("QueueWorker failed to get cache path.");
-                panic!("QueueWorker failed to get cache path.")
-            });
+        let cache_path = cache::get_cache_path().unwrap_or_else(|| {
+            error!("QueueWorker failed to get cache path.");
+            panic!("QueueWorker failed to get cache path.")
+        });
 
         while let Some(item) = receiver.recv().await {
             info!("Generate thumbnail: {}", item.full_path.to_string_lossy());
@@ -67,7 +69,10 @@ impl QueueWorker {
             thumb_path.push(item.path_hash);
 
             if !Path::exists(&thumb_path) {
-                debug!("Path hash does not exist, creating: {}", &thumb_path.to_string_lossy());
+                debug!(
+                    "Path hash does not exist, creating: {}",
+                    &thumb_path.to_string_lossy()
+                );
                 let _ = fs::create_dir(&thumb_path).await;
             }
 

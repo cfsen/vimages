@@ -6,13 +6,13 @@ use axum::{
     routing::get,
     Router,
 };
+use mime_guess::from_path;
 use std::{
     collections::HashMap,
-    path::{Path, PathBuf },
+    path::{Path, PathBuf},
     sync::{Arc, RwLock},
 };
 use tokio::fs;
-use mime_guess::from_path;
 
 use crate::img_cache;
 
@@ -97,7 +97,8 @@ pub async fn start_server(server_state: ServerState) -> u16 {
         .await
         .expect("Failed to bind axum to localhost.");
 
-    let port = listener.local_addr()
+    let port = listener
+        .local_addr()
         .expect("Failed to get local address for axum.")
         .port();
 

@@ -1,8 +1,5 @@
-use sha2::{Sha256, Digest};
-use std::{
-    fs,
-    path::Path
-};
+use sha2::{Digest, Sha256};
+use std::{fs, path::Path};
 
 pub fn get_path_hash(path: &Path) -> String {
     let mut hasher = Sha256::new();

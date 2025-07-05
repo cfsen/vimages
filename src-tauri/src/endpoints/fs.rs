@@ -1,11 +1,11 @@
+use log::{debug, error, info};
+use std::path::{Path, PathBuf};
 use std::{env, fs};
-use std::path::{ Path, PathBuf };
-use log::{ info, error, debug };
 
+use crate::endpoints::types::{EntityDirectory, EntityImage};
+use crate::get_queue;
 use crate::img_cache;
 use crate::{get_server_state, server::set_serve_directory};
-use crate::get_queue;
-use crate::endpoints::types::{ EntityDirectory, EntityImage };
 
 #[tauri::command]
 pub fn fsx_get_dir(path: &str, rel_path: Option<&str>) -> Result<EntityDirectory, String> {
@@ -41,17 +41,15 @@ pub fn fsx_get_dir(path: &str, rel_path: Option<&str>) -> Result<EntityDirectory
     }
 
     // prepare response
-    let parent_path = final_path.parent()
-        .map(|s| s.to_string_lossy().to_string());
-    let sibling_dirs = final_path.parent()
+    let parent_path = final_path.parent().map(|s| s.to_string_lossy().to_string());
+    let sibling_dirs = final_path
+        .parent()
         .map(fs_get_directories)
         .unwrap_or(Ok(Vec::new()))
         .unwrap_or(Vec::new());
     let path_hash = img_cache::hash::get_path_hash(&final_path);
-    let images = fsx_get_images(&final_path, &path_hash)
-        .unwrap_or_default();
-    let sub_dirs = fs_get_directories(&final_path)
-        .unwrap_or_default();
+    let images = fsx_get_images(&final_path, &path_hash).unwrap_or_default();
+    let sub_dirs = fs_get_directories(&final_path).unwrap_or_default();
 
     // update axum
     let server_state = get_server_state();
@@ -62,7 +60,7 @@ pub fn fsx_get_dir(path: &str, rel_path: Option<&str>) -> Result<EntityDirectory
     debug!(" -> Path hash: {:?}", path_hash);
     debug!(" -> Parent dir: {:?}", parent_path);
 
-    let directory = EntityDirectory { 
+    let directory = EntityDirectory {
         name: final_path
             .file_name()
             .and_then(|name| name.to_str())
@@ -86,7 +84,7 @@ fn fsx_get_images(path: &Path, path_hash: &str) -> Result<Vec<EntityImage>, Stri
         .map_err(|e| e.to_string())?
         .filter_map(Result::ok)
         .filter(|entry| entry.path().is_file())
-        .filter(|entry| { 
+        .filter(|entry| {
             entry
                 .path()
                 .extension()
@@ -97,23 +95,22 @@ fn fsx_get_images(path: &Path, path_hash: &str) -> Result<Vec<EntityImage>, Stri
         .map(|entry| -> Result<EntityImage, String> {
             let full_path = entry.path();
             let filename = entry.file_name().to_string_lossy().to_string();
-            let file_hash = img_cache::hash::get_file_hash(&full_path)
-                .map_err(|e| {
-                    error!("Failed to hash: {}: {}", filename, e);
-                    format!("Failed to hash: {}: {}", filename, e) 
-                })?;
+            let file_hash = img_cache::hash::get_file_hash(&full_path).map_err(|e| {
+                error!("Failed to hash: {}: {}", filename, e);
+                format!("Failed to hash: {}: {}", filename, e)
+            })?;
 
-            // TODO: 
+            // TODO:
             // thumbnails should only be generated for larger files
             // consider a separate limit for animated files
 
             let cache = img_cache::cache::check_cache(path_hash, &file_hash);
 
             if cache.is_none() {
-                let queue_item = img_cache::queue::QueueItem { 
+                let queue_item = img_cache::queue::QueueItem {
                     full_path: full_path.to_path_buf(),
                     path_hash: path_hash.to_string().clone(),
-                    file_hash: file_hash.clone()
+                    file_hash: file_hash.clone(),
                 };
                 tauri::async_runtime::spawn(async move {
                     if let Err(e) = get_queue().enqueue(queue_item).await {

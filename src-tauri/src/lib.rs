@@ -1,14 +1,17 @@
-mod server;
 mod endpoints;
 mod img_cache;
+mod server;
 
-use std::{path::PathBuf, sync::{Arc, RwLock, OnceLock}};
-use server::{ServerState, start_server};
 use queue::Queue;
+use server::{start_server, ServerState};
+use std::{
+    path::PathBuf,
+    sync::{Arc, OnceLock, RwLock},
+};
 
-use crate::endpoints::{ 
-    fs::{fsx_get_dir, fs_get_current_path},
-    runtime::{rt_get_axum_port, rt_get_queue_size}
+use crate::endpoints::{
+    fs::{fs_get_current_path, fsx_get_dir},
+    runtime::{rt_get_axum_port, rt_get_queue_size},
 };
 use crate::img_cache::queue;
 
@@ -30,18 +33,23 @@ pub fn get_queue() -> &'static Queue {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_opener::init())
         .setup(move |_app| {
             // Init axum
             tauri::async_runtime::spawn(async move {
                 let server_state: ServerState = Arc::new(RwLock::new(PathBuf::from(".")));
-                GLOBAL_SERVER_STATE.set(server_state.clone()).expect("Failed to register axum state");
+                GLOBAL_SERVER_STATE
+                    .set(server_state.clone())
+                    .expect("Failed to register axum state");
 
                 let port = start_server(server_state).await;
-                GLOBAL_SERVER_PORT.set(port).expect("Failed to register axum port");
+                GLOBAL_SERVER_PORT
+                    .set(port)
+                    .expect("Failed to register axum port");
             });
 
-            // Init queue  
+            // Init queue
             tauri::async_runtime::spawn(async move {
                 let queue = queue::setup_queue().await;
                 GLOBAL_QUEUE.set(queue).expect("Failed to set global queue");
