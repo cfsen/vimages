@@ -1,6 +1,7 @@
 import { CommandSequence, Command } from "@/keyboard/Command";
 import { Modal } from "@keyboard/KeyboardTypes";
 import { useAppState } from "@context/AppContextStore";
+import { nextNavProvider } from "../AppContextStore.actions";
 
 export function NormalModeHandler(seq: CommandSequence){
 	const { 
@@ -8,8 +9,6 @@ export function NormalModeHandler(seq: CommandSequence){
 		showHelp, 
 		setShowHelp, 
 		activeNavigationContext, 
-		navigationHandlersArray,
-		setActiveNavigationContext 
 	} = useAppState.getState();
 
 	switch(seq.cmd){
@@ -49,25 +48,7 @@ export function NormalModeHandler(seq: CommandSequence){
 
 		case Command.Tab:
 			console.log("ctx:handleCmd:tab"); 
-			
-			// Cycle registered navigation contexts sequentially
-			const handlerIds = navigationHandlersArray
-			.filter((a) => a.active())
-			.map((key) => key.id);
-
-			// TODO: review TODO_NAVCTX_DS
-			if (handlerIds.length > 1) {
-				const currentIndex = activeNavigationContext ? handlerIds.indexOf(activeNavigationContext) : -1;
-				const nextIndex = (currentIndex + 1) % handlerIds.length;
-				const nextId = handlerIds[nextIndex];
-				setActiveNavigationContext(nextId);
-
-				console.log("ctx:active nav context changed:" + nextId);
-				return;
-			}
-			else {
-				console.error("ctx:no active navigation context available!");
-			}
+			if(!nextNavProvider(useAppState)) console.error("ctx: no active navigation context available!");
 			break;
 	}
 

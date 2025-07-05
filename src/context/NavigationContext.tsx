@@ -1,4 +1,3 @@
-import { invoke } from "@tauri-apps/api/core";
 import { createContext, useEffect, useRef, useContext } from "react";
 import { useStore } from "zustand";
 
@@ -6,9 +5,10 @@ import { AppContext } from "./AppContext";
 import { useAppState } from "./AppContextStore";
 import { KeyboardCursorHandle } from "./CommandCursorHandler";
 import { NavigableItemType } from "./NavigableItem";
-import { EntityDirectory, UIComponent, RustApiAction } from "./ContextTypes";
+import { UIComponent } from "./ContextTypes";
 import { createNavigationState } from "./NavigationContextStore";
 import { NavigationContextType, NavigationItem } from "./NavigationContextTypes";
+import { getDirectory } from "./AppContextStore.actions";
 
 import { Command, CommandSequence } from "@keyboard/Command";
 
@@ -31,10 +31,6 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 	//
 
 	// global state
-	const setCurrentDir = useAppState(state => state.setCurrentDir);
-	const setCurrentDirHash = useAppState(state => state.setCurrentDirHash);
-	const setImages = useAppState(state => state.setImages);
-	const setDirectories = useAppState(state => state.setDirectories);
 	const setFullscreenImage = useAppState(state => state.setFullscreenImage);
 	const setFullscreenImagePath = useAppState(state => state.setFullscreenImagePath);
 
@@ -88,19 +84,7 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 			.find((i) => i.id === navigationState.getState().navItemActive);
 
 			if(item?.itemType === NavigableItemType.FileBrowser){
-				// TODO: reused code, see: TODO_REUSE_PATH
-				invoke(RustApiAction.GetDir, { 
-					path: useAppState.getState().currentDir, 
-					relPath: item.data 
-				})
-					.then(response => {
-						const res = response as EntityDirectory;
-						setCurrentDir(res.path);
-						setCurrentDirHash(res.path_hash);
-						setImages(res.images);
-						setDirectories(res.sub_dirs);
-					})
-					.catch(console.error);
+				getDirectory(useAppState, item.data);
 				return true;
 			}
 			else if(item?.itemType === NavigableItemType.Image){

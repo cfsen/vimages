@@ -1,11 +1,12 @@
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { invoke } from "@tauri-apps/api/core";
-import { RustApiAction } from "@filesystem/RustApiBridge";
-import { EntityDirectory } from "@context/ContextTypes";
 
-import { Command, CommandSequence } from "@/keyboard/Command";
 import { useAppState } from "@context/AppContextStore";
-import { Modal } from "@/keyboard/KeyboardTypes";
+import { getDirectory, setNavProviderActive } from "@context/AppContextStore.actions"
+import { RustApiAction, UIComponent } from "@context/ContextTypes";
+
+import { Command, CommandSequence } from "@keyboard/Command";
+import { Modal } from "@keyboard/KeyboardTypes";
 
 const paramCommands = [":set", ":e"];
 
@@ -17,10 +18,6 @@ export function CommandModeHandler(input: string, sequence: CommandSequence){
 		setMode,
 		setShowHelp,
 		setInputBufferCommand,
-		setCurrentDir,
-		setCurrentDirHash,
-		setImages,
-		setDirectories,
 		setFullscreenImage,
 	} = useAppState.getState();
 
@@ -46,27 +43,12 @@ export function CommandModeHandler(input: string, sequence: CommandSequence){
 		console.log("issplitCommand: " + split.cmd, split.param);
 		switch(split.cmd){
 			case ":e":
+				// TODO: windows: parse d: -> D:\ (handle in rust)
 				// TODO: path hints while typing
-				// TODO: maintain a hashmap of which directory was traversed to maintain cursor selection
 				
 				// exit fullscreen on directory traversal
 				setFullscreenImage(false);
-
-				// TODO: windows: parse d: -> D:\ (handle in rust)
-				// TODO: reused code, see: TODO_REUSE_PATH
-				invoke(RustApiAction.GetDir, {
-					path: useAppState.getState().currentDir,
-					relPath: split.param.join(" ") 
-				})
-					.then(response => {
-						const res = response as EntityDirectory;
-						setCurrentDir(res.path);
-						setCurrentDirHash(res.path_hash);
-						setImages(res.images);
-						setDirectories(res.sub_dirs);
-					})
-					// TODO: error handling on invalid paths
-					.catch(console.error);
+				getDirectory(useAppState, split.param.join(" "));
 				break;
 			case ":set":
 				// TODO: further implementation blocked by config file/unified command type TODO_CONFIG_FILE
@@ -75,18 +57,15 @@ export function CommandModeHandler(input: string, sequence: CommandSequence){
 					console.log("no keyword");
 					break;
 				}
-				
 				if(split.param[0] !== "imgscale") {
 					console.log("incorrect keyword");
 					break;
 				}
-
 				// output value 
 				if(split.param.length === 1) {
 					console.log("No value for param, output current value: " + imageGridScale);
 					break;
 				}
-
 				// set value
 				console.log(`Setting value: ${input}`);
 				setImageGridScale(Number(split.param[1]));
