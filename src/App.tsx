@@ -14,6 +14,7 @@ import { useAppState } from "./context/AppContextStore";
 import HelpOverlay from "./components/HelpOverlay";
 import TitleBar from "./components/Titlebar";
 import { UIComponent } from "./context/ContextTypes";
+import DirBrowser from "./components/fs/dir.browser";
 
 function App() {
 	const { handleModeVisual, handleModeNormal, handleModeInsert, handleModeCommand } = useGlobalCtx();
@@ -47,21 +48,14 @@ function App() {
 			<TitleBar />
 			<HelpOverlay />
 			<VimageFullscreen />
+			<DirBrowser />
 			<div className="colContainer">
-				<NavigationProvider 
-					key="np_fsBrowser" 
-					component={UIComponent.fsBrowser} 
-					initActive={true} 
-					tabOrder={0}
-				>
-					<FileSystemBrowser />
-				</NavigationProvider>
 				<div className="col">
 					<div className="row">
 						<NavigationProvider 
 							key="np_imgGrid" 
 							component={UIComponent.imgGrid} 
-							initActive={true} 
+							initActive={false} 
 							tabOrder={1}
 						>
 							<VimageGrid />

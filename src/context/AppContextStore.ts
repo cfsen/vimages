@@ -115,7 +115,7 @@ export const useAppState = create<IAppState>((set) => ({
 	mode: Modal.Normal,
 	setMode: (mode) => set({ mode: mode }),
 	workspace: {
-		DirBrowser: false,
+		DirBrowser: true,
 		ImgGrid: false,
 	},
 	setWorkspace: (ws, active) => {

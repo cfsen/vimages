@@ -2,7 +2,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import { invoke } from "@tauri-apps/api/core";
 
 import { useAppState } from "@context/AppContextStore";
-import { getDirectory, setNavProviderActive } from "@context/AppContextStore.actions"
+import { getDirectory, nextNavProvider, setNavProviderActive } from "@context/AppContextStore.actions"
 import { RustApiAction, UIComponent } from "@context/ContextTypes";
 
 import { Command, CommandSequence } from "@keyboard/Command";
@@ -35,6 +35,38 @@ export function CommandModeHandler(input: string, sequence: CommandSequence){
 			break;
 		case ":help":
 			setShowHelp(true);
+			break;
+		case ":queue":
+			invoke(RustApiAction.GetQueueSize, {})
+				.then(res => {
+					console.log("Queue: ", res);
+				});
+			break;
+		case ":dbg all":
+			useAppState.getState().navigationHandlers.forEach((s) => {
+				console.log("comp:" + s.component + " state:" + s.active() + " new:" + !s.active());
+				s.setActive(!s.active());
+			});
+			break;
+		case ":ws1":
+			useAppState.getState().setWorkspace("DirBrowser", false);
+			setNavProviderActive(useAppState, UIComponent.imgGrid, true);
+			setNavProviderActive(useAppState, UIComponent.fsBrowser, false);
+			setNavProviderActive(useAppState, UIComponent.dirBrowserParent, false);
+			setNavProviderActive(useAppState, UIComponent.dirBrowserMain, false);
+			setNavProviderActive(useAppState, UIComponent.dirBrowserPreview, false);
+			nextNavProvider(useAppState);
+			break;
+		case ":ws2":
+			useAppState.getState().setWorkspace("DirBrowser", true);
+			setNavProviderActive(useAppState, UIComponent.imgGrid, false);
+			setNavProviderActive(useAppState, UIComponent.fsBrowser, false);
+			setNavProviderActive(useAppState, UIComponent.dirBrowserParent, true);
+			setNavProviderActive(useAppState, UIComponent.dirBrowserMain, true);
+			setNavProviderActive(useAppState, UIComponent.dirBrowserPreview, true);
+			// TODO: quick fix to select dir.browsers.main navprovider
+			nextNavProvider(useAppState);
+			nextNavProvider(useAppState);
 			break;
 	};
 
