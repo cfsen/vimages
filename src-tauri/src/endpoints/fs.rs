@@ -9,31 +9,16 @@ use crate::{get_server_state, server::set_serve_directory};
 
 #[tauri::command]
 pub fn fsx_get_dir(path: &str, rel_path: Option<&str>) -> Result<EntityDirectory, String> {
-    let path_buf = PathBuf::from(path);
-
     info!("fsx_get_dir: {} -> {}", path, rel_path.unwrap_or("None"));
 
+    let path_buf = PathBuf::from(path);
+
     if !path_buf.exists() || !path_buf.is_dir() {
+        error!("Invalid path");
         return Err("Invalid path".into());
     }
 
-    let final_path = if let Some(rel) = rel_path {
-        match rel {
-            ".." => {
-                if let Some(parent) = path_buf.parent() {
-                    parent.to_path_buf()
-                }
-                else {
-                    return Err("No parent directory".into());
-                }
-            },
-            "." => path_buf,
-            _ => path_buf.join(rel)
-        }
-    }
-    else {
-        path_buf
-    };
+    let final_path = fsx_parse_path_traversal(&path_buf, rel_path.unwrap_or("."))?;
 
     if !final_path.exists() || !final_path.is_dir() {
         error!("Invalid rel_path: {:?}", final_path);
@@ -75,6 +60,20 @@ pub fn fsx_get_dir(path: &str, rel_path: Option<&str>) -> Result<EntityDirectory
     };
 
     Ok(directory)
+}
+
+fn fsx_parse_path_traversal(path: &Path, rel_path: &str) -> Result<PathBuf, String> {
+    match rel_path {
+        ".." => Ok(path
+            .parent()
+            .ok_or("No parent directory")?
+            .canonicalize()
+            .map_err(|e| e.to_string())?),
+        _ => Ok(path
+            .join(rel_path)
+            .canonicalize()
+            .map_err(|e| e.to_string())?),
+    }
 }
 
 fn fsx_get_images(path: &Path, path_hash: &str) -> Result<Vec<EntityImage>, String> {
