@@ -37,6 +37,9 @@ export enum UIComponent {
 	fsParentView,
 	fsBrowser,
 	imgGrid,
+	dirBrowserParent,
+	dirBrowserMain,
+	dirBrowserPreview,
 }
 
 export type Workspaces = {

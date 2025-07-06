@@ -1,0 +1,110 @@
+.fsElement {
+	text-align: left;
+	padding: 0.1em 0.5em;
+}
+.fsElementOpen {
+	text-align: left;
+	padding: 0.1em 0.5em;
+}
+.fsElementOpen::after {
+    content: "";
+    float: right;
+    width: 0.8em;
+    height: 0.8em;
+    background-color: var(--neutral-500);
+    margin-left: auto;
+	margin-top: 0.38em;
+}
+
+.fsBgBorder {
+	border: 0.5em solid rgba(0,0,0,0.3);
+	background-color: rgba(0,0,0,0.3);
+}
+
+.fsFlexColumn {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.fsFlexRow {
+	display: flex;
+	align-items: flex-start;
+	justify-content: flex-start;
+}
+
+.fsBrowser {
+	padding: 0em 1.5em 1.5em 1.5em;
+	min-width: calc(400px + 16em);
+	max-width: calc(1200px + 32em);
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+	flex-wrap: wrap;
+}
+
+.fsImgBox {
+	width: 400px;
+	max-height: 400px;
+}
+.fsImgPreview {
+	max-width: 400px;
+	max-height: 400px;
+	object-fit: cover;
+}
+
+.fsHeaderPath {
+	padding-bottom: 0.75em;
+}
+
+.fsBrowserContainer {
+	padding: 3em;
+}
+
+.fsParentColumn {
+	max-width: 16em;
+	min-width: 16em;
+}
+.fsActiveColumn {
+	max-width: 16em;
+	min-width: 16em;
+}
+.fsPreview {
+	display: grid;
+	grid-template-columns: repeat(3, 400px);
+	justify-content: center;
+}
+
+@media (max-width: 1800px) {
+	.fsPreview {
+		grid-template-columns: repeat(2, 400px);
+	}
+	.fsBrowser {
+		width: calc(800px + 32em);
+	}
+}
+@media (max-width: 1440px) {
+	.fsPreview {
+		grid-template-columns: repeat(2, 400px);
+	}
+	.fsParentColumn {
+		display: none;
+		width: 0;
+	}
+	.fsBrowser {
+		width: calc(800px + 16em);
+	}
+}
+@media (max-width: 1180px) {
+	.fsPreview {
+		grid-template-columns: repeat(1, 400px);
+	}
+	.fsParentColumn {
+		display: none;
+		width: 0;
+	}
+	.fsBrowser {
+		width: calc(400px + 16em);
+	}
+}
