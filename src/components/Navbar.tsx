@@ -1,5 +1,8 @@
 import { useAppState } from "@context/AppContextStore";
 import { Modal } from "@keyboard/KeyboardTypes";
+
+import { windowsUncStrip } from "./utility.general";
+
 import styles from "./Navbar.module.css";
 
 function Navbar() {
@@ -12,7 +15,7 @@ function Navbar() {
 			case Modal.Command:
 				return inputBufferCommand;
 			default:
-				return currentDir;
+				return windowsUncStrip(currentDir);
 		};
 	};
 
