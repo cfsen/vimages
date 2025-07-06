@@ -6,24 +6,11 @@ import { useCommand } from "@context/NavigationContext";
 import Vimage from "./Vimage";
 
 import styles from "./Vimage.module.css";
-import { EntityImage } from "@/context/ContextTypes";
-
-function fromCache(img: EntityImage, path_hash: string | null, axum_port: string | null) {
-	if(axum_port === null) {
-		// TODO: error handling, show to user
-		console.log("axum unavailable!");
-	}
-
-	if(!img.has_thumbnail || path_hash === null) {
-		return `http://127.0.0.1:${axum_port}/image?file=${img.filename}`;
-	}
-	return `http://127.0.0.1:${axum_port}/cache/${path_hash}/${img.img_hash}`;
-}
+import { getImgFromCache } from "@context/api/axum.img.actions";
 
 const VimageGrid: React.FC = () => {
 	const images = useAppState(state => state.images);
 	const path_hash = useAppState(state => state.currentDirHash);
-	const axum_port = useAppState(state => state.axum_port);
 
 	const squareBaseSize = useAppState(state => state.imageGridSize);
 	const scale = useAppState(state => state.imageGridScale);
@@ -43,7 +30,9 @@ const VimageGrid: React.FC = () => {
 
 	useEffect(() => {
 		const fullSize = squareBaseSize * scale + 18; // account for padding between elements
-		const perRow = Math.floor((containerWidth-350) / fullSize); // account for filesystem sidebar
+		// TODO: needs to be an option if sidebar+grid will continue being a workspace
+		//const perRow = Math.floor((containerWidth-350) / fullSize); // account for filesystem sidebar
+		const perRow = Math.floor((containerWidth) / fullSize); // account for filesystem sidebar
 
 		setItemsPerRow(perRow);
 	}, [containerWidth, scale]);
@@ -80,7 +69,7 @@ const VimageGrid: React.FC = () => {
 									border: '1px solid rgba(0,0,0,0.3)',
 								}}
 							>
-								<Vimage id={"vimage" + idx} src={fromCache(img, path_hash, axum_port)} />
+								<Vimage id={"vimage" + idx} src={getImgFromCache(img, path_hash) } />
 								<div className={styles.imgFilename}>
 									{img.filename}
 								</div>
