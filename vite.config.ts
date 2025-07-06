@@ -32,10 +32,17 @@ export default defineConfig(async () => ({
 	resolve: {
 		alias: {
 			"@": "/src",
+
 			"@context": "/src/context",
+			"@app": "/src/context/app",
+			"@key": "/src/context/key",
+			"@nav": "/src/context/nav",
+
 			"@components": "/src/components",
-			"@filesystem": "/src/filesystem",
-			"@keyboard": "/src/keyboard",
+			"@fs": "/src/components/fs",
+			"@img": "/src/components/img",
+			"@ui": "/src/components/ui",
+
 		},
 	}
 }));

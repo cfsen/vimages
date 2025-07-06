@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 
-import { useAppState } from "@context/AppContextStore";
-import { NavigableItem, NavigableItemType } from "@context/NavigableItem";
-import { useCommand } from "@context/NavigationContext";
+import { useAppState } from "@app/app.context.store";
+import { useCommand } from "@nav/nav.provider";
+import { NavigableItem, NavigableItemType } from "@nav/nav.element.wrapper";
 
 import styles from "./fs.module.css";
 

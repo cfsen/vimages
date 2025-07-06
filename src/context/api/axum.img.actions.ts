@@ -1,5 +1,5 @@
-import { EntityImage } from "@context/ContextTypes";
-import { useAppState } from "@context/AppContextStore";
+import { useAppState } from "@app/app.context.store";
+import { EntityImage } from "@context/context.types";
 
 export function getImgFromCache(img: EntityImage, path_hash: string | null) {
 	let axum_port = useAppState.getState().axum_port;

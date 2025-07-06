@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 
-import { useAppState } from "@/context/AppContextStore";
-import { NavigationProvider } from "@context/NavigationContext";
-import { UIComponent } from "@/context/ContextTypes";
+import { useAppState } from "@app/app.context.store";
+import { NavigationProvider } from "@nav/nav.provider";
+import { UIComponent } from "@/context/context.types";
 
 import DirBrowserParent from "./dir.browser.parent";
 import DirBrowserMain from "./dir.browser.main";
 import DirBrowserCurrentPreview from "./dir.browser.preview";
 
-import styles from "./fs.module.css";
 import { windowsUncStrip } from "@components/utility.general";
+
+import styles from "./fs.module.css";
 
 function DirBrowser(){
 	const active = useAppState(s => s.workspace);
