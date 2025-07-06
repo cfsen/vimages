@@ -89,21 +89,6 @@ const VimageGrid: React.FC = () => {
 					);
 				})}
 			</div>
-			{
-				// TODO: should be settable via :set imgscale 
-				//<label>
-				//	Scale:
-				//	<input
-				//		type="range"
-				//		min="0.5"
-				//		max="3"
-				//		step="0.1"
-				//		value={scale}
-				//		onChange={(e) => setScale(Number(e.target.value))}
-				//	/>
-				//</label>
-				//<p>Squares per row: {itemsPerRow}</p>
-			}
 		</div>
 	);
 };
