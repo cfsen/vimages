@@ -31,6 +31,7 @@ export type NavigationHandle = {
 	tabOrder: number;
 	setActive: (state: boolean) => boolean;
 	handleNavCmd: (cmd: CommandSequence) => boolean;
+	getRegisteredElements: () => number;
 }
 
 export enum UIComponent {

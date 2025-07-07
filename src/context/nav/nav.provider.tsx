@@ -57,6 +57,8 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 	const setActive = useStore(navigationState, s => s.setActive);
 	const isActive = (): boolean => { return navigationState.getState().active; }
 
+	const getRegisteredElements = (): number => { return navigationState.getState().navItems.length }
+
 	//
 	// Command handler
 	//
@@ -142,8 +144,8 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 			active: isActive,
 			setActive,
 			tabOrder,
+			getRegisteredElements
 		});
-		//parentCtx.registerNavigationContainer(navigationId.current, handleNavigationCmd);
 		return () => {
 			parentCtx.unregisterNavigationContainer(navigationId.current);
 		};

@@ -15,10 +15,9 @@ export function nextNavProvider(store: StoreApi<IAppState>): boolean {
 	// TODO: needs to check if a navctx has any selectable elements, and skip if it doesnt
 	const handlerIds = store.getState().navigationHandlersArray
 	.filter((a) => a.active() === true)
+	.filter((a) => a.getRegisteredElements() > 0)
 	.sort((a,b) => a.tabOrder-b.tabOrder)
 	.map((key) => key.id)
-
-	console.log(handlerIds);
 
 	// TODO: review TODO_NAVCTX_DS
 	if (handlerIds.length >= 1) {
