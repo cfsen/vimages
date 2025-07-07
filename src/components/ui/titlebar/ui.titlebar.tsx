@@ -7,7 +7,7 @@ function TitleBar() {
 
 	return (
 		<div className={styles.titlebar} data-tauri-drag-region>
-			<div className={styles.titlebarTitle}>vimages 0.1.2</div>
+			<div className={styles.titlebarTitle}>vimages 0.1.3</div>
 			<div className={styles.titlebarButtons}>
 				<div className={styles.titlebarButton} onClick={() => currentWindow.minimize()}>
 					−
