@@ -44,7 +44,6 @@ export function getDirectory(store: StoreApi<IAppState>, relPath: string){
 			store.getState().setSiblingDirs(res.sibling_dirs);
 			console.log(res);
 		})
-		.catch(console.error);
 		.catch((e) => {
 			console.error(e);
 			raiseError(store, e);

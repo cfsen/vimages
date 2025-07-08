@@ -40,11 +40,6 @@ export function NormalModeHandler(seq: CommandSequence){
 			console.log("ctx:handleCmd:escape");
 			break;
 
-		case Command.Leader:
-			console.log("ctx:handleCmd:leader");
-			//setShowLeader(!showLeader);
-			break;
-
 		case Command.Error:
 			console.log("ctx:handleCmd:error");
 			raiseError(useAppState, "Unrecognized input. TODO: Make a toggle for this specific error.");
