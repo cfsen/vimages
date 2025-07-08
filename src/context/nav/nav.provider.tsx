@@ -184,6 +184,8 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 			setItemsPerRow,
 
 			navItemActive,
+			active,
+			setActive,
 		}}>
 			<div style={{
 				display: active ? 'block' : 'none'

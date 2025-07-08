@@ -11,6 +11,9 @@ export type NavigationContextType = {
 	
 	itemsPerRow: number;
 	setItemsPerRow: (n: number) => void;
+
+	active: boolean;
+	setActive: (active: boolean) => void;
 };
 
 export type NavigationItem = {
