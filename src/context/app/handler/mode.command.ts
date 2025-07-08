@@ -2,9 +2,9 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import { invoke } from "@tauri-apps/api/core";
 
 import { useAppState } from "@app/app.context.store";
-import { getDirectory, nextNavProvider, setNavProviderActive } from "@app/app.context.actions"
+import { getDirectory } from "@app/app.context.actions"
 
-import { RustApiAction, UIComponent } from "@context/context.types";
+import { RustApiAction } from "@context/context.types";
 
 import { Command, CommandSequence } from "@key/key.command";
 import { Modal } from "@key/key.types";
@@ -48,26 +48,6 @@ export function CommandModeHandler(input: string, sequence: CommandSequence){
 				console.log("comp:" + s.component + " state:" + s.active() + " new:" + !s.active());
 				s.setActive(!s.active());
 			});
-			break;
-		case ":ws1":
-			useAppState.getState().setWorkspace("DirBrowser", false);
-			setNavProviderActive(useAppState, UIComponent.imgGrid, true);
-			setNavProviderActive(useAppState, UIComponent.fsBrowser, false);
-			setNavProviderActive(useAppState, UIComponent.dirBrowserParent, false);
-			setNavProviderActive(useAppState, UIComponent.dirBrowserMain, false);
-			setNavProviderActive(useAppState, UIComponent.dirBrowserPreview, false);
-			nextNavProvider(useAppState);
-			break;
-		case ":ws2":
-			useAppState.getState().setWorkspace("DirBrowser", true);
-			setNavProviderActive(useAppState, UIComponent.imgGrid, false);
-			setNavProviderActive(useAppState, UIComponent.fsBrowser, false);
-			setNavProviderActive(useAppState, UIComponent.dirBrowserParent, true);
-			setNavProviderActive(useAppState, UIComponent.dirBrowserMain, true);
-			setNavProviderActive(useAppState, UIComponent.dirBrowserPreview, true);
-			// TODO: quick fix to select dir.browsers.main navprovider
-			nextNavProvider(useAppState);
-			nextNavProvider(useAppState);
 			break;
 	};
 

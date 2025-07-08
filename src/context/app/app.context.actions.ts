@@ -55,3 +55,31 @@ export function raiseError(store: StoreApi<IAppState>, error: string){
 	store.getState().setShowError(true);
 	store.getState().setErrorMsg(error);
 }
+
+// TODO: improve logic when more workspaces are added TODO_WORKSPACE_SELECTION
+export function nextWorkspace(store: StoreApi<IAppState>){
+	const spaces = store.getState().workspace;
+	if(spaces.ImgGrid) {
+		store.getState().setWorkspace("DirBrowser", true);
+		store.getState().setWorkspace("ImgGrid", false);
+		setNavProviderActive(store, UIComponent.imgGrid, false);
+		setNavProviderActive(store, UIComponent.fsBrowser, false);
+		setNavProviderActive(store, UIComponent.dirBrowserParent, true);
+		setNavProviderActive(store, UIComponent.dirBrowserMain, true);
+		setNavProviderActive(store, UIComponent.dirBrowserPreview, true);
+
+		// TODO: quick fix to select dir.browsers.main navprovider
+		nextNavProvider(store);
+		nextNavProvider(store);
+	}
+	else {
+		store.getState().setWorkspace("DirBrowser", false);
+		store.getState().setWorkspace("ImgGrid", true);
+		setNavProviderActive(store, UIComponent.imgGrid, true);
+		setNavProviderActive(store, UIComponent.fsBrowser, false);
+		setNavProviderActive(store, UIComponent.dirBrowserParent, false);
+		setNavProviderActive(store, UIComponent.dirBrowserMain, false);
+		setNavProviderActive(store, UIComponent.dirBrowserPreview, false);
+		nextNavProvider(store);
+	}
+}
