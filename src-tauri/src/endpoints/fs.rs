@@ -66,7 +66,7 @@ fn fsx_parse_path_traversal(path: &Path, rel_path: &str) -> Result<PathBuf, Stri
     match rel_path {
         ".." => Ok(path
             .parent()
-            .ok_or("No parent directory")?
+            .ok_or("No parent directory available.")?
             .canonicalize()
             .map_err(|e| e.to_string())?),
         _ => Ok(path

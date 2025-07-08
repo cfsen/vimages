@@ -28,6 +28,8 @@ interface IAppProps {
 	fullscreenImagePath: string
 
 	showHelp: boolean
+	showError: boolean
+	errorMsg: string
 
 	inputBufferCommand: string
 
@@ -72,6 +74,8 @@ export interface IAppState extends IAppProps {
 	setFullscreenImagePath: (path: string) => void
 
 	setShowHelp: (_: boolean) => void
+	setShowError: (_: boolean) => void
+	setErrorMsg: (_: string) => void
 
 	setInputBufferCommand: (_: string) => void
 	
@@ -143,6 +147,11 @@ export const useAppState = create<IAppState>((set) => ({
 
 	showHelp: false,
 	setShowHelp: (_) => set({ showHelp: _ }),
+	
+	showError: false,
+	setShowError: (bool) => set({ showError: bool }),
+	errorMsg: "",
+	setErrorMsg: (_) => set({ errorMsg: _}),
 
 	inputBufferCommand: ":",
 	setInputBufferCommand: (_) => set({ inputBufferCommand: _ }),

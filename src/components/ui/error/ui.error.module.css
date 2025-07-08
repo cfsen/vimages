@@ -1,0 +1,39 @@
+.uiErrorPopup {
+	position: fixed;
+	bottom: 6em;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	background: var(--primary-700);
+	border: 0.5em solid var(--dark-1);
+	padding: 1rem;
+	z-index: 1002;
+	opacity: 0.7;
+}
+
+.uiErrorAttentionGrab {
+	width: 3rem;
+	height: 3rem;
+	background-color: var(--primary-600);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+	font-weight: bold;
+	color: white;
+	font-size: 1.2rem;
+}
+
+.uiErrorAttentionGrab::before {
+	content: 'ERR';
+	transform: rotate(-45deg);
+	display: block;
+}
+
+.uiErrorDescription {
+	font-size: 1rem;
+	color: var(--neutral-400);
+	font-weight: 500;
+}

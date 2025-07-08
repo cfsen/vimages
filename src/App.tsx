@@ -13,6 +13,7 @@ import Navbar from "@ui/navbar/ui.navbar";
 import HelpOverlay from "@ui/help/ui.help.overlay";
 import TitleBar from "@ui/titlebar/ui.titlebar";
 import DirBrowser from "@fs/dir.browser";
+import ErrorPopup from "./components/ui/error/ui.error";
 
 function App() {
 	const { handleModeVisual, handleModeNormal, handleModeInsert, handleModeCommand } = useGlobalCtx();
@@ -45,6 +46,7 @@ function App() {
 		>
 			<TitleBar />
 			<HelpOverlay />
+			<ErrorPopup />
 			<VimageFullscreen />
 			<DirBrowser />
 			<div className="colContainer">

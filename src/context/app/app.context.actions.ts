@@ -45,5 +45,14 @@ export function getDirectory(store: StoreApi<IAppState>, relPath: string){
 			console.log(res);
 		})
 		.catch(console.error);
+		.catch((e) => {
+			console.error(e);
+			raiseError(store, e);
+		});
 }
 
+export function raiseError(store: StoreApi<IAppState>, error: string){
+	console.log("raiseError() called");
+	store.getState().setShowError(true);
+	store.getState().setErrorMsg(error);
+}

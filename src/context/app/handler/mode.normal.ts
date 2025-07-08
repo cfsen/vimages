@@ -1,5 +1,5 @@
 import { useAppState } from "@app/app.context.store";
-import { nextNavProvider } from "@app/app.context.actions";
+import { nextNavProvider, raiseError } from "@app/app.context.actions";
 
 import { CommandSequence, Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
@@ -9,6 +9,8 @@ export function NormalModeHandler(seq: CommandSequence){
 		setMode, 
 		showHelp, 
 		setShowHelp, 
+		showError,
+		setShowError,
 		activeNavigationContext, 
 	} = useAppState.getState();
 
@@ -45,12 +47,18 @@ export function NormalModeHandler(seq: CommandSequence){
 
 		case Command.Error:
 			console.log("ctx:handleCmd:error");
+			raiseError(useAppState, "Unrecognized input. TODO: Make a toggle for this specific error.");
 			break;
 
 		case Command.Tab:
 			console.log("ctx:handleCmd:tab"); 
 			if(!nextNavProvider(useAppState)) console.error("ctx: no active navigation context available!");
 			break;
+	}
+
+	// Hide any errors
+	if(showError) {
+		setShowError(false);
 	}
 
 	// Navigation commands - delegate to active container
