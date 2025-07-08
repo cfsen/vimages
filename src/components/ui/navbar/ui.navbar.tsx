@@ -20,12 +20,25 @@ function Navbar() {
 		};
 	};
 
+	const outputMode = (): string => {
+		switch(mode){
+			case Modal.Normal:
+				return "Normal";
+			case Modal.Leader:
+				return "Leader";
+			case Modal.Command:
+				return "Command";
+			case Modal.Insert:
+				return "Insert";
+			case Modal.Visual:
+				return "Visual";
+		}
+	}
+
 	return(
 		<div className={styles.navbar_container}>
-			<div
-				className={mode !== Modal.Normal ? styles.navbar_mode_active : styles.navbar_mode}
-			>
-				{ Modal[mode] }
+			<div className={mode !== Modal.Normal ? styles.navbar_mode_active : styles.navbar_mode}>
+				{ outputMode() }
 			</div>
 			<div className={mode === Modal.Command ? styles.navbar_text_command : styles.navbar_text}>
 				{ outputText() }
