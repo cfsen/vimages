@@ -27,9 +27,18 @@ export function populateCommandMap(): Map<string,Command>{
 	commandMap.set('I', Command.ModeInsertPrefix);
 	commandMap.set('A', Command.ModeInsertSuffix);
 
+	commandMap.set(' ', Command.Leader);
+	commandMap.set('  ', Command.Return);
+	commandMap.set(' w', Command.WorkspaceNext);
+	commandMap.set(' W', Command.WorkspaceNext);
+
 	commandMap.set(':', Command.Console);
 
 	commandMap.set('q', Command.Debug);
+
+	commandMap.set('s', Command.WorkspaceNext);
+	commandMap.set('S', Command.WorkspacePrev);
+
 
 	return commandMap;
 }
@@ -82,5 +91,8 @@ export enum Command {
 	PageDown,
 
 	CenterView,
+
+	WorkspaceNext,
+	WorkspacePrev,
 }
 

@@ -4,6 +4,7 @@ export enum Modal {
 	Visual,
 	Insert,
 	Command,
+	Leader,
 }
 export interface modeNormal {
 	callback: (sequence: CommandSequence) => void;

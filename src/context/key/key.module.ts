@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { staticCommands, possibleCommands, assembleCommand, ctrlCommands } from './key.input.parsers';
+import { staticCommands, possibleCommands, assembleCommand, ctrlCommands, possibleLeaderCommands } from './key.input.parsers';
 import { Command, CommandSequence, populateCommandMap } from './key.command';
 import { Modal, modeNormal, modeState, modeInsert, modeVisual, modeCommand } from "./key.types";
 
@@ -49,7 +49,7 @@ export function modalKeyboard(
 					handleModeCommand(cmdHandler, event, commandSequence, setCommandSequence);
 					break;
 				default:
-					handleModeNormal(normalHandler, event, normalSequence, setNormalSequence);
+					handleModeNormal(normalHandler, event, normalSequence, setNormalSequence, mode, setModeState);
 					break;
 			};
 		};
@@ -65,7 +65,9 @@ function handleModeNormal(
 	handler: modeNormal,
 	event: KeyboardEvent,
 	sequence: string,
-	setSequence: (seq: string) => void
+	setSequence: (seq: string) => void,
+	mode: Modal,
+	setModeState: (mode: Modal) => void,
 ) {
 	let checkStaticCmds = staticCommands(event);
 	if(statics.includes(checkStaticCmds)) {
@@ -102,7 +104,14 @@ function handleModeNormal(
 	setSequence(newSeq);
 
 	// Check if there are any more possible commands
-	let possibleCmds = possibleCommands(newSeq, commandMap);
+	let possibleCmds;
+	if(mode === Modal.Leader) {
+		possibleCmds = possibleLeaderCommands(newSeq, commandMap);
+	}
+	else {
+		possibleCmds = possibleCommands(newSeq, commandMap);
+	}
+
 	if(possibleCmds > 1){
 		return;
 	}
@@ -114,19 +123,37 @@ function handleModeNormal(
 		};
 		handler.callback?.(tmp);
 		setSequence("");
+
+		// escape leader mode if command is invalid
+		if(mode === Modal.Leader) {
+			setModeState(Modal.Normal);
+			console.error("No valid leader command for combination");
+		}
 		return;
 	}
 
 	// possibleCmds must be 1
 	const tmp = assembleCommand(newSeq, commandMap);
 
+	// return without clearing and change mode if command was leader
+	if(tmp.cmd === Command.Leader){
+		setModeState(Modal.Leader);
+		return;
+	}
+	
 	// Avoid sending partial commands ('g', 'z' -> finalized next run with 'gg', 'zz')
 	if(tmp.cmd === Command.PartialInput) {
+		console.log("no callback");
 		return;
 	}
 
 	handler.callback?.(tmp);
 	setSequence("");
+
+	// Exit leader if leader command was sent
+	if(mode === Modal.Leader) {
+		setModeState(Modal.Normal);
+	}
 }
 function handleModeVisual(
 	handler: modeVisual,

@@ -9,7 +9,6 @@ export function staticCommands(input: KeyboardEvent): Command {
 		case 'Alt':		return Command.Ignore;
 		case 'Shift':	return Command.Ignore;
 		case ':':		return Command.Console;
-		case ' ':		return Command.Leader;
 		default:		return Command.None;
 	}
 }
@@ -33,6 +32,10 @@ export function possibleCommands(input: string, commandMap: Map<string,Command>)
 	let cmd = commandMap.get(input.substring(lastNumberIdx+1, input.length));
 	if(cmd === undefined) return 0;
 	return 1;
+}
+export function possibleLeaderCommands(input: string, commandMap: Map<string,Command>): number {
+	return Array.from(commandMap.keys())
+	.filter((a) => a.slice(0,input.length) === input).length;
 }
 
 export function assembleCommand(input: string, commandMap: Map<string,Command>): CommandSequence {

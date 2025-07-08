@@ -13,6 +13,7 @@ import Navbar from "@ui/navbar/ui.navbar";
 import HelpOverlay from "@ui/help/ui.help.overlay";
 import TitleBar from "@ui/titlebar/ui.titlebar";
 import DirBrowser from "@fs/dir.browser";
+import Leader from "./components/ui/leader/ui.leader";
 import ErrorPopup from "./components/ui/error/ui.error";
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
 			data-tauri-drag-region
 		>
 			<TitleBar />
+			<Leader />
 			<HelpOverlay />
 			<ErrorPopup />
 			<VimageFullscreen />
