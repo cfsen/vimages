@@ -11,7 +11,7 @@ function DirBrowserCurrentPreview(){
 		return (
 			<div className={styles.fsPreview}>
 				{imgs.slice(0,6).map((img, index) => (
-					<div className={styles.fsImgBox}>
+					<div className={styles.fsImgBox} key={"fs.dir.browser.preview.imgbox.i." + index + ".h." + path_hash}>
 						<img 
 							key={"fs.dir.browser.preview.i." + index + ".h." + img.img_hash} 
 							src={getImgFromCache(img, path_hash)} 
