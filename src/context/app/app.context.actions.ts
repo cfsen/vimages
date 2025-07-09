@@ -42,7 +42,6 @@ export function getDirectory(store: StoreApi<IAppState>, relPath: string){
 			store.getState().setImages(res.images);
 			store.getState().setDirectories(res.sub_dirs);
 			store.getState().setSiblingDirs(res.sibling_dirs);
-			console.log(res);
 		})
 		.catch((e) => {
 			console.error(e);
@@ -51,7 +50,6 @@ export function getDirectory(store: StoreApi<IAppState>, relPath: string){
 }
 
 export function raiseError(store: StoreApi<IAppState>, error: string){
-	console.log("raiseError() called");
 	store.getState().setShowError(true);
 	store.getState().setErrorMsg(error);
 }
