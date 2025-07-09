@@ -1,5 +1,3 @@
-import { NavigableItemType } from "./nav.element.wrapper";
-
 export type NavigationContextType = {
 	//cmdLog: CommandSequence[];
 	navCtxId: string;
@@ -19,7 +17,11 @@ export type NavigationContextType = {
 export type NavigationItem = {
 	id: string;
 	ref: React.RefObject<HTMLElement>;
-	itemType: NavigableItemType;
+	itemType: NavWrapperItemType;
 	data: string;
 };
 
+export enum NavWrapperItemType {
+	Image,
+	FileBrowser,
+}

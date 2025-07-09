@@ -7,8 +7,7 @@ import { KeyboardCursorHandle } from "@app/app.cursor.handler";
 import { getDirectory } from "@app/app.context.actions";
 
 import { createNavigationState } from "./nav.provider.store";
-import { NavigableItemType } from "./nav.element.wrapper";
-import { NavigationContextType, NavigationItem } from "./nav.types";
+import { NavigationContextType, NavWrapperItemType, NavigationItem } from "@nav/nav.types";
 
 import { UIComponent } from "@context/context.types";
 import { Command, CommandSequence } from "@key/key.command";
@@ -86,11 +85,11 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 			let item  = navigationState.getState().navItems
 			.find((i) => i.id === navigationState.getState().navItemActive);
 
-			if(item?.itemType === NavigableItemType.FileBrowser){
+			if(item?.itemType === NavWrapperItemType.FileBrowser){
 				getDirectory(useAppState, item.data);
 				return true;
 			}
-			else if(item?.itemType === NavigableItemType.Image){
+			else if(item?.itemType === NavWrapperItemType.Image){
 				console.log("Setting fullscreen image path to: " + item.data);
 				setFullscreenImage(true);
 				setFullscreenImagePath(item.data);

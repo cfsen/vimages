@@ -1,57 +1,37 @@
 import { useEffect, useRef } from "react";
 
 import { useAppState } from "@app/app.context.store";
-import { useCommand } from "./nav.provider";
+import { useCommand } from "@nav/nav.provider";
 
-function scrollToElementCenteredSmoothly(el: HTMLElement, duration = 150) {
+import { NavWrapperItemType } from "@nav/nav.types";
+
+function scrollToCursor(el: HTMLElement){
 	const rect = el.getBoundingClientRect();
 	const targetY = window.scrollY + rect.top - (window.innerHeight / 2) + (rect.height / 2);
-	const startY = window.scrollY;
-	const diff = targetY - startY;
 
-	let startTime: number | null = null;
-
-	function easeInOutQuad(t: number) {
-		return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-	}
-
-	function step(timestamp: number) {
-		if (startTime === null) startTime = timestamp;
-		const elapsed = timestamp - startTime;
-		const progress = Math.min(elapsed / duration, 1);
-		const ease = easeInOutQuad(progress);
-
-		window.scrollTo(0, startY + diff * ease);
-
-		if (elapsed < duration) {
-			requestAnimationFrame(step);
-		}
-	}
-
-	requestAnimationFrame(step);
-}
-
-export enum NavigableItemType {
-	Image,
-	FileBrowser,
+	scrollTo({
+		left: 0,
+		top: targetY,
+		behavior: "smooth",
+	});
 }
 
 interface NavigableItemProps {
 	id: string;
 	children: React.ReactNode;
-	itemType: NavigableItemType;
+	itemType: NavWrapperItemType;
 	data: string;
 	parentNavCtxId: string;
 }
 
-export const NavigableItem: React.FC<NavigableItemProps> = ({ 
+export const NavWrapper: React.FC<NavigableItemProps> = ({ 
 	id, 
 	children, 
 	itemType, 
 	data,
 	parentNavCtxId
 }) => {
-	const activeNavigationContext = useAppState(state => state.activeNavigationContext);
+	const activeNavigationContext = useAppState(state => state.activeNavigationContext === parentNavCtxId);
 	const ref = useRef<HTMLDivElement>(null);
 	const { navItemActive , navUnregister , navRegister } = useCommand();
 
@@ -61,21 +41,14 @@ export const NavigableItem: React.FC<NavigableItemProps> = ({
 	}, [id]);
 
 	useEffect(() => {
-		//console.log("navigable effect:", navItemActive);
 		if(navItemActive === id && ref.current){
-			scrollToElementCenteredSmoothly(ref.current);
-			// TODO: allow opt in to no animations:
-			//ref.current.scrollIntoView({
-			//  behavior: 'smooth',
-			//  block: 'center',
-			//  inline: 'nearest',
-			//});
+			scrollToCursor(ref.current);
 		}
 	}, [navItemActive]);
 
 	// TODO: move to css
 	const getItemColor = (): string => { 
-		if(navItemActive === id && activeNavigationContext === parentNavCtxId)
+		if(navItemActive === id && activeNavigationContext)
 			return 'var(--primary-700)';
 			//return '#4c606d';
 		if(navItemActive === id)

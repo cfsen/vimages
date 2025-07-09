@@ -2,7 +2,9 @@ import { useEffect } from "react";
 
 import { useAppState } from "@app/app.context.store";
 import { useCommand } from "@nav/nav.provider";
-import { NavigableItem, NavigableItemType } from "@nav/nav.element.wrapper";
+
+import { NavWrapper } from "@nav/nav.element.wrapper";
+import { NavWrapperItemType } from "@/context/nav/nav.types";
 
 import styles from "./fs.module.css";
 
@@ -20,23 +22,23 @@ function DirBrowserMain(){
 					<div className={styles.fsElement}>
 						./
 					</div>
-			<NavigableItem
+			<NavWrapper
 				key={"fileBrowserItemGoParentDir.h." + currentDirHash}
 				id={"fileBrowserItemGoParentDir"}
-				itemType={NavigableItemType.FileBrowser}
+				itemType={NavWrapperItemType.FileBrowser}
 				data={".."}
 				parentNavCtxId={navCtxId} 
 			>
 				<div key={"fbrowseridxGoParentDir"} className={styles.fsElement}>
 					..
 				</div>
-			</NavigableItem>
+			</NavWrapper>
 
 			{directories.map((entry, index) => (
-				<NavigableItem
+				<NavWrapper
 					key={"fileBrowserItem" + index + "_" + entry.path_hash}
 					id={"fileBrowserItem" + index + "_" + entry.path_hash}
-					itemType={NavigableItemType.FileBrowser}
+					itemType={NavWrapperItemType.FileBrowser}
 					data={entry.name}
 					parentNavCtxId={navCtxId} 
 				>
@@ -45,7 +47,7 @@ function DirBrowserMain(){
 						className={styles.fsElement}>
 						{entry.name}
 					</div>
-				</NavigableItem>
+				</NavWrapper>
 			))}
 		</div>
 	);

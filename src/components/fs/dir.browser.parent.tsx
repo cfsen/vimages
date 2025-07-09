@@ -2,10 +2,12 @@ import { useEffect } from "react";
 
 import { useAppState } from "@app/app.context.store";
 import { useCommand } from "@nav/nav.provider";
-import { NavigableItem, NavigableItemType } from "@nav/nav.element.wrapper";
+import { nextNavProvider } from "@/context/app/app.context.actions";
+
+import { NavWrapper } from "@nav/nav.element.wrapper";
+import { NavWrapperItemType } from "@/context/nav/nav.types";
 
 import styles from "./fs.module.css";
-import { nextNavProvider } from "@/context/app/app.context.actions";
 
 function DirBrowserParentSiblings(){
 	const parent_siblings = useAppState(s => s.siblingDirs);
@@ -41,17 +43,17 @@ function DirBrowserParentSiblings(){
 					../
 				</div>
 				{parent_siblings.map((dir, idx) => (
-					<NavigableItem
+					<NavWrapper
 						key={"fs.dir.browser.parent.i." + idx + ".h." + dir.path_hash}
 						id={"fs.dir.browser.parent.i." + idx + ".h." + dir.path_hash}
-						itemType={NavigableItemType.FileBrowser}
+						itemType={NavWrapperItemType.FileBrowser}
 						data={"../" + dir.name}
 						parentNavCtxId={navCtxId}
 					>
 						<div className={path === dir.path ? styles.fsElementOpen : styles.fsElement}>
 							{dir.name}
 						</div>
-					</NavigableItem>
+					</NavWrapper>
 				))}
 			</div>
 		);

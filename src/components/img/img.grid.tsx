@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 
 import { useAppState } from "@app/app.context.store";
 import { getImgFromCache } from "@context/api/axum.img.actions";
-import { NavigableItem, NavigableItemType } from "@nav/nav.element.wrapper";
 import { useCommand } from "@nav/nav.provider";
 
+import { NavWrapper } from "@nav/nav.element.wrapper";
+import { NavWrapperItemType } from "@/context/nav/nav.types";
 import Vimage from "./img";
 
 import styles from "./img.module.css";
@@ -51,10 +52,10 @@ const VimageGrid: React.FC = () => {
 				{images.map((img, idx) => {
 
 					return (
-						<NavigableItem
+						<NavWrapper
 							key={"imgGrid" + idx + "_" + img.img_hash}
 							id={"imgGrid" + idx + "_" + img.img_hash}
-							itemType={NavigableItemType.Image}
+							itemType={NavWrapperItemType.Image}
 							data={img.filename}
 							parentNavCtxId={navCtxId}
 						>
@@ -75,7 +76,7 @@ const VimageGrid: React.FC = () => {
 									{img.filename}
 								</div>
 							</div>
-						</NavigableItem>
+						</NavWrapper>
 					);
 				})}
 			</div>
