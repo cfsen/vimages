@@ -8,6 +8,7 @@ import styles from "./fs.module.css";
 
 function DirBrowserMain(){
 	const directories = useAppState(state => state.directories);
+	const currentDirHash = useAppState(state => state.currentDirHash);
 	const { setItemsPerRow, navCtxId } = useCommand();
 
 	useEffect(() => {
@@ -20,7 +21,7 @@ function DirBrowserMain(){
 						./
 					</div>
 			<NavigableItem
-				key={"fileBrowserItemGoParentDir"}
+				key={"fileBrowserItemGoParentDir.h." + currentDirHash}
 				id={"fileBrowserItemGoParentDir"}
 				itemType={NavigableItemType.FileBrowser}
 				data={".."}
