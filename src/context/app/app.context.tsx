@@ -2,7 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { createContext, useEffect, useContext } from "react";
 
 import { useAppState } from "./app.context.store";
-import { getDirectory } from "./app.context.actions";
+import { getDirectory, nextNavProvider } from "./app.context.actions";
 
 import { NormalModeHandler } from "@app/handler/mode.normal";
 import { CommandModeHandler } from "@app/handler/mode.command";
@@ -38,6 +38,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 		//	.then(res => { setCurrentDir(res as string) });
 		getDirectory(useAppState, ".");
 		useAppState.getState().setWorkspace("DirBrowser", true);
+		nextNavProvider(useAppState);
 	}, []);
 
 	//
