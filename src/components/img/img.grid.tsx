@@ -19,7 +19,7 @@ const VimageGrid: React.FC = () => {
 	const { itemsPerRow, setItemsPerRow, navCtxId } = useCommand();
 	const [containerWidth, setContainerWidth] = useState(window.innerWidth);
 
-	// Resize handler
+	// TODO: Resize handler TODO_MOVE_RESIZE_EVENT
 	useEffect(() => {
 		const handleResize = () => {
 			setContainerWidth(window.innerWidth);

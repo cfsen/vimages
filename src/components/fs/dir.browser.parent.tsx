@@ -5,11 +5,30 @@ import { useCommand } from "@nav/nav.provider";
 import { NavigableItem, NavigableItemType } from "@nav/nav.element.wrapper";
 
 import styles from "./fs.module.css";
+import { nextNavProvider } from "@/context/app/app.context.actions";
 
 function DirBrowserParentSiblings(){
 	const parent_siblings = useAppState(s => s.siblingDirs);
 	const path = useAppState(s => s.currentDir);
-	const { setItemsPerRow, navCtxId } = useCommand();
+	const { active, setActive, setItemsPerRow, navCtxId } = useCommand();
+
+	// Resize handler
+	useEffect(() => {
+		const handleResize = () => {
+			if(!active && window.innerWidth <= 1440) {
+				return;
+			}
+			if(active && window.innerWidth <= 1440) {
+				nextNavProvider(useAppState);
+				setActive(false);
+				return;
+			}
+			setActive(true);
+		};
+		window.addEventListener('resize', handleResize);
+		handleResize();
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
 
 	useEffect(() => {
 		setItemsPerRow(1);
