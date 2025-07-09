@@ -1,5 +1,5 @@
 import { useAppState } from "@app/app.context.store";
-import { nextNavProvider, nextWorkspace, raiseError } from "@app/app.context.actions";
+import { getDirectory, nextNavProvider, nextWorkspace, raiseError } from "@app/app.context.actions";
 
 import { CommandSequence, Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
@@ -28,6 +28,10 @@ export function NormalModeHandler(seq: CommandSequence){
 		case Command.Console:
 			console.log("MODE SWAP -> Commmand");
 			setMode(Modal.Command);
+			break;
+
+		case Command.Refresh:
+			getDirectory(useAppState, ".");
 			break;
 
 		case Command.WorkspaceNext:

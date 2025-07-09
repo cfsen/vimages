@@ -39,6 +39,8 @@ export function populateCommandMap(): Map<string,Command>{
 	commandMap.set('s', Command.WorkspaceNext);
 	commandMap.set('S', Command.WorkspacePrev);
 
+	commandMap.set('R', Command.Refresh);
+
 
 	return commandMap;
 }
@@ -91,6 +93,7 @@ export enum Command {
 	PageDown,
 
 	CenterView,
+	Refresh,
 
 	WorkspaceNext,
 	WorkspacePrev,
