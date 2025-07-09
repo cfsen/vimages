@@ -1,6 +1,7 @@
 use image::{self, codecs::webp::WebPEncoder, ImageReader};
 use std::{fs::File, path::Path};
 
+// TODO: TODO_RS_CTHUMB
 pub fn create_thumbnail(org_path: &Path, thumb_path: &Path) -> Result<bool, image::ImageError> {
     let img = ImageReader::open(org_path)?.decode()?;
 

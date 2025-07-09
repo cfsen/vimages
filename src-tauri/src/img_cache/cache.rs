@@ -1,7 +1,6 @@
 use log::{debug, error, info};
 use std::{
-    fs,
-    path::{Path, PathBuf},
+    fs, io::ErrorKind, path::{Path, PathBuf}
 };
 
 /*
@@ -43,6 +42,25 @@ pub fn get_cache_path() -> Option<PathBuf> {
     }
 
     Some(cache_path)
+}
+
+pub async fn get_cache_path_async() -> Result<PathBuf, std::io::Error> {
+    let mut path = dirs::cache_dir()
+        .ok_or_else(|| std::io::Error::new(ErrorKind::NotFound, "App local data directory not found"))?;
+
+    path.push(".vimages");
+    path.push("cache");
+
+    match tokio::fs::create_dir_all(&path).await {
+        Ok(_) => {},
+        Err(e) if e.kind() == ErrorKind::AlreadyExists => {},
+        Err(e) => {
+            error!("Failed to create cache directory {:?}: {}", path, e);
+            return Err(e);
+        }
+    }
+
+    Ok(path)
 }
 
 pub fn check_cache(path_hash: &str, file_hash: &str) -> Option<bool> {
