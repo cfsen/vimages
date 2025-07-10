@@ -5,7 +5,7 @@ import { getImgFromCache } from "@context/api/axum.img.actions";
 import { useCommand } from "@nav/nav.provider";
 
 import { NavWrapper } from "@nav/nav.element.wrapper";
-import { NavWrapperItemType } from "@/context/nav/nav.types";
+import { NavWrapperItemType } from "@nav/nav.types";
 import Vimage from "./img";
 
 import styles from "./img.module.css";
@@ -17,7 +17,7 @@ const VimageGrid: React.FC = () => {
 	const squareBaseSize = useAppState(state => state.imageGridSize);
 	const scale = useAppState(state => state.imageGridScale);
 
-	const { itemsPerRow, setItemsPerRow, navCtxId } = useCommand();
+	const { itemsPerRow, setItemsPerRow } = useCommand();
 	const [containerWidth, setContainerWidth] = useState(window.innerWidth);
 
 	// TODO: Resize handler TODO_MOVE_RESIZE_EVENT
@@ -57,7 +57,6 @@ const VimageGrid: React.FC = () => {
 							id={"imgGrid" + idx + "_" + img.img_hash}
 							itemType={NavWrapperItemType.Image}
 							data={img.filename}
-							parentNavCtxId={navCtxId}
 						>
 							<div
 								style={{

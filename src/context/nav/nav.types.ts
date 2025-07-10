@@ -1,3 +1,6 @@
+import { StoreApi } from "zustand";
+import { INavigationState } from "./nav.provider.store";
+
 export type NavigationContextType = {
 	//cmdLog: CommandSequence[];
 	navCtxId: string;
@@ -12,6 +15,8 @@ export type NavigationContextType = {
 
 	active: boolean;
 	setActive: (active: boolean) => void;
+
+	navigationState: StoreApi<INavigationState>;
 };
 
 export type NavigationItem = {
@@ -24,4 +29,10 @@ export type NavigationItem = {
 export enum NavWrapperItemType {
 	Image,
 	FileBrowser,
+}
+
+export enum NavWrapperUIState {
+	Active,
+	InactiveProvider,
+	Inactive
 }

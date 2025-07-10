@@ -1,0 +1,12 @@
+.navElementWrapperActive {
+	background-color: var(--primary-700);
+	margin: 'auto';
+}
+.navElementWrapperInactiveProvider {
+	background-color: var(--neutral-800);
+	margin: 'auto';
+}
+.navElementWrapperInactive {
+	background-color: var(--neutral-900);
+	margin: 'auto';
+}

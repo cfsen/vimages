@@ -11,7 +11,7 @@ import styles from "./fs.module.css";
 function DirBrowserMain(){
 	const directories = useAppState(state => state.directories);
 	const currentDirHash = useAppState(state => state.currentDirHash);
-	const { setItemsPerRow, navCtxId } = useCommand();
+	const { setItemsPerRow } = useCommand();
 
 	useEffect(() => {
 		setItemsPerRow(1);
@@ -27,7 +27,6 @@ function DirBrowserMain(){
 				id={"fileBrowserItemGoParentDir"}
 				itemType={NavWrapperItemType.FileBrowser}
 				data={".."}
-				parentNavCtxId={navCtxId} 
 			>
 				<div key={"fbrowseridxGoParentDir"} className={styles.fsElement}>
 					..
@@ -40,7 +39,6 @@ function DirBrowserMain(){
 					id={"fileBrowserItem" + index + "_" + entry.path_hash}
 					itemType={NavWrapperItemType.FileBrowser}
 					data={entry.name}
-					parentNavCtxId={navCtxId} 
 				>
 					<div 
 						key={"fbrowseridx" + index + "_" + entry.path_hash} 

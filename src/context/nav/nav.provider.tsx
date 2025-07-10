@@ -154,14 +154,34 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 	// Child navigation element registration
 	//
 
+	// default cursor to first nav element
 	useEffect(() => {
 		if(navItems.length > 0) setNavItemActive(navItems[0].id);
 	}, [navItems]);
 
+	// scroll to cursor
+	useEffect(() => {
+		const cursorElement = navItems
+		.filter((a) => a.id === navItemActive);
+
+		if(cursorElement.length !== 1 || cursorElement[0].ref.current === null) return;
+
+		const rect = cursorElement[0].ref.current.getBoundingClientRect();
+		const targetY = window.scrollY + rect.top - (window.innerHeight / 2) + (rect.height / 2);
+
+		scrollTo({
+			left: 0,
+			top: targetY,
+			behavior: "smooth",
+		});
+	}, [navItemActive]);
+
+	// nav element registration
 	const navRegister = (navItem: NavigationItem) => {
 		registerNavItem(navItem);
 	};
 
+	// nav element unregistration
 	const navUnregister = (id: string) => {
 		if(navItems.length === 1) setNavItemActive(null);
 		unregisterNavItem(id);
@@ -175,6 +195,7 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 		<NavigationContext.Provider value={{ 
 			//cmdLog, 
 			navCtxId,
+			navigationState,
 
 			navRegister,
 			navUnregister,
