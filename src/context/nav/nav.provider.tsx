@@ -108,6 +108,18 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 			navigationState.getState().navItemActive
 		);
 		if(cur != null)  {
+			if(component === UIComponent.dirBrowserMain && seq.cmd === Command.CursorLeft){
+				getDirectory(useAppState, "..");
+				return true;
+			}
+			if(component === UIComponent.dirBrowserMain && seq.cmd === Command.CursorRight){
+				let path  = navigationState.getState().navItems
+				.find((i) => i.id === navigationState.getState().navItemActive);
+				if(path !== undefined) {
+					getDirectory(useAppState, path.data)
+					return true;
+				}
+			}
 			// update cursor position
 			navigationState.getState().setNavItemActive(
 				navigationState.getState().navItems[cur].id
