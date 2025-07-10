@@ -72,38 +72,32 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 		if(seq.cmd === Command.Debug){
 			console.log(">>> Active NavigationContext (" + navigationId.current + ")");
 			console.log("> Instanced Zustand store:", navigationState.getState());
+			return true;
 		}
 
 		// TODO: refactor out
 		if(seq.cmd === Command.Escape){
 			if(useAppState.getState().fullscreenImage)
 				setFullscreenImage(false);
+			return true;
 		}
 		if(seq.cmd === Command.Return){
-			console.log("navctx:handleCmd:return:currentDir: " + useAppState.getState().currentDir);
-
 			let item  = navigationState.getState().navItems
 			.find((i) => i.id === navigationState.getState().navItemActive);
 
 			if(item?.itemType === NavWrapperItemType.FileBrowser){
 				getDirectory(useAppState, item.data);
-				return true;
 			}
 			else if(item?.itemType === NavWrapperItemType.Image){
-				console.log("Setting fullscreen image path to: " + item.data);
 				setFullscreenImage(true);
 				setFullscreenImagePath(item.data);
 			}
+			return true;
 		}
 		if(seq.cmd === Command.Error){
 			console.log("navctx:handleCmd:error");
 
 			return false;
-		}
-
-		// Handle no available elements being selected: move cursor to first element.
-		if(navigationState.getState().navItemActive === null && navItems.length > 0) {
-			setNavItemActive(navItems[0].id);
 		}
 
 		// Navigation keys
