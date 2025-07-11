@@ -8,6 +8,7 @@ interface IAppProps {
 	// Backend
 	// key_backend
 	axum_port: string | null
+	vimages_version: string
 
 	//
 	// Current directory, subdirectories and images
@@ -53,6 +54,7 @@ export interface IAppState extends IAppProps {
 	// Backend
 	// key_backend
 	setAxumPort: (port: string) => void
+	setVimagesVersion: (version: string) => void
 
 	//
 	// Current directory, subdirectories and images
@@ -99,6 +101,8 @@ export const useAppState = create<IAppState>((set) => ({
 	// key_backend
 	axum_port: null,
 	setAxumPort: (port) => set({ axum_port: port }),
+	vimages_version: "",
+	setVimagesVersion: (version) => set({ vimages_version: version }),
 
 	//
 	// Current directory, subdirectories and images

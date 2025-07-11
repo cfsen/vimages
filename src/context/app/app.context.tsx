@@ -11,6 +11,7 @@ import { InsertModeHandler } from "@app/handler/mode.insert";
 import { NavigationHandle, RustApiAction } from "@context/context.types";
 
 import { CommandSequence } from "@key/key.command";
+import { getVersion } from "@tauri-apps/api/app";
 
 type AppContextType = {
 	// Navigation container management
@@ -29,6 +30,7 @@ export const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
 	//const setCurrentDir = useAppState(state => state.setCurrentDir);
 	const setAxumPort = useAppState(state => state.setAxumPort);
+	const setVersion = useAppState(state => state.setVimagesVersion);
 
 	useEffect(() => {
 		invoke(RustApiAction.GetAxumPort)
@@ -39,6 +41,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 		getDirectory(useAppState, ".");
 		useAppState.getState().setWorkspace("DirBrowser", true);
 		nextNavProvider(useAppState);
+		getVersion().then(setVersion);
 	}, []);
 
 	//

@@ -1,13 +1,17 @@
 import { getCurrentWindow } from '@tauri-apps/api/window';
 
 import styles from "./ui.titlebar.module.css";
+import { useAppState } from '@/context/app/app.context.store';
 
 function TitleBar() {
 	const currentWindow = getCurrentWindow();
+	const version = useAppState(state => state.vimages_version);
 
 	return (
 		<div className={styles.titlebar} data-tauri-drag-region>
-			<div className={styles.titlebarTitle}>vimages 0.1.3</div>
+			<div className={styles.titlebarTitle}>
+				vimages {version}
+			</div>
 			<div className={styles.titlebarButtons}>
 				<div className={styles.titlebarButton} onClick={() => currentWindow.minimize()}>
 					−
