@@ -1,6 +1,7 @@
 mod endpoints;
 mod img_cache;
 mod server;
+mod user_config;
 
 use queue::Queue;
 use server::{start_server, ServerState};
@@ -14,6 +15,7 @@ use crate::endpoints::{
     runtime::{rt_get_axum_port, rt_get_queue_size},
 };
 use crate::img_cache::queue;
+use crate::user_config::vimages_config;
 
 static GLOBAL_SERVER_STATE: OnceLock<ServerState> = OnceLock::new();
 static GLOBAL_SERVER_PORT: OnceLock<u16> = OnceLock::new();
@@ -62,6 +64,8 @@ pub fn run() {
             fsx_get_dir,
             rt_get_axum_port,
             rt_get_queue_size,
+            vimages_config::save_config,
+            vimages_config::get_or_create_config,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

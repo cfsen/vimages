@@ -5,6 +5,8 @@ export enum RustApiAction {
 	GetDir = "fsx_get_dir",
 	GetAxumPort = "rt_get_axum_port",
 	GetQueueSize = "rt_get_queue_size",
+	GetConfig = "get_or_create_config",
+	SaveConfig = "save_config",
 }
 
 export type EntityImage = {
