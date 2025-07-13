@@ -7,6 +7,7 @@ import { KeyboardCursorHandle } from "@app/app.cursor.handler";
 import { getDirectory } from "@app/app.context.actions";
 
 import { createNavigationState } from "./nav.provider.store";
+import { scrollToActive } from "@nav/nav.provider.actions";
 import { NavigationContextType, NavWrapperItemType, NavigationItem } from "@nav/nav.types";
 
 import { UIComponent } from "@context/context.types";
@@ -149,7 +150,7 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 			active: isActive,
 			setActive,
 			tabOrder,
-			getRegisteredElements
+			getRegisteredElements,
 		});
 		return () => {
 			parentCtx.unregisterNavigationContainer(navigationId.current);
@@ -167,20 +168,14 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 
 	// scroll to cursor
 	useEffect(() => {
-		const cursorElement = navItems
-		.filter((a) => a.id === navItemActive);
-
-		if(cursorElement.length !== 1 || cursorElement[0].ref.current === null) return;
-
-		const rect = cursorElement[0].ref.current.getBoundingClientRect();
-		const targetY = window.scrollY + rect.top - (window.innerHeight / 2) + (rect.height / 2);
-
-		scrollTo({
-			left: 0,
-			top: targetY,
-			behavior: "smooth",
-		});
+		scrollToActive(navigationState);
 	}, [navItemActive]);
+
+	// scroll to cursor on display
+	useEffect(() => {
+		if(active)
+			scrollToActive(navigationState);
+	}, [active]);
 
 	// nav element registration
 	const navRegister = (navItem: NavigationItem) => {

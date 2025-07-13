@@ -12,3 +12,19 @@ export function activeNavWrapper(navProviderStore: StoreApi<INavigationState>, a
 
 	return NavWrapperUIState.Active;
 }
+
+export function scrollToActive(navProvider: StoreApi<INavigationState>){
+	const cursorElement = navProvider.getState().navItems
+	.filter((a) => a.id === navProvider.getState().navItemActive);
+
+	if(cursorElement.length !== 1 || cursorElement[0].ref.current === null) return;
+
+	const rect = cursorElement[0].ref.current.getBoundingClientRect();
+	const targetY = window.scrollY + rect.top - (window.innerHeight / 2) + (rect.height / 2);
+
+	scrollTo({
+		left: 0,
+		top: targetY,
+		behavior: "smooth",
+	});
+}
