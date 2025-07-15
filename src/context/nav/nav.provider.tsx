@@ -7,11 +7,12 @@ import { KeyboardCursorHandle } from "@app/app.cursor.handler";
 import { getDirectory } from "@app/app.context.actions";
 
 import { createNavigationState } from "./nav.provider.store";
-import { scrollToActive } from "@nav/nav.provider.actions";
+import { scrollToActive, scrollToActive_Delayed } from "@nav/nav.provider.actions";
 import { NavigationContextType, NavWrapperItemType, NavigationItem } from "@nav/nav.types";
 
 import { UIComponent } from "@context/context.types";
 import { Command, CommandSequence } from "@key/key.command";
+import { platform } from "@tauri-apps/plugin-os";
 
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
 
@@ -173,8 +174,15 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 
 	// scroll to cursor on display
 	useEffect(() => {
-		if(active)
-			scrollToActive(navigationState);
+		if(!active) return;
+
+		// delay scroll call on linux to give DOM time to finish, see: KNOWN_ISSUE_WEBKIT_SCROLLTO
+		if(platform() === 'linux'){
+			scrollToActive_Delayed(navigationState, useAppState);
+			return;
+		}
+
+		scrollToActive(navigationState);
 	}, [active]);
 
 	// nav element registration

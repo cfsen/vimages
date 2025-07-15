@@ -1,6 +1,7 @@
 import { StoreApi } from "zustand";
 import { INavigationState } from "@nav/nav.provider.store";
 import { NavWrapperUIState } from "@nav/nav.types";
+import { IAppState } from "../app/app.context.store";
 
 export function activeNavWrapper(navProviderStore: StoreApi<INavigationState>, activeProvider: boolean, id: string): NavWrapperUIState {
 	let navItemActive = navProviderStore.getState().navItemActive;
@@ -27,4 +28,16 @@ export function scrollToActive(navProvider: StoreApi<INavigationState>){
 		top: targetY,
 		behavior: "smooth",
 	});
+}
+
+export function scrollToActive_Delayed(navProvider: StoreApi<INavigationState>, appStore: StoreApi<IAppState>){
+	// TODO: hoist delay to app context
+
+	// KNOWN_ISSUE_WEBKIT_SCROLLTO
+	// As of July 2025, webkit on Linux fails to calculate the final position of grid elements in time
+	// for scrollToActive to correctly scroll to the element. Adding a slight delay works around the issue,
+	// however this value will likely need to be configurable to account for system speed.
+	setTimeout(() => {
+		scrollToActive(navProvider);
+	}, 100);
 }
