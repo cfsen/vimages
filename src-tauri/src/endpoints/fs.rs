@@ -1,6 +1,6 @@
 use log::{debug, error, info};
 use std::path::{Path, PathBuf};
-use std::{env, fs};
+use std::fs;
 
 use crate::endpoints::types::{EntityDirectory, EntityImage};
 use crate::get_queue;
@@ -164,12 +164,4 @@ fn fs_get_directories(path: &Path) -> Result<Vec<EntityDirectory>, String> {
     dirs.sort_by(|a, b| a.name.cmp(&b.name));
 
     Ok(dirs)
-}
-
-// TODO: still used on launch
-#[tauri::command]
-pub fn fs_get_current_path() -> Result<String, String> {
-    env::current_dir()
-        .map(|path: PathBuf| path.to_string_lossy().to_string())
-        .map_err(|e| e.to_string())
 }

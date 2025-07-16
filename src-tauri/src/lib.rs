@@ -10,10 +10,6 @@ use std::{
     sync::{Arc, OnceLock, RwLock},
 };
 
-use crate::endpoints::{
-    fs::{fs_get_current_path, fsx_get_dir},
-    runtime::{rt_get_axum_port, rt_get_queue_size},
-};
 use crate::img_cache::queue;
 use crate::user_config::vimages_config;
 
@@ -60,10 +56,9 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            fs_get_current_path,
-            fsx_get_dir,
-            rt_get_axum_port,
-            rt_get_queue_size,
+            endpoints::fs::fsx_get_dir,
+            endpoints::runtime::rt_get_axum_port,
+            endpoints::runtime::rt_get_queue_size,
             vimages_config::save_config,
             vimages_config::get_or_create_config,
         ])
