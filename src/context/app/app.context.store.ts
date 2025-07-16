@@ -18,6 +18,7 @@ interface IAppProps {
 	directories: EntityDirectory[]
 	siblingDirs: EntityDirectory[]
 	images: EntityImage[]
+	dirHistory: Map<string, string>
 
 	//
 	// UI state
@@ -64,6 +65,7 @@ export interface IAppState extends IAppProps {
 	setDirectories: (dirs: EntityDirectory[]) => void
 	setSiblingDirs: (dirs: EntityDirectory[]) => void
 	setImages: (images: EntityImage[]) => void
+	setDirHistory: (dir: string) => void
 
 	//
 	// UI state
@@ -117,6 +119,19 @@ export const useAppState = create<IAppState>((set) => ({
 	setSiblingDirs: (dirs) => set({ siblingDirs: dirs }),
 	images: [],
 	setImages: (images) => set({ images: images }),
+	dirHistory: new Map<string, string>(),
+	setDirHistory: (id: string) => set((state) => { 
+		const hist = state.dirHistory;
+
+		if(hist.get(state.currentDir) !== id) {
+			hist.set(state.currentDir, id);
+		}
+
+		const updates: Partial<IAppState> = {
+			dirHistory: hist
+		};
+		return updates;
+	}),
 
 	//
 	// UI state

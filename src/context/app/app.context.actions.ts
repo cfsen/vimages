@@ -36,6 +36,9 @@ export function getDirectory(store: StoreApi<IAppState>, relPath: string){
 		relPath 
 	})
 		.then(response => {
+			if(relPath !== "..")
+				store.getState().setDirHistory(relPath);
+
 			const res = response as EntityDirectory;
 			store.getState().setCurrentDir(res.path);
 			store.getState().setCurrentDirHash(res.path_hash);
@@ -47,6 +50,11 @@ export function getDirectory(store: StoreApi<IAppState>, relPath: string){
 			console.error(e);
 			raiseError(store, e);
 		});
+}
+
+export function getDirectoryHistory(store: StoreApi<IAppState>): string | undefined {
+	const dir = store.getState().currentDir;
+	return store.getState().dirHistory.get(dir);
 }
 
 export function raiseError(store: StoreApi<IAppState>, error: string){

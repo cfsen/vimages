@@ -4,7 +4,7 @@ import { useStore } from "zustand";
 import { AppContext } from "@app/app.context";
 import { useAppState } from "@app/app.context.store";
 import { KeyboardCursorHandle } from "@app/app.cursor.handler";
-import { getDirectory } from "@app/app.context.actions";
+import { getDirectory, getDirectoryHistory } from "@app/app.context.actions";
 
 import { createNavigationState } from "./nav.provider.store";
 import { scrollToActive, scrollToActive_Delayed } from "@nav/nav.provider.actions";
@@ -164,6 +164,15 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 
 	// default cursor to first nav element
 	useEffect(() => {
+		if(component === UIComponent.dirBrowserMain) {
+			const historyId = getDirectoryHistory(useAppState);
+			const lastItem = historyId && navItems.find((a) => a.data === historyId);
+
+			if(lastItem) {
+				setNavItemActive(lastItem.id);
+				return;
+			}
+		}
 		if(navItems.length > 0) setNavItemActive(navItems[0].id);
 	}, [navItems]);
 
