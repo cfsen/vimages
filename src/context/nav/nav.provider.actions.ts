@@ -26,7 +26,7 @@ export function scrollToActive(navProvider: StoreApi<INavigationState>){
 	scrollTo({
 		left: 0,
 		top: targetY,
-		behavior: "smooth",
+		behavior: "instant",
 	});
 }
 
