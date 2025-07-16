@@ -14,7 +14,7 @@ fn get_config_path() -> Result<PathBuf, String> {
 
     if !config_dir.exists() {
         fs::create_dir_all(&config_dir)
-            .map_err(|e| format!("Failed to create config directory: {}", e))?;
+            .map_err(|e| format!("Failed to create config directory: {e}"))?;
     }
 
     Ok(config_dir.join(CONFIG_FILE))
@@ -46,10 +46,10 @@ pub fn read_config() -> Result<ConfigFile, String> {
     }
 
     let content = fs::read_to_string(&config_path)
-        .map_err(|e| format!("Failed to read config file: {}", e))?;
+        .map_err(|e| format!("Failed to read config file: {e}"))?;
 
     let config: ConfigFile = serde_json::from_str(&content)
-        .map_err(|e| format!("Failed to parse config file: {}", e))?;
+        .map_err(|e| format!("Failed to parse config file: {e}"))?;
 
     Ok(config)
 }
@@ -81,10 +81,10 @@ pub fn write_config(config: &ConfigFile) -> Result<(), String> {
     let config_path = get_config_path()?;
 
     let json = serde_json::to_string_pretty(config)
-        .map_err(|e| format!("Failed to serialize config: {}", e))?;
+        .map_err(|e| format!("Failed to serialize config: {e}"))?;
 
     fs::write(&config_path, json)
-        .map_err(|e| format!("Failed to write config file: {}", e))?;
+        .map_err(|e| format!("Failed to write config file: {e}"))?;
 
     Ok(())
 }

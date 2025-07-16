@@ -13,7 +13,7 @@ pub fn get_file_hash(path: &Path) -> Result<String, std::io::Error> {
     let mut file_hash = path.to_string_lossy().to_string();
 
     if let Ok(modified) = meta.modified() {
-        file_hash.push_str(&format!("{:?}", modified));
+        file_hash.push_str(&format!("{modified:?}"));
     }
 
     file_hash.push_str(&meta.len().to_string());

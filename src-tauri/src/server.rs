@@ -102,12 +102,12 @@ pub async fn start_server(server_state: ServerState) -> u16 {
         .expect("Failed to get local address for axum.")
         .port();
 
-    println!("axum listening on port: {}", port);
+    println!("axum listening on port: {port}");
 
     tokio::spawn(async move {
         axum::serve(listener, app)
             .await
-            .unwrap_or_else(|e| panic!("axum crashed: {}", e));
+            .unwrap_or_else(|e| panic!("axum crashed: {e}"));
     });
 
     port

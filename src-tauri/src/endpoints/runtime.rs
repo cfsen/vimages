@@ -11,7 +11,7 @@ pub fn rt_get_axum_port() -> Result<u16, String> {
 pub async fn rt_get_queue_size() -> Result<u32, String> {
     let size = get_queue().size().await;
     size.try_into().map_err(|e| {
-        error!("Failed to get queue size: {}", e);
-        format!("Failed to get queue size: {}", e)
+        error!("Failed to get queue size: {e}");
+        format!("Failed to get queue size: {e}")
     })
 }

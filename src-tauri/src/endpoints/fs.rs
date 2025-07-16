@@ -21,7 +21,7 @@ pub fn fsx_get_dir(path: &str, rel_path: Option<&str>) -> Result<EntityDirectory
     let final_path = fsx_parse_path_traversal(&path_buf, rel_path.unwrap_or("."))?;
 
     if !final_path.exists() || !final_path.is_dir() {
-        error!("Invalid rel_path: {:?}", final_path);
+        error!("Invalid rel_path: {final_path:?}");
         return Err("Invalid rel_path".into());
     }
 
@@ -41,9 +41,9 @@ pub fn fsx_get_dir(path: &str, rel_path: Option<&str>) -> Result<EntityDirectory
     set_serve_directory(server_state, &final_path)?;
 
     // NOTE: debug
-    debug!("Opening: {:?}", final_path);
-    debug!(" -> Path hash: {:?}", path_hash);
-    debug!(" -> Parent dir: {:?}", parent_path);
+    debug!("Opening: {final_path:?}");
+    debug!(" -> Path hash: {path_hash:?}");
+    debug!(" -> Parent dir: {parent_path:?}");
 
     let directory = EntityDirectory {
         name: final_path
@@ -95,8 +95,8 @@ fn fsx_get_images(path: &Path, path_hash: &str) -> Result<Vec<EntityImage>, Stri
             let full_path = entry.path();
             let filename = entry.file_name().to_string_lossy().to_string();
             let file_hash = img_cache::hash::get_file_hash(&full_path).map_err(|e| {
-                error!("Failed to hash: {}: {}", filename, e);
-                format!("Failed to hash: {}: {}", filename, e)
+                error!("Failed to hash: {filename}: {e}");
+                format!("Failed to hash: {filename}: {e}")
             })?;
 
             // TODO:
@@ -113,15 +113,15 @@ fn fsx_get_images(path: &Path, path_hash: &str) -> Result<Vec<EntityImage>, Stri
                 };
                 tauri::async_runtime::spawn(async move {
                     if let Err(e) = get_queue().enqueue(queue_item).await {
-                        error!("Failed to enqueue thumbnail job: {}", e);
+                        error!("Failed to enqueue thumbnail job: {e}");
                     }
                 });
             }
 
             debug!("EntityImage:");
-            debug!("full_path: {:?}", full_path);
-            debug!("filename: {:?}", filename);
-            debug!("file_hash: {:?}\n", file_hash);
+            debug!("full_path: {full_path:?}");
+            debug!("filename: {filename:?}");
+            debug!("file_hash: {file_hash:?}\n");
 
             Ok(EntityImage {
                 full_path: full_path.to_string_lossy().to_string(),

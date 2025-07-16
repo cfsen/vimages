@@ -65,7 +65,7 @@ impl QueueWorker {
         let cache_path = match cache::get_cache_path_async().await {
             Ok(path) => path,
             Err(e) => {
-                error!("QueueWorker failed to get or create cache path: {}", e);
+                error!("QueueWorker failed to get or create cache path: {e}");
                 return;
             }
         };
@@ -82,7 +82,7 @@ impl QueueWorker {
                 Err(e) if e.kind() == ErrorKind::AlreadyExists => {},
                 Err(e) => {
                     // TODO: granular error handling
-                    error!("Failed to create item-specific directory {:?}: {}", thumb_path, e);
+                    error!("Failed to create item-specific directory {thumb_path:?}: {e}");
                     size.fetch_sub(1, Ordering::SeqCst);
                     continue;
                 }
@@ -120,7 +120,7 @@ impl QueueWorker {
 
             let remaining = size.fetch_sub(1, Ordering::SeqCst).saturating_sub(1);
             if remaining % 10 == 0 || remaining < 10 {
-                info!("{:?} images remaining in queue.", remaining);
+                info!("{remaining:?} images remaining in queue.");
             }
         }
         info!("Worker shutting down");
@@ -142,8 +142,7 @@ pub async fn setup_queue() -> Queue {
     let worker_count = 24;
 
     info!(
-        "Detected {} CPU cores, spawning {} thumbnail workers",
-        core_count, worker_count
+        "Detected {core_count} CPU cores, spawning {worker_count} thumbnail workers"
     );
 
     let mut worker_senders: Vec<mpsc::UnboundedSender<QueueItem>> =
@@ -154,7 +153,7 @@ pub async fn setup_queue() -> Queue {
 
         let size_ref_clone = size_ref.clone();
         tokio::spawn(async move {
-            debug!("Starting worker {}", i);
+            debug!("Starting worker {i}");
             QueueWorker::start(worker_receiver, size_ref_clone).await;
         });
     }
@@ -165,7 +164,7 @@ pub async fn setup_queue() -> Queue {
         while let Some(item) = main_receiver.recv().await {
             let worker_sender = &worker_senders[next_worker_idx];
             if let Err(e) = worker_sender.send(item) {
-                error!("Failed to dispatch item to worker {}: {}", next_worker_idx, e);
+                error!("Failed to dispatch item to worker {next_worker_idx}: {e}");
                 // TODO: re-enqueue or handle this specific item.
                 // for now, it's dropped if the worker died.
             }
