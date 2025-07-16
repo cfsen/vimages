@@ -2,7 +2,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import { invoke } from "@tauri-apps/api/core";
 
 import { useAppState } from "@app/app.context.store";
-import { getDirectory } from "@app/app.context.actions"
+import { getDirectory, raiseError, saveConfig } from "@app/app.context.actions"
 
 import { RustApiAction } from "@context/context.types";
 
@@ -34,20 +34,21 @@ export function CommandModeHandler(input: string, sequence: CommandSequence){
 			// TODO: confirm close on unsaved changes
 			getCurrentWindow().close();
 			break;
+		case ":wq":
+			saveConfig(useAppState);
+			getCurrentWindow().close();
+			break;
 		case ":help":
 			setShowHelp(true);
+			break;
+		case ":sc":
+			saveConfig(useAppState);
 			break;
 		case ":queue":
 			invoke(RustApiAction.GetQueueSize, {})
 				.then(res => {
-					console.log("Queue: ", res);
+					raiseError(useAppState, "Images in queue: " + res);
 				});
-			break;
-		case ":dbg all":
-			useAppState.getState().navigationHandlers.forEach((s) => {
-				console.log("comp:" + s.component + " state:" + s.active() + " new:" + !s.active());
-				s.setActive(!s.active());
-			});
 			break;
 	};
 

@@ -8,7 +8,7 @@ import { NormalModeHandler } from "@app/handler/mode.normal";
 import { CommandModeHandler } from "@app/handler/mode.command";
 import { VisualModeHandler } from "@app/handler/mode.visual";
 import { InsertModeHandler } from "@app/handler/mode.insert";
-import { NavigationHandle, RustApiAction } from "@context/context.types";
+import { NavigationHandle, RustApiAction, VimagesConfig } from "@context/context.types";
 
 import { CommandSequence } from "@key/key.command";
 import { getVersion } from "@tauri-apps/api/app";
@@ -33,15 +33,19 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 	const setVersion = useAppState(state => state.setVimagesVersion);
 
 	useEffect(() => {
+		getVersion().then(setVersion);
+
 		invoke(RustApiAction.GetAxumPort)
 			.then(res => { setAxumPort(res as string) });
-		// TODO: clean backend
-		//invoke(RustApiAction.GetCurrentPath)
-		//	.then(res => { setCurrentDir(res as string) });
-		getDirectory(useAppState, ".");
+		// TODO: proper result parsing, version check, etc.
+		invoke(RustApiAction.GetConfig)
+			.then(response => {
+				const res = response as VimagesConfig;
+				getDirectory(useAppState, res.last_path);
+			});
+
 		useAppState.getState().setWorkspace("DirBrowser", true);
 		nextNavProvider(useAppState);
-		getVersion().then(setVersion);
 	}, []);
 
 	//

@@ -9,6 +9,13 @@ export enum RustApiAction {
 	SaveConfig = "save_config",
 }
 
+export type VimagesConfig = {
+	vimages_version: string;
+	last_path: string;
+	window_width: number;
+	window_height: number;
+}
+
 export type EntityImage = {
 	full_path: string;
 	filename: string;

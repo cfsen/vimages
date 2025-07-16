@@ -1,7 +1,7 @@
 import { invoke } from '@tauri-apps/api/core';
 import { StoreApi } from 'zustand';
 
-import { EntityDirectory, RustApiAction, UIComponent } from "@context/context.types";
+import { EntityDirectory, RustApiAction, UIComponent, VimagesConfig } from "@context/context.types";
 import { IAppState } from "./app.context.store";
 
 // enable/disable navigation context
@@ -55,6 +55,25 @@ export function getDirectory(store: StoreApi<IAppState>, relPath: string){
 export function getDirectoryHistory(store: StoreApi<IAppState>): string | undefined {
 	const dir = store.getState().currentDir;
 	return store.getState().dirHistory.get(dir);
+}
+
+export function saveConfig(store: StoreApi<IAppState>){
+	const bfr: VimagesConfig = {
+		vimages_version: store.getState().vimages_version,
+		last_path: store.getState().currentDir,
+		window_width: 1280,
+		window_height: 720,
+	};
+
+	invoke(RustApiAction.SaveConfig, {
+		config: bfr
+	})
+		.then(res => {
+			console.log(res);
+		})
+		.catch((e) => {
+			console.error(e);
+		});
 }
 
 export function raiseError(store: StoreApi<IAppState>, error: string){
