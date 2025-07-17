@@ -1,71 +1,57 @@
-import { useEffect, useState } from 'react';
 import { staticCommands, possibleCommands, assembleCommand, ctrlCommands, possibleLeaderCommands } from './key.input.parsers';
 import { Command, CommandSequence, populateCommandMap } from './key.command';
 import { Modal, modeNormal, modeState, modeInsert, modeVisual, modeCommand } from "./key.types";
 
 const commandMap = populateCommandMap();
 const statics = [Command.Escape, Command.Return, Command.Console, Command.Leader, Command.Tab];
+let normalSequence = "";
+let visualSequence = "";
+let insertSequence = "";
+let commandSequence = ":";
 
 export function modalKeyboard(
+	event: KeyboardEvent,
 	normalHandler: modeNormal,
 	visualHandler: modeVisual,
 	insertHandler: modeInsert,
 	cmdHandler: modeCommand,
 	{callback: setModeState, Mode: mode}: modeState
 ){
-	// NOTE: WIP
-	// buffers for modes
-	const [normalSequence, setNormalSequence] = useState<string>("");
-	const [visualSequence, setVisualSequence] = useState<string>("");
-	const [insertSequence, setInsertSequence] = useState<string>("");
-	const [commandSequence, setCommandSequence] = useState<string>(":");
+	let checkStaticCmds = staticCommands(event);
+	if(checkStaticCmds === Command.Ignore) return;
+	if(checkStaticCmds === Command.Escape && mode !== Modal.Normal) {
+		console.log("Returning to normal mode");
+		setModeState(Modal.Normal);	
 
-	useEffect(() => {
-		const handleKeyDown = (event: KeyboardEvent) => {
-			event.preventDefault();
+		// clear buffers
+		normalSequence = "";
+		visualSequence = "";
+		insertSequence = "";
+		commandSequence = ":";
+		return;
+	}
 
-			let checkStaticCmds = staticCommands(event);
-			if(checkStaticCmds === Command.Ignore) return;
-			if(checkStaticCmds === Command.Escape && mode !== Modal.Normal) {
-				console.log("Returning to normal mode");
-				setModeState(Modal.Normal);	
-
-				// clear sequences
-				setNormalSequence("");
-				setVisualSequence("");
-				setInsertSequence("");
-				setCommandSequence(":");
-				return;
-			}
-
-			switch(mode){
-				case Modal.Visual:
-					handleModeVisual(visualHandler, event, visualSequence, setVisualSequence);
-					break;
-				case Modal.Insert:
-					handleModeInsert(insertHandler, event, insertSequence, setInsertSequence);
-					break;
-				case Modal.Command:
-					handleModeCommand(cmdHandler, event, commandSequence, setCommandSequence);
-					break;
-				default:
-					handleModeNormal(normalHandler, event, normalSequence, setNormalSequence, mode, setModeState);
-					break;
-			};
-		};
-		window.addEventListener('keydown', handleKeyDown);
-		return () => {
-			window.removeEventListener('keydown', handleKeyDown);
-		};
-	}, [normalHandler, visualHandler, insertHandler, cmdHandler, mode, 
-			normalSequence, visualSequence, insertSequence, commandSequence]);
+	// NOTE: side effects in '...Sequence' globals
+	switch(mode){
+		case Modal.Visual:
+			handleModeVisual(visualHandler, event, visualSequence);
+			break;
+		case Modal.Insert:
+			handleModeInsert(insertHandler, event, insertSequence);
+			break;
+		case Modal.Command:
+			handleModeCommand(cmdHandler, event, commandSequence);
+			break;
+		default:
+			handleModeNormal(normalHandler, event, normalSequence, mode, setModeState);
+			break;
+	};
 }
 
 function handleModeNormal(
 	handler: modeNormal,
 	event: KeyboardEvent,
 	sequence: string,
-	setSequence: (seq: string) => void,
 	mode: Modal,
 	setModeState: (mode: Modal) => void,
 ) {
@@ -73,7 +59,7 @@ function handleModeNormal(
 	if(statics.includes(checkStaticCmds)) {
 		// Revert the input sequence 
 		if(sequence != ""){ 
-			setSequence("");
+			normalSequence = "";
 			return;
 		}
 
@@ -82,7 +68,7 @@ function handleModeNormal(
 			cmd: checkStaticCmds,
 		};
 		handler.callback?.(tmp);
-		setSequence("");
+		normalSequence = "";
 
 		return;
 	}
@@ -95,13 +81,13 @@ function handleModeNormal(
 			cmd: cmd,
 		};
 		handler.callback?.(tmp);
-		setSequence("");
+		normalSequence = "";
 		return;
 	}
 
 	// Assemble new input into sequence
 	const newSeq = sequence + event.key;
-	setSequence(newSeq);
+	normalSequence = newSeq;
 
 	// Check if there are any more possible commands
 	let possibleCmds;
@@ -122,7 +108,7 @@ function handleModeNormal(
 			cmd: Command.Error,
 		};
 		handler.callback?.(tmp);
-		setSequence("");
+		normalSequence = "";
 
 		// escape leader mode if command is invalid
 		if(mode === Modal.Leader) {
@@ -148,7 +134,7 @@ function handleModeNormal(
 	}
 
 	handler.callback?.(tmp);
-	setSequence("");
+	normalSequence = "";
 
 	// Exit leader if leader command was sent
 	if(mode === Modal.Leader) {
@@ -159,26 +145,22 @@ function handleModeVisual(
 	handler: modeVisual,
 	event: KeyboardEvent,
 	sequence: string,
-	setSequence: (seq: string) => void
 ) {
-	console.log("handleModeVisual", handler, event, sequence, setSequence);
-	//handler.callback?.
+	console.log("handleModeVisual", handler, event, sequence);
 }
 
 function handleModeInsert(
 	handler: modeInsert,
 	event: KeyboardEvent,
 	sequence: string,
-	setSequence: (seq: string) => void
 ) {
-	console.log("handleModeInsert", handler, event, sequence, setSequence);
+	console.log("handleModeInsert", handler, event, sequence);
 }
 
 function handleModeCommand(
 	handler: modeCommand,
 	event: KeyboardEvent,
 	sequence: string,
-	setSequence: (seq: string) => void
 ) {
 	let seq = sequence;
 
@@ -192,18 +174,18 @@ function handleModeCommand(
 	// return buffer and indicate command is ready for parsing and execution
 	if(event.key === 'Enter') {
 		handler.callback?.(seq, { modInt: 0, cmd: Command.Return });
-		setSequence(":");
+		commandSequence = ":";
 		return;
 	}
 	
 	// remove last character from the buffer
 	if(event.key === 'Backspace') {
 		seq = sequence.substring(0, sequence.length-1);
-		setSequence(seq);
+		commandSequence = seq;
 	}
 	else {
 		seq += event.key;
-		setSequence(seq);
+		commandSequence = seq;
 	}
 
 	// callback
