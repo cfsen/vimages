@@ -13,7 +13,7 @@ export function KeyboardCursorHandle(
 
 	let cur = navItems.findIndex((i) => i.id === navActiveId);
 	let len = navItems.length;
-	let n = seq.modInt;
+	let n = seq.modInt ?? 0;
 
 	if(cur >= len || cur < 0) return null;
 

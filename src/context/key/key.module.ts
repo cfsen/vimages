@@ -43,7 +43,7 @@ export function modalKeyboard(
 			handleModeCommand(cmdHandler, event, commandSequence);
 			break;
 		default:
-			handleModeNormal(normalHandler, event, normalSequence, mode, setModeState);
+			normalSequence = handleModeNormal(normalHandler, event, normalSequence, mode, setModeState);
 			break;
 	};
 }
@@ -54,92 +54,62 @@ function handleModeNormal(
 	sequence: string,
 	mode: Modal,
 	setModeState: (mode: Modal) => void,
-) {
+): string {
+	// Check for control commands (Escape, Return) or ignored keys (Ignore)
 	let checkStaticCmds = staticCommands(event);
 	if(statics.includes(checkStaticCmds)) {
-		// Revert the input sequence 
-		if(sequence != ""){ 
-			normalSequence = "";
-			return;
-		}
-
-		const tmp: CommandSequence = {
-			modInt: 0,
-			cmd: checkStaticCmds,
-		};
-		handler.callback?.(tmp);
-		normalSequence = "";
-
-		return;
+		handler.callback?.({ cmd: checkStaticCmds });
+		return "";
 	}
 
 	// Handle ctrl+key events
 	if(event.ctrlKey){
-		let cmd = ctrlCommands(event);
-		const tmp: CommandSequence = {
-			modInt: 0,
-			cmd: cmd,
-		};
-		handler.callback?.(tmp);
-		normalSequence = "";
-		return;
+		handler.callback?.({ cmd: ctrlCommands(event) });
+		return "";
 	}
 
 	// Assemble new input into sequence
-	const newSeq = sequence + event.key;
-	normalSequence = newSeq;
+	let newSeq = sequence + event.key;
 
 	// Check if there are any more possible commands
 	let possibleCmds;
-	if(mode === Modal.Leader) {
-		possibleCmds = possibleLeaderCommands(newSeq, commandMap);
-	}
-	else {
-		possibleCmds = possibleCommands(newSeq, commandMap);
-	}
+	if(mode === Modal.Leader) possibleCmds = possibleLeaderCommands(newSeq, commandMap);
+	else possibleCmds = possibleCommands(newSeq, commandMap);
 
-	if(possibleCmds > 1){
-		return;
-	}
+	// Buffer matches multiple commands, return early
+	if(possibleCmds > 1) return newSeq;
 	else if(possibleCmds === 0){
 		// No commands are possible, reset sequence, send error
-		const tmp: CommandSequence = {
-			modInt: 0,
-			cmd: Command.Error,
-		};
+		const tmp: CommandSequence = { cmd: Command.Error };
 		handler.callback?.(tmp);
-		normalSequence = "";
 
 		// escape leader mode if command is invalid
 		if(mode === Modal.Leader) {
 			setModeState(Modal.Normal);
 			console.error("No valid leader command for combination");
 		}
-		return;
+		return "";
 	}
 
-	// possibleCmds must be 1
+	// Must be one matching command
 	const tmp = assembleCommand(newSeq, commandMap);
 
 	// return without clearing and change mode if command was leader
 	if(tmp.cmd === Command.Leader){
 		setModeState(Modal.Leader);
-		return;
+		return newSeq;
 	}
 	
 	// Avoid sending partial commands ('g', 'z' -> finalized next run with 'gg', 'zz')
-	if(tmp.cmd === Command.PartialInput) {
-		console.log("no callback");
-		return;
-	}
+	if(tmp.cmd === Command.PartialInput) return newSeq;
 
+	// Success: complete command return
 	handler.callback?.(tmp);
-	normalSequence = "";
 
+	// Post-success cleanup
 	// Exit leader if leader command was sent
-	if(mode === Modal.Leader) {
-		setModeState(Modal.Normal);
-	}
+	if(mode === Modal.Leader) setModeState(Modal.Normal);
+	return "";
 }
 function handleModeVisual(
 	handler: modeVisual,
@@ -167,13 +137,13 @@ function handleModeCommand(
 	// filter F1->F..., Shift, Alt, ArrowLeft, etc.
 	let allowed = ['Enter', 'Backspace'];
 	if(event.key.length > 1 && !allowed.includes(event.key)){
-		handler.callback?.(seq, { modInt: 0, cmd: Command.Ignore });
+		handler.callback?.(seq, { cmd: Command.Ignore });
 		return;
 	}
 
 	// return buffer and indicate command is ready for parsing and execution
 	if(event.key === 'Enter') {
-		handler.callback?.(seq, { modInt: 0, cmd: Command.Return });
+		handler.callback?.(seq, { cmd: Command.Return });
 		commandSequence = ":";
 		return;
 	}
@@ -189,7 +159,7 @@ function handleModeCommand(
 	}
 
 	// callback
-	handler.callback?.(seq, { modInt: 0, cmd: Command.None });
+	handler.callback?.(seq, { cmd: Command.None });
 	//console.log("Command mode handler: " + seq);
 }
 

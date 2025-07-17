@@ -46,8 +46,9 @@ export function populateCommandMap(): Map<string,Command>{
 }
 
 export type CommandSequence = {
-	modInt: number,
 	cmd: Command,
+	modInt?: number,
+	cursorPos?: number,
 }
 
 export enum Command {
