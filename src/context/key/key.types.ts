@@ -1,4 +1,7 @@
 import { CommandSequence } from "./key.command";
+import { resultModeCommand } from "./key.module.handler.cmd";
+import { resultModeNormal } from "./key.module.handler.normal";
+
 export enum Modal {
 	Normal,
 	Visual,
@@ -7,7 +10,7 @@ export enum Modal {
 	Leader,
 }
 export interface modeNormal {
-	callback: (sequence: CommandSequence) => void;
+	callback: (resultNormal: resultModeNormal) => void;
 }
 export interface modeVisual {
 	callback: (selection: string[], sequence: CommandSequence) => void;
@@ -16,7 +19,7 @@ export interface modeInsert {
 	callback: (input: string, sequence: CommandSequence) => void;
 }
 export interface modeCommand {
-	callback: (input: string, sequence: CommandSequence) => void;
+	callback: (resultCommand: resultModeCommand) => void;
 }
 export interface modeState {
 	callback: (mode: Modal) => void;

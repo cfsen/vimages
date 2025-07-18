@@ -3,7 +3,6 @@ import { useStore } from "zustand";
 
 import { AppContext } from "@app/app.context";
 import { useAppState } from "@app/app.context.store";
-import { KeyboardCursorHandle } from "@app/app.cursor.handler";
 import { getDirectory, getDirectoryHistory } from "@app/app.context.actions";
 
 import { createNavigationState } from "./nav.provider.store";
@@ -11,7 +10,10 @@ import { scrollToActive, scrollToActive_Delayed } from "@nav/nav.provider.action
 import { NavigationContextType, NavWrapperItemType, NavigationItem } from "@nav/nav.types";
 
 import { UIComponent } from "@context/context.types";
-import { Command, CommandSequence } from "@key/key.command";
+import { Command } from "@key/key.command";
+import { KeyboardCursorHandle } from "@key/key.cursor.handler";
+import { resultModeNormal } from "@key/key.module.handler.normal";
+
 import { platform } from "@tauri-apps/plugin-os";
 
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
@@ -64,7 +66,7 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 	// Command handler
 	//
 
-	const handleNavigationCmd = (seq: CommandSequence): boolean => {
+	const handleNavigationCmd = (seq: resultModeNormal): boolean => {
 		if(navigationState.getState().navItems.length > 0 && navigationState.getState().navItemActive === null) {
 			setNavItemActive(navigationState.getState().navItems[0].id);
 		}
@@ -102,13 +104,19 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 			return false;
 		}
 
-		// Navigation keys
-		let cur = KeyboardCursorHandle(
-			seq, 
-			navigationState.getState().navItems, 
-			navigationState.getState().navItemsPerRow, 
-			navigationState.getState().navItemActive
-		);
+		// Handle cursor navigation
+		let _length = navigationState.getState().navItems.length;
+		let _curpos = navigationState.getState().navItems
+		.findIndex((i) => i.id === navigationState.getState().navItemActive);
+		let _perRow = navigationState.getState().navItemsPerRow;
+
+		if(_curpos === -1 || _length === 0 || _perRow === 0) {
+			// TODO: UI: empty directory
+			return false;
+		}
+
+		let cur = KeyboardCursorHandle(seq.cmdSequence, _length, _curpos, _perRow);
+
 		if(cur != null)  {
 			if(component === UIComponent.dirBrowserMain && seq.cmd === Command.CursorLeft){
 				getDirectory(useAppState, "..");

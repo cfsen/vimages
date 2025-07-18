@@ -1,4 +1,4 @@
-import { CommandSequence } from "@key/key.command";
+import { resultModeNormal } from "@key/key.module.handler.normal";
 
 export enum RustApiAction {
 	GetCurrentPath = "fs_get_current_path",
@@ -39,7 +39,7 @@ export type NavigationHandle = {
 	active: () => boolean;
 	tabOrder: number;
 	setActive: (state: boolean) => boolean;
-	handleNavCmd: (cmd: CommandSequence) => boolean;
+	handleNavCmd: (resultNormal: resultModeNormal) => boolean;
 	getRegisteredElements: () => number;
 }
 

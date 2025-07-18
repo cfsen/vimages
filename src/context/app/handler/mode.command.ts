@@ -6,12 +6,13 @@ import { getDirectory, raiseError, saveConfig } from "@app/app.context.actions"
 
 import { RustApiAction } from "@context/context.types";
 
-import { Command, CommandSequence } from "@key/key.command";
+import { Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
+import { resultModeCommand } from '@key/key.module.handler.cmd';
 
 const paramCommands = [":set", ":e"];
 
-export function CommandModeHandler(input: string, sequence: CommandSequence){
+export function CommandModeHandler(resultCommand: resultModeCommand){
 	const {
 		imageGridScale,
 		setImageGridScale,
@@ -23,12 +24,12 @@ export function CommandModeHandler(input: string, sequence: CommandSequence){
 	} = useAppState.getState();
 
 	// update buffer
-	setInputBufferCommand(input);
+	setInputBufferCommand(resultCommand.sequence);
 
-	if(sequence.cmd !== Command.Return) return;
+	if(resultCommand.cmd !== Command.Return) return;
 
 	// check for parameterless commands
-	switch(input){
+	switch(resultCommand.sequence){
 		case ":q":
 			// TODO: save any pending thumbnail tasks
 			// TODO: confirm close on unsaved changes
@@ -52,7 +53,7 @@ export function CommandModeHandler(input: string, sequence: CommandSequence){
 			break;
 	};
 
-	let split = SplitCommandParam(input);
+	let split = SplitCommandParam(resultCommand.sequence);
 	if(split !== null) {
 		console.log("issplitCommand: " + split.cmd, split.param);
 		switch(split.cmd){
@@ -81,7 +82,7 @@ export function CommandModeHandler(input: string, sequence: CommandSequence){
 					break;
 				}
 				// set value
-				console.log(`Setting value: ${input}`);
+				console.log(`Setting value: ${resultCommand.sequence}`);
 				setImageGridScale(Number(split.param[1]));
 				break;
 		};

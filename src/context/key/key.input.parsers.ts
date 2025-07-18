@@ -8,7 +8,7 @@ export function staticCommands(input: KeyboardEvent): Command {
 		case 'Escape':	return Command.Escape;
 		case 'Alt':		return Command.Ignore;
 		case 'Shift':	return Command.Ignore;
-		case ':':		return Command.Console;
+		case 'Super': 	return Command.Ignore;
 		default:		return Command.None;
 	}
 }

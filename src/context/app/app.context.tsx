@@ -11,6 +11,9 @@ import { InsertModeHandler } from "@app/handler/mode.insert";
 import { NavigationHandle, RustApiAction, VimagesConfig } from "@context/context.types";
 
 import { CommandSequence } from "@key/key.command";
+import { resultModeCommand } from "@key/key.module.handler.cmd";
+import { resultModeNormal } from "@key/key.module.handler.normal";
+
 import { getVersion } from "@tauri-apps/api/app";
 
 type AppContextType = {
@@ -19,16 +22,15 @@ type AppContextType = {
 	unregisterNavigationContainer: (id: string) => void;
 
 	// Main command handlers
-	handleModeNormal: (sequence: CommandSequence) => void;
+	handleModeNormal: (resultNormal: resultModeNormal) => void;
 	handleModeVisual: (selection: string[], sequence: CommandSequence) => void;
 	handleModeInsert: (input: string, sequence: CommandSequence) => void;
-	handleModeCommand: (input: string, sequence: CommandSequence) => void;
+	handleModeCommand: (resultCommand: resultModeCommand) => void;
 };
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
-	//const setCurrentDir = useAppState(state => state.setCurrentDir);
 	const setAxumPort = useAppState(state => state.setAxumPort);
 	const setVersion = useAppState(state => state.setVimagesVersion);
 
@@ -71,14 +73,13 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 		InsertModeHandler(input, sequence);
 	}
 
-	const handleModeCommand = (input: string, sequence: CommandSequence) => {
-		CommandModeHandler(input, sequence);
+	const handleModeCommand = (resultCmd: resultModeCommand) => {
+		CommandModeHandler(resultCmd);
 	}
 
-	const handleModeNormal = (seq: CommandSequence) => {
-		NormalModeHandler(seq);
+	const handleModeNormal = (resultNormal: resultModeNormal) => {
+		NormalModeHandler(resultNormal);
 	}
-
 	return (
 		<AppContext.Provider value={{ 
 			handleModeNormal,

@@ -1,10 +1,11 @@
 import { useAppState } from "@app/app.context.store";
 import { getDirectory, nextNavProvider, nextWorkspace, raiseError } from "@app/app.context.actions";
 
-import { CommandSequence, Command } from "@key/key.command";
+import { Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
+import { resultModeNormal } from "@/context/key/key.module.handler.normal";
 
-export function NormalModeHandler(seq: CommandSequence){
+export function NormalModeHandler(resultNormal: resultModeNormal){
 	const { 
 		setMode, 
 		showHelp, 
@@ -14,7 +15,7 @@ export function NormalModeHandler(seq: CommandSequence){
 		activeNavigationContext, 
 	} = useAppState.getState();
 
-	switch(seq.cmd){
+	switch(resultNormal.cmd){
 		case Command.ModeVisual:
 			console.log("MODE SWAP -> Visual");
 			setMode(Modal.Visual);
@@ -74,10 +75,10 @@ export function NormalModeHandler(seq: CommandSequence){
 	if (activeNavigationContext) {
 		const handler = useAppState.getState().navigationHandlers.get(activeNavigationContext);
 		if (handler) {
-			const wasHandled = handler.handleNavCmd(seq);
+			const wasHandled = handler.handleNavCmd(resultNormal);
 			if (wasHandled) return;
 		}
 	}		
-	console.log("Unhandled command:", seq);
+	console.log("Unhandled command:", resultNormal);
 }
 

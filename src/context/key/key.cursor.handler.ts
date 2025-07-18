@@ -1,18 +1,14 @@
-import { Command, CommandSequence } from "@key/key.command";
-
-import { NavigationItem } from "@nav/nav.types";
+import { Command, CommandSequence } from "./key.command";
 
 export function KeyboardCursorHandle(
 	seq: CommandSequence,
-	navItems: NavigationItem[],
+	items_length: number,
+	cursor_position: number,
 	itemsPerRow: number,
-	navActiveId: string | null
 ): number | null {
 
-	if(navItems === undefined || navItems === null) return null;
-
-	let cur = navItems.findIndex((i) => i.id === navActiveId);
-	let len = navItems.length;
+	let cur = cursor_position;
+	let len = items_length;
 	let n = seq.modInt ?? 0;
 
 	if(cur >= len || cur < 0) return null;
