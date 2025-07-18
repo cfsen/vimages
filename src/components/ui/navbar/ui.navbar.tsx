@@ -9,14 +9,27 @@ import styles from "./ui.navbar.module.css";
 function Navbar() {
 	const currentDir = useAppState(state => state.currentDir);
 	const mode = useAppState(state => state.mode);
-	const inputBufferCommand = useAppState(state => state.inputBufferCommand);
+	const inputBfrCmd = useAppState(state => state.inputBufferCommand);
+	const inputBfrCur = useAppState(state => state.inputBufferCursor);
 
-	const outputText = (): string => {
+	const outputText = (): JSX.Element => {
 		switch(mode){
 			case Modal.Command:
-				return inputBufferCommand;
+				return(
+					<>
+					{inputBfrCmd.slice(0, inputBfrCur)}
+						<div className={styles.navbar_cursor}>
+							&nbsp;
+						</div>
+					{inputBfrCmd.slice(inputBfrCur)}
+					</>
+				);
 			default:
-				return windowsUncStrip(currentDir);
+				return(
+					<>
+					{windowsUncStrip(currentDir)}
+					</>
+				);
 		};
 	};
 
@@ -38,10 +51,14 @@ function Navbar() {
 	return(
 		<div className={styles.navbar_container}>
 			<div className={mode !== Modal.Normal ? styles.navbar_mode_active : styles.navbar_mode}>
-				{ outputMode() }
+				<span>
+					{ outputMode() }
+				</span>
 			</div>
 			<div className={mode === Modal.Command ? styles.navbar_text_command : styles.navbar_text}>
-				{ outputText() }
+				<span>
+					{ outputText() }
+				</span>
 			</div>
 		</div>
 	);

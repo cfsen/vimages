@@ -34,6 +34,7 @@ interface IAppProps {
 	errorMsg: string
 
 	inputBufferCommand: string
+	inputBufferCursor: number
 
 	//
 	// Image grid UI
@@ -82,6 +83,7 @@ export interface IAppState extends IAppProps {
 	setErrorMsg: (_: string) => void
 
 	setInputBufferCommand: (_: string) => void
+	setInputBufferCursor: (_: number) => void
 	
 	//
 	// Image grid UI
@@ -174,6 +176,8 @@ export const useAppState = create<IAppState>((set) => ({
 
 	inputBufferCommand: ":",
 	setInputBufferCommand: (_) => set({ inputBufferCommand: _ }),
+	inputBufferCursor: 1,
+	setInputBufferCursor: (_) => set ({ inputBufferCursor: _ }),
 
 	//
 	// Image grid UI

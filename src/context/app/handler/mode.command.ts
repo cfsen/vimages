@@ -20,11 +20,13 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 		setMode,
 		setShowHelp,
 		setInputBufferCommand,
+		setInputBufferCursor,
 		setFullscreenImage,
 	} = useAppState.getState();
 
 	// update buffer
 	setInputBufferCommand(resultCommand.sequence);
+	setInputBufferCursor(resultCommand.cursor);
 
 	if(resultCommand.cmd !== Command.Return) return;
 
