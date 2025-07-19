@@ -118,13 +118,13 @@ function handleModeCommandSpecialCtrl(key: SpecialKey, sequenceState: resultMode
 		case SpecialKey.Backspace:
 			let deleteTo = whitespacePosition(sequence, cursor, wsDirection.Left);
 
-			// include whitespace in delettion
-			if(deleteTo > 0) deleteTo -= 1;
 			// clear the buffer if no whitespace
 			if(deleteTo === 0) {
 				sequence = "";
-				cursor = 1;
+				cursor = 0;
 			}
+			// include whitespace in deletion
+			if(deleteTo > 0) deleteTo -= 1;
 
 			sequence = cutOut(sequence, deleteTo, cursor);
 			cursor = deleteTo;
@@ -151,7 +151,7 @@ function whitespacePosition(str: string, cur: number, dir: wsDirection): number 
 	let matches = str.matchAll(/\s+/g);
 	let pos = Array.from(matches, match => match.index!);
 
-	if(pos.length === 0) return cur;
+	if(pos.length === 0) return dir === wsDirection.Left ? 0 : str.length;
 
 	if(dir == wsDirection.Left) pos.reverse();
 
