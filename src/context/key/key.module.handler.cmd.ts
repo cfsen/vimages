@@ -97,8 +97,8 @@ function handleModeCommandSpecial(key: SpecialKey, sequenceState: resultModeComm
 			cursor = sequence.length;
 			break;
 		default:
-			console.error("Unhandled key:" + key);
-			cmd = Command.Error;
+			// console.error("Unhandled key:" + key);
+			cmd = Command.Ignore;
 			break;
 	};
 	return { ...defaultResultModeCommand(), sequence, cursor, cmd };
@@ -130,8 +130,8 @@ function handleModeCommandSpecialCtrl(key: SpecialKey, sequenceState: resultMode
 			cursor = deleteTo;
 			break;
 		default:
-			console.error("Unhandled key:" + key);
-			cmd = Command.Error;
+			// console.error("Unhandled key:" + key);
+			cmd = Command.Ignore;
 			break;
 	};
 	return { ...defaultResultModeCommand(), sequence, cursor, cmd };
@@ -160,6 +160,7 @@ function whitespacePosition(str: string, cur: number, dir: wsDirection): number 
 			return pos[i]+1;
 	}
 
+	// should never reach this return
 	return dir === wsDirection.Left ? 0 : str.length;
 }
 
