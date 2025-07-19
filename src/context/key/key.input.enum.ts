@@ -27,6 +27,7 @@ export enum SpecialKey {
 	Shift = 'Shift',
 	Control = 'Control',
 	Alt = 'Alt',
+	AltGrp = 'AltGraph',
 	Meta = 'Meta',
 	ContextMenu = 'ContextMenu',
 
@@ -42,8 +43,12 @@ export enum SpecialKey {
 	ScrollLock = 'ScrollLock',
 	PrintScreen = 'PrintScreen',
 	Pause = 'Pause',
+	Dead = 'Dead',
+	Super = 'Super'
 }
 
+const specialKeySet = new Set(Object.values(SpecialKey));
+
 export function isSpecialKey(key: string): key is SpecialKey {
-  return Object.values(SpecialKey).includes(key as SpecialKey);
+    return specialKeySet.has(key as SpecialKey);
 }
