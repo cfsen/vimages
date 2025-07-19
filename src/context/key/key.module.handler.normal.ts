@@ -1,6 +1,7 @@
-import { staticCommands, possibleCommands, assembleCommand, ctrlCommands, possibleLeaderCommands } from './key.input.parsers';
+import { possibleCommands, assembleCommand, possibleLeaderCommands, staticSpecialKeyBinds } from './key.input.parsers';
 import { Command, CommandSequence } from './key.command';
 import { Modal } from "./key.types";
+import { isSpecialKey, SpecialKey } from './key.input.enum';
 
 export type resultModeNormal = {
 	sequence: string,
@@ -19,21 +20,17 @@ export function defaultResultModeNormal(): resultModeNormal {
 export function handleModeNormal(
 	event: KeyboardEvent,
 	normalBuffer: resultModeNormal,
-	statics: Command[],
 	commandMap: Map<string, Command>
 ): resultModeNormal {
+	if(event.ctrlKey && isSpecialKey(event.key))
+		return handleModeNormalSpecialCtrl(event.key as SpecialKey);
+	if(isSpecialKey(event.key))
+		return handleModeNormalSpecial(event.key as SpecialKey);
+	if(event.ctrlKey)
+		return handleModeNormalCtrl(event.key, normalBuffer);
+
 	let sequence = normalBuffer.sequence;
 	let mode = normalBuffer.mode;
-
-	// Check for control commands (Escape, Return) or ignored keys (Ignore)
-	let checkStaticCmds = staticCommands(event);
-	if(statics.includes(checkStaticCmds)) 
-		return { ...defaultResultModeNormal(),
-			cmd: checkStaticCmds, cmdSequence: { cmd: checkStaticCmds } };
-
-	// Handle ctrl+key events
-	if(event.ctrlKey)
-		return { ...defaultResultModeNormal(), cmd: ctrlCommands(event) };
 
 	// Assemble new input into sequence
 	let newSeq = sequence + event.key;
@@ -65,4 +62,34 @@ export function handleModeNormal(
 			sequence: newSeq, cmdSequence: tmp, cmd: Command.PartialInput };
 
 	return { ...defaultResultModeNormal(), sequence: newSeq, cmd: tmp.cmd, cmdSequence: tmp };
+}
+
+function handleModeNormalSpecial(key: SpecialKey): resultModeNormal{
+	let cmd = staticSpecialKeyBinds(key);
+	return { ...defaultResultModeNormal(), cmd, cmdSequence: { cmd } };
+}
+
+function handleModeNormalSpecialCtrl(key: SpecialKey): resultModeNormal{
+	let cmd = Command.None;
+	switch(key){
+		case SpecialKey.Enter:
+			// TODO: toggle fullscreen
+			break;
+	};
+	return { ...defaultResultModeNormal(), cmd, cmdSequence: { cmd } };
+}
+
+function handleModeNormalCtrl(key: string, sequenceState: resultModeNormal): resultModeNormal{
+	let cmd = Command.None;
+
+	switch(key) {
+		case 'u':
+			cmd = Command.PageUp;
+			break;
+		case 'd':
+			cmd = Command.PageDown;
+			break;
+	};
+	
+	return { ...defaultResultModeNormal(), cmd, cmdSequence: { cmd } };
 }

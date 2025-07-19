@@ -1,23 +1,16 @@
 import { isStrictInteger, getNumberEndsIdx } from './key.helpers';
 import { Command, CommandSequence } from './key.command';
+import { SpecialKey } from './key.input.enum';
 
-export function staticCommands(input: KeyboardEvent): Command {
-	switch(input.key) {
-		case 'Enter':	return Command.Return;
-		case 'Tab': 	return Command.Tab;
-		case 'Escape':	return Command.Escape;
-		case 'Alt':		return Command.Ignore;
-		case 'Shift':	return Command.Ignore;
-		case 'Super': 	return Command.Ignore;
-		default:		return Command.None;
-	}
-}
-
-export function ctrlCommands(input: KeyboardEvent): Command {
-	switch(input.key) {
-		case 'u':		return Command.PageUp;
-		case 'd':		return Command.PageDown;
-		default:		return Command.None;
+export function staticSpecialKeyBinds(key: SpecialKey): Command {
+	switch(key) {
+		case SpecialKey.Enter:	return Command.Return;
+		case SpecialKey.Tab: 	return Command.Tab;
+		case SpecialKey.Escape:	return Command.Escape;
+		case SpecialKey.Alt:	return Command.Ignore;
+		case SpecialKey.Shift:	return Command.Ignore;
+		case SpecialKey.Super: 	return Command.Ignore;
+		default:				return Command.None;
 	}
 }
 

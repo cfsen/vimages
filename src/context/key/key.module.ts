@@ -1,11 +1,12 @@
-import { staticCommands } from './key.input.parsers';
+import { isSpecialKey } from './key.input.enum';
 import { Command, populateCommandMap } from './key.command';
+import { staticSpecialKeyBinds } from './key.input.parsers';
 import { Modal, modeNormal, modeState, modeInsert, modeVisual, modeCommand } from "./key.types";
+
 import { handleModeNormal, resultModeNormal, defaultResultModeNormal } from "./key.module.handler.normal";
 import { handleModeCommand, resultModeCommand, defaultResultModeCommand } from "./key.module.handler.cmd";
 
 const commandMap = populateCommandMap();
-const statics = [Command.Escape, Command.Return, Command.Console, Command.Leader, Command.Tab];
 
 let commandBuffer: resultModeCommand = defaultResultModeCommand();
 let normalBuffer: resultModeNormal = defaultResultModeNormal();
@@ -20,9 +21,9 @@ export function modalKeyboard(
 	cmdHandler: modeCommand,
 	{callback: setModeState, Mode: mode}: modeState
 ){
-	let checkStaticCmds = staticCommands(event);
-	if(checkStaticCmds === Command.Ignore) return;
-	if(checkStaticCmds === Command.Escape && mode !== Modal.Normal) {
+	if(isSpecialKey(event.key) && staticSpecialKeyBinds(event.key) === Command.Ignore)
+		return;
+	if(isSpecialKey(event.key) && staticSpecialKeyBinds(event.key) === Command.Escape && mode !== Modal.Normal) {
 		setModeState(Modal.Normal);	
 
 		// clear buffers
@@ -54,7 +55,7 @@ export function modalKeyboard(
 			}
 			break;
 		default:
-			normalBuffer = handleModeNormal(event, normalBuffer, statics, commandMap);
+			normalBuffer = handleModeNormal(event, normalBuffer, commandMap);
 
 			setModeState(normalBuffer.mode);
 
