@@ -89,6 +89,13 @@ function handleModeCommandSpecial(key: SpecialKey, sequenceState: resultModeComm
 				sequence = cutOut(sequence, cursor, cursor+1);
 			}
 			break;
+		case SpecialKey.Dead:
+			// TODO: WORKAROUND, TODO_LOG
+			// ~ is returned as Dead on Hyprland, unsure of cause
+			console.info("Dead key workaround for ~ triggered.");
+			sequence += "~";
+			cursor = sequence.length;
+			break;
 		default:
 			console.error("Unhandled key:" + key);
 			cmd = Command.Error;
