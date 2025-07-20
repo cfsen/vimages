@@ -98,6 +98,16 @@ export function raiseError(store: StoreApi<IAppState>, error: string){
 	store.getState().setErrorMsg(error);
 }
 
+export function addInfoMessage(store: StoreApi<IAppState>, msg: string){
+	const timestamp = new Date().toLocaleTimeString('en-GB', {
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: false
+	});
+	store.getState().setShowInfo(true);
+	store.getState().addInfoMessage("[" + timestamp + "] " + msg);
+}
+
 // TODO: improve logic when more workspaces are added TODO_WORKSPACE_SELECTION
 export function nextWorkspace(store: StoreApi<IAppState>){
 	const spaces = store.getState().workspace;

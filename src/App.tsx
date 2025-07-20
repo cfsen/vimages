@@ -16,6 +16,7 @@ import TitleBar from "@ui/titlebar/ui.titlebar";
 import DirBrowser from "@fs/dir.browser";
 import Leader from "@ui/leader/ui.leader";
 import ErrorPopup from "@ui/error/ui.error";
+import InfoPopup from "@ui/info/ui.info";
 
 function App() {
 	const { handleModeVisual, handleModeNormal, handleModeInsert, handleModeCommand } = useGlobalCtx();
@@ -51,6 +52,7 @@ function App() {
 			<Leader />
 			<HelpOverlay />
 			<ErrorPopup />
+			<InfoPopup />
 			<VimageFullscreen />
 			<DirBrowser />
 			<div className="colContainer">

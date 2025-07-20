@@ -30,6 +30,8 @@ interface IAppProps {
 	fullscreenImagePath: string
 
 	showHelp: boolean
+	showInfo: boolean
+	infoMessages: string[]
 	showError: boolean
 	errorMsg: string
 
@@ -79,6 +81,8 @@ export interface IAppState extends IAppProps {
 	setFullscreenImagePath: (path: string) => void
 
 	setShowHelp: (_: boolean) => void
+	setShowInfo: (_: boolean) => void
+	addInfoMessage: (msg: string) => void
 	setShowError: (_: boolean) => void
 	setErrorMsg: (_: string) => void
 
@@ -168,6 +172,16 @@ export const useAppState = create<IAppState>((set) => ({
 
 	showHelp: false,
 	setShowHelp: (_) => set({ showHelp: _ }),
+
+	showInfo: false,
+	setShowInfo: (display) => set({ showInfo: display }),
+	infoMessages: [],
+	addInfoMessage: (msg) => set((state) => {
+		const maxMessages = 10;
+		return {
+			infoMessages: [...state.infoMessages, msg].slice(-maxMessages)
+		}
+	}),
 	
 	showError: false,
 	setShowError: (bool) => set({ showError: bool }),

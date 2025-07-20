@@ -12,6 +12,8 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 		setShowHelp, 
 		showError,
 		setShowError,
+		showInfo,
+		setShowInfo,
 		activeNavigationContext, 
 	} = useAppState.getState();
 
@@ -69,6 +71,12 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 	// Hide any errors
 	if(showError) {
 		setShowError(false);
+	}
+
+	// Hide info overlay
+	// TODO: config toggle for behavior, allow keep-open
+	if(showInfo) {
+		setShowInfo(false);
 	}
 
 	// Navigation commands - delegate to active container
