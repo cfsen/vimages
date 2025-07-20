@@ -1,7 +1,7 @@
 import { getCurrentWindow } from '@tauri-apps/api/window';
 
 import { useAppState } from "@app/app.context.store";
-import { getDirectory, saveConfig } from "@app/app.context.actions"
+import { addInfoMessage, getDirectory, raiseError, saveConfig } from "@app/app.context.actions"
 
 import { Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
@@ -10,6 +10,8 @@ import { resultModeCommand } from '@key/key.module.handler.cmd';
 import {
 	ConsoleCmd, getParser, ParamCommand, ParamCommandBuilder, ParamType, parseInput
 } from "@app/handler/mode.command.input.builder";
+import { invoke } from '@tauri-apps/api/core';
+import { RustApiAction } from '@/context/context.types';
 
 function b(call: string) { return new ParamCommandBuilder(call) };
 const cmdParam: ParamCommand[] = [
@@ -30,6 +32,7 @@ const cmdParam: ParamCommand[] = [
 	b(":get")
 	.param(ParamType.Keyword, ConsoleCmd.GetVerison, "version")
 	.param(ParamType.Keyword, ConsoleCmd.GetCacheInfo, "cache")
+	.param(ParamType.Keyword, ConsoleCmd.GetQueueSize, "queue")
 	.build(),
 
 	b(":cd").param(ParamType.Action, ConsoleCmd.ChangeDir).build(),
@@ -72,28 +75,43 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 				saveConfig(useAppState);
 				getCurrentWindow().close();
 				break;
+
 			case ConsoleCmd.Help:
 				// TODO: handle additional keyword for specific lookup
 				setShowHelp(true);
 				break;
+
 			case ConsoleCmd.WriteConfig:
 				saveConfig(useAppState);
+				addInfoMessage(useAppState, "Config saved!");
 				break;
+
 			case ConsoleCmd.ChangeDir:
-				// TODO: windows: parse d: -> D:\ (handle in rust)
 				// TODO: path hints while typing
 				setFullscreenImage(false);
 				getDirectory(useAppState, res.payload as string);
 				break;
 			case ConsoleCmd.SetImgScale:
 				setImageGridScale(Number(res.payload));
+				addInfoMessage(useAppState, "Thumbnail scale set: " + res.payload);
 				break;
+			case ConsoleCmd.SetErrorDisplayLv:
+				console.warn("errorlv not implemented");
+				break;
+
 			case ConsoleCmd.GetVerison:
-				console.log("getversion");
+				// TODO: add UI element for info responses
+				addInfoMessage(useAppState, "vimages v"+useAppState.getState().vimages_version);
+				break;
+			case ConsoleCmd.GetQueueSize:
+				// TODO: add UI element for info responses
+				invoke(RustApiAction.GetQueueSize)
+					.then((api) => { addInfoMessage(useAppState, "Images in queue: " + api) });
 				break;
 			case ConsoleCmd.GetCacheInfo:
 				console.log("getcacheinfo");
 				break;
+
 			default:
 				console.warn("Unhandled command in mode.command.ts:");
 				console.warn(ConsoleCmd[res.action] + " -> " + res.word + " -> " + res.payload);

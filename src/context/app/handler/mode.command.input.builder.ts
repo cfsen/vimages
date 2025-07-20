@@ -12,6 +12,7 @@ export enum ConsoleCmd {
 
 	GetVerison,
 	GetCacheInfo,
+	GetQueueSize,
 	ChangeDir
 };
 
