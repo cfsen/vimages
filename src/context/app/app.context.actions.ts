@@ -1,8 +1,12 @@
 import { invoke } from '@tauri-apps/api/core';
 import { StoreApi } from 'zustand';
 
-import { EntityDirectory, RustApiAction, UIComponent, VimagesConfig } from "@context/context.types";
+import { EntityDirectory, Keybind, RustApiAction, UIComponent, VimagesConfig } from "@context/context.types";
 import { IAppState } from "./app.context.store";
+
+import { getCurrentKeybinds } from '@key/key.module';
+import { Keybinds } from '@key/key.types';
+import { Command } from '@key/key.command';
 
 // enable/disable navigation context
 export function setNavProviderActive(store: StoreApi<IAppState>, component: UIComponent, state: boolean) {
@@ -58,11 +62,13 @@ export function getDirectoryHistory(store: StoreApi<IAppState>): string | undefi
 }
 
 export function saveConfig(store: StoreApi<IAppState>){
+	let keybinds = getCurrentKeybinds();
 	const bfr: VimagesConfig = {
 		vimages_version: store.getState().vimages_version,
 		last_path: store.getState().currentDir,
 		window_width: 1280,
 		window_height: 720,
+		keybinds: packageKeybinds(keybinds),
 	};
 
 	invoke(RustApiAction.SaveConfig, {
@@ -74,6 +80,17 @@ export function saveConfig(store: StoreApi<IAppState>){
 		.catch((e) => {
 			console.error(e);
 		});
+}
+
+function packageKeybinds(keybinds: Keybinds): Keybind[] {
+	const result: Keybind[] = [];
+	for (const [keybind, cmd] of keybinds.keyMap.entries()) {
+		result.push({
+			command: Command[cmd],
+			keybind: keybind
+		});
+	}
+	return result;
 }
 
 export function raiseError(store: StoreApi<IAppState>, error: string){

@@ -14,6 +14,11 @@ export type VimagesConfig = {
 	last_path: string;
 	window_width: number;
 	window_height: number;
+	keybinds: Keybind[];
+}
+export type Keybind = {
+	command: string;
+	keybind: string;
 }
 
 export type EntityImage = {

@@ -1,4 +1,4 @@
-import { CommandSequence } from "./key.command";
+import { Command, CommandSequence } from "./key.command";
 import { resultModeCommand } from "./key.module.handler.cmd";
 import { resultModeNormal } from "./key.module.handler.normal";
 
@@ -25,4 +25,7 @@ export interface modeState {
 	callback: (mode: Modal) => void;
 	Mode: Modal;
 }
-
+export type Keybinds = {
+	commandMap: Map<Command, string>,
+	keyMap: Map<string, Command>,
+};

@@ -1,12 +1,12 @@
 import { isSpecialKey } from './key.input.enum';
-import { Command, populateCommandMap } from './key.command';
+import { Command, convertKeyToCommandMap, getDefaultKeyMap } from './key.command';
 import { staticSpecialKeyBinds } from './key.input.parsers';
-import { Modal, modeNormal, modeState, modeInsert, modeVisual, modeCommand } from "./key.types";
+import { Modal, modeNormal, modeState, modeInsert, modeVisual, modeCommand, Keybinds } from "./key.types";
 
 import { handleModeNormal, resultModeNormal, defaultResultModeNormal } from "./key.module.handler.normal";
 import { handleModeCommand, resultModeCommand, defaultResultModeCommand } from "./key.module.handler.cmd";
 
-const commandMap = populateCommandMap();
+let KEYBINDS = getDefaultKeybinds();
 
 let commandBuffer: resultModeCommand = defaultResultModeCommand();
 let normalBuffer: resultModeNormal = defaultResultModeNormal();
@@ -55,17 +55,46 @@ export function modalKeyboard(
 			}
 			break;
 		default:
-			normalBuffer = handleModeNormal(event, normalBuffer, commandMap);
+			normalBuffer = handleModeNormal(event, normalBuffer, KEYBINDS.keyMap);
 
 			setModeState(normalBuffer.mode);
 
 			if(normalBuffer.cmd !== Command.PartialInput) {
-				// normalHandler.callback?.(normalBuffer.cmdSequence);
 				normalHandler.callback?.(normalBuffer);
 				normalBuffer = defaultResultModeNormal();
 			}
 			break;
 	};
+}
+
+export function getDefaultKeybinds(): Keybinds {
+	const keyMap = getDefaultKeyMap();
+	return {
+		commandMap: convertKeyToCommandMap(keyMap),
+		keyMap
+	};
+}
+
+export function getCurrentKeybinds(): Keybinds {
+	return KEYBINDS;
+}
+
+// consumer should getDefaultKeybinds if this fails
+export function setKeybinds(keyMap: Map<string, Command>): boolean {
+	// TODO: verify keyMap
+
+	const commandMap = convertKeyToCommandMap(keyMap);
+	KEYBINDS = {
+		commandMap,
+		keyMap,
+	}
+
+	return true;
+}
+
+export function parseCommand(cmdStr: string): Command | null {
+	if(cmdStr in Command) return Command[cmdStr as keyof typeof Command];
+	return null;
 }
 
 // TODO: 

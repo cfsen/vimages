@@ -10,11 +10,12 @@ import { VisualModeHandler } from "@app/handler/mode.visual";
 import { InsertModeHandler } from "@app/handler/mode.insert";
 import { NavigationHandle, RustApiAction, VimagesConfig } from "@context/context.types";
 
-import { CommandSequence } from "@key/key.command";
+import { Command, CommandSequence, getDefaultKeyMap } from "@key/key.command";
 import { resultModeCommand } from "@key/key.module.handler.cmd";
 import { resultModeNormal } from "@key/key.module.handler.normal";
 
 import { getVersion } from "@tauri-apps/api/app";
+import { getDefaultKeybinds, parseCommand, setKeybinds } from "../key/key.module";
 
 type AppContextType = {
 	// Navigation container management
@@ -44,6 +45,22 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 			.then(response => {
 				const res = response as VimagesConfig;
 				getDirectory(useAppState, res.last_path);
+
+				let keyMap = new Map<string, Command>();
+				for(const k of res.keybinds) {
+					let cmd = parseCommand(k.command);
+					// TODO: robust tests
+					if(cmd !== null) {
+						keyMap.set(k.keybind, cmd);
+						console.log("Mapping: " + k.keybind + " -> " + Command[cmd]);
+					}
+					else {
+						console.log("Failed to map: " + k.keybind);
+					}
+				}
+				
+				if(!setKeybinds(keyMap))
+					console.error("Failed to set keybinds"); // TODO: fallback
 			});
 
 		useAppState.getState().setWorkspace("DirBrowser", true);

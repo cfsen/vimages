@@ -1,7 +1,7 @@
 use std::fs;
 use std::path::PathBuf;
 
-use crate::user_config::types::ConfigFile;
+use crate::user_config::types::{ConfigFile, Keybind};
 
 const CONFIG_DIR: &str = ".vimages";
 const CONFIG_FILE: &str = "vimages_config.json";
@@ -92,8 +92,17 @@ pub fn write_config(config: &ConfigFile) -> Result<(), String> {
 pub fn create_default_config() -> ConfigFile {
     ConfigFile {
         vimages_version: env!("CARGO_PKG_VERSION").to_string(),
-        last_path: ".".to_string(),
+        last_path: dirs::home_dir()
+            .unwrap_or_else(|| PathBuf::from("."))
+            .to_string_lossy().to_string(),
         window_width: 1280,
         window_height: 720,
+        keybinds: vec![
+            create_keybind("Return", "  "),
+        ],
     }
+}
+
+fn create_keybind(command: &str, keybind: &str) -> Keybind {
+   Keybind { command: command.into(), keybind: keybind.into() } 
 }
