@@ -1,22 +1,48 @@
 import { getCurrentWindow } from '@tauri-apps/api/window';
-import { invoke } from "@tauri-apps/api/core";
 
 import { useAppState } from "@app/app.context.store";
-import { getDirectory, raiseError, saveConfig } from "@app/app.context.actions"
-
-import { RustApiAction } from "@context/context.types";
+import { getDirectory, saveConfig } from "@app/app.context.actions"
 
 import { Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
 import { resultModeCommand } from '@key/key.module.handler.cmd';
 
-const paramCommands = [":set", ":e"];
+import {
+	ConsoleCmd, getParser, ParamCommand, ParamCommandBuilder, ParamType, parseInput
+} from "@app/handler/mode.command.input.builder";
+
+function b(call: string) { return new ParamCommandBuilder(call) };
+const cmdParam: ParamCommand[] = [
+	b(":q").param(ParamType.None, ConsoleCmd.Quit).build(),
+	b(":wq").param(ParamType.None, ConsoleCmd.SaveQuit).build(),
+	b(":sc").param(ParamType.None, ConsoleCmd.WriteConfig).build(),
+
+	b(":help")
+	.param(ParamType.None, ConsoleCmd.Help)
+	.param(ParamType.Keyword, ConsoleCmd.KeywordHelp)
+	.build(),
+
+	b(":set")
+	.param(ParamType.Number, ConsoleCmd.SetImgScale, "imgscale")
+	.param(ParamType.Number, ConsoleCmd.SetErrorDisplayLv, "errorlv")
+	.build(),
+
+	b(":get")
+	.param(ParamType.Keyword, ConsoleCmd.GetVerison, "version")
+	.param(ParamType.Keyword, ConsoleCmd.GetCacheInfo, "cache")
+	.build(),
+
+	b(":cd").param(ParamType.Action, ConsoleCmd.ChangeDir).build(),
+];
+
+const registeredCommands = new Map<string,ParamCommand>();
+for(const cmd of cmdParam){
+	registeredCommands.set(cmd.call, cmd);
+}
 
 export function CommandModeHandler(resultCommand: resultModeCommand){
 	const {
-		imageGridScale,
 		setImageGridScale,
-
 		setMode,
 		setShowHelp,
 		setInputBufferCommand,
@@ -30,62 +56,47 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 
 	if(resultCommand.cmd !== Command.Return) return;
 
-	// check for parameterless commands
-	switch(resultCommand.sequence){
-		case ":q":
-			// TODO: save any pending thumbnail tasks
-			// TODO: confirm close on unsaved changes
-			getCurrentWindow().close();
-			break;
-		case ":wq":
-			saveConfig(useAppState);
-			getCurrentWindow().close();
-			break;
-		case ":help":
-			setShowHelp(true);
-			break;
-		case ":sc":
-			saveConfig(useAppState);
-			break;
-		case ":queue":
-			invoke(RustApiAction.GetQueueSize, {})
-				.then(res => {
-					raiseError(useAppState, "Images in queue: " + res);
-				});
-			break;
-	};
+	const parser = getParser(resultCommand.sequence, registeredCommands);
+	if(parser === undefined) return;
 
-	let split = SplitCommandParam(resultCommand.sequence);
-	if(split !== null) {
-		console.log("issplitCommand: " + split.cmd, split.param);
-		switch(split.cmd){
-			case ":e":
+	const results = parseInput(resultCommand.sequence, parser);
+
+	for(const res of results) {
+		switch(res.action) {
+			case ConsoleCmd.Quit:
+				// TODO: save any pending thumbnail tasks
+				// TODO: confirm close on unsaved changes
+				getCurrentWindow().close();
+				break;
+			case ConsoleCmd.SaveQuit:
+				saveConfig(useAppState);
+				getCurrentWindow().close();
+				break;
+			case ConsoleCmd.Help:
+				// TODO: handle additional keyword for specific lookup
+				setShowHelp(true);
+				break;
+			case ConsoleCmd.WriteConfig:
+				saveConfig(useAppState);
+				break;
+			case ConsoleCmd.ChangeDir:
 				// TODO: windows: parse d: -> D:\ (handle in rust)
 				// TODO: path hints while typing
-				
-				// exit fullscreen on directory traversal
 				setFullscreenImage(false);
-				getDirectory(useAppState, split.param.join(" "));
+				getDirectory(useAppState, res.payload as string);
 				break;
-			case ":set":
-				// TODO: further implementation blocked by config file/unified command type TODO_CONFIG_FILE
-				console.log(split);
-				if(split.param.length === 0) {
-					console.log("no keyword");
-					break;
-				}
-				if(split.param[0] !== "imgscale") {
-					console.log("incorrect keyword");
-					break;
-				}
-				// output value 
-				if(split.param.length === 1) {
-					console.log("No value for param, output current value: " + imageGridScale);
-					break;
-				}
-				// set value
-				console.log(`Setting value: ${resultCommand.sequence}`);
-				setImageGridScale(Number(split.param[1]));
+			case ConsoleCmd.SetImgScale:
+				setImageGridScale(Number(res.payload));
+				break;
+			case ConsoleCmd.GetVerison:
+				console.log("getversion");
+				break;
+			case ConsoleCmd.GetCacheInfo:
+				console.log("getcacheinfo");
+				break;
+			default:
+				console.warn("Unhandled command in mode.command.ts:");
+				console.warn(ConsoleCmd[res.action] + " -> " + res.word + " -> " + res.payload);
 				break;
 		};
 	}
@@ -93,21 +104,4 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 	// reset to normal, clear buffer
 	setMode(Modal.Normal);
 	setInputBufferCommand(":");
-}
-
-function SplitCommandParam(input: string): {cmd: string, param: string[]} | null {
-	for(let i = 0; i < paramCommands.length; i++){
-		if(input.length <= paramCommands[i].length) {
-			continue
-		}
-
-		if(input.slice(0, paramCommands[i].length) === paramCommands[i]) {
-			let split = {
-				cmd: input.slice(0, paramCommands[i].length),
-				param: input.slice(paramCommands[i].length+1, input.length).split(" "),
-			};
-			return split
-		}
-	}
-	return null
 }
