@@ -7,6 +7,7 @@ export enum RustApiAction {
 	GetQueueSize = "rt_get_queue_size",
 	GetConfig = "get_or_create_config",
 	SaveConfig = "save_config",
+	GetCacheInfo = "cache_get_info"
 }
 
 export type VimagesConfig = {
@@ -36,6 +37,11 @@ export type EntityDirectory = {
 	images: EntityImage[];
 	sub_dirs: EntityDirectory[];
 	sibling_dirs: EntityDirectory[];
+}
+
+export type JournalInfo = {
+	entries_hashes: number;
+	entries_metadata: number;
 }
 
 export type NavigationHandle = {

@@ -11,7 +11,7 @@ import {
 	ConsoleCmd, getParser, ParamCommand, ParamCommandBuilder, ParamType, parseInput
 } from "@app/handler/mode.command.input.builder";
 import { invoke } from '@tauri-apps/api/core';
-import { RustApiAction } from '@/context/context.types';
+import { JournalInfo, RustApiAction } from '@/context/context.types';
 
 function b(call: string) { return new ParamCommandBuilder(call) };
 const cmdParam: ParamCommand[] = [
@@ -100,16 +100,21 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 				break;
 
 			case ConsoleCmd.GetVerison:
-				// TODO: add UI element for info responses
 				addInfoMessage(useAppState, "vimages v"+useAppState.getState().vimages_version);
 				break;
 			case ConsoleCmd.GetQueueSize:
-				// TODO: add UI element for info responses
 				invoke(RustApiAction.GetQueueSize)
 					.then((api) => { addInfoMessage(useAppState, "Images in queue: " + api) });
 				break;
 			case ConsoleCmd.GetCacheInfo:
-				console.log("getcacheinfo");
+				invoke(RustApiAction.GetCacheInfo)
+					.then((api) => { 
+						// TODO: helper for setting multiple lines of output at once.
+						const jinfo = api as JournalInfo;
+						addInfoMessage(useAppState, "CACHE INFO:");
+						addInfoMessage(useAppState, "entries_hashes: " + jinfo.entries_hashes);
+						addInfoMessage(useAppState, "entries_metadata: " + jinfo.entries_metadata);
+					});
 				break;
 
 			default:
