@@ -2,6 +2,7 @@ mod endpoints;
 mod img_cache;
 mod server;
 mod user_config;
+mod journal;
 
 use queue::Queue;
 use server::{start_server, ServerState};
@@ -10,12 +11,16 @@ use std::{
     sync::{Arc, OnceLock, RwLock},
 };
 
-use crate::img_cache::queue;
-use crate::user_config::vimages_config;
+use crate::{
+    img_cache::queue, 
+    journal::database::Database,
+    user_config::vimages_config
+};
 
 static GLOBAL_SERVER_STATE: OnceLock<ServerState> = OnceLock::new();
 static GLOBAL_SERVER_PORT: OnceLock<u16> = OnceLock::new();
 static GLOBAL_QUEUE: OnceLock<Queue> = OnceLock::new();
+static GLOBAL_JOURNAL: OnceLock<Database> = OnceLock::new();
 
 pub fn get_server_state() -> &'static ServerState {
     GLOBAL_SERVER_STATE.get().expect("axum not initialized")
@@ -26,6 +31,10 @@ pub fn get_server_port() -> u16 {
 
 pub fn get_queue() -> &'static Queue {
     GLOBAL_QUEUE.get().expect("Queue not initialized")
+}
+
+pub fn get_db() -> &'static Database {
+    GLOBAL_JOURNAL.get().expect("Database not initialized")
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -53,12 +62,19 @@ pub fn run() {
                 GLOBAL_QUEUE.set(queue).expect("Failed to set global queue");
             });
 
+            // Init db
+            tauri::async_runtime::spawn(async move {
+                let db = Database::new().expect("Failed to initialize database");
+                GLOBAL_JOURNAL.set(db).expect("Failed to set global database");
+            });
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
             endpoints::fs::fsx_get_dir,
             endpoints::runtime::rt_get_axum_port,
             endpoints::runtime::rt_get_queue_size,
+            endpoints::cache::cache_get_info,
             vimages_config::save_config,
             vimages_config::get_or_create_config,
         ])
