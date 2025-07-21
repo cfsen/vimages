@@ -102,7 +102,11 @@ impl QueueWorker {
                 // TODO: clean up return from create_thumbnail() TODO_RS_CTHUMB
                 Ok(Ok(true)) => {
                     debug!("Thumbnail generated successfully for {}", item.full_path.to_string_lossy());
-                    if let Err(e) = get_db().insert_hash(&item.path_hash, &item.file_hash) {
+                    if let Err(e) = get_db().insert_hash(
+                        &item.path_hash,
+                        &item.file_hash,
+                        &item.full_path.to_string_lossy()
+                    ) {
                         error!("Failed to insert hash for {}, {}", item.full_path.to_string_lossy(), e);
                     }
                 }
