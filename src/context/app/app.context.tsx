@@ -1,4 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
+import { getVersion } from "@tauri-apps/api/app";
+
 import { createContext, useEffect, useContext } from "react";
 
 import { useAppState } from "./app.context.store";
@@ -8,14 +11,15 @@ import { NormalModeHandler } from "@app/handler/mode.normal";
 import { CommandModeHandler } from "@app/handler/mode.command";
 import { VisualModeHandler } from "@app/handler/mode.visual";
 import { InsertModeHandler } from "@app/handler/mode.insert";
+import { eventHandleMsgInfoWindow } from "@app/app.event.listeners";
+import { IPC_MsgInfoWindow } from "@app/app.event.types";
+
 import { NavigationHandle, RustApiAction, VimagesConfig } from "@context/context.types";
 
-import { Command, CommandSequence, getDefaultKeyMap } from "@key/key.command";
+import { Command, CommandSequence } from "@key/key.command";
 import { resultModeCommand } from "@key/key.module.handler.cmd";
 import { resultModeNormal } from "@key/key.module.handler.normal";
-
-import { getVersion } from "@tauri-apps/api/app";
-import { getDefaultKeybinds, parseCommand, setKeybinds } from "../key/key.module";
+import { parseCommand, setKeybinds } from "@key/key.module";
 
 type AppContextType = {
 	// Navigation container management
@@ -36,6 +40,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 	const setVersion = useAppState(state => state.setVimagesVersion);
 
 	useEffect(() => {
+
 		getVersion().then(setVersion);
 
 		invoke(RustApiAction.GetAxumPort)
@@ -58,13 +63,30 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 						console.log("Failed to map: " + k.keybind);
 					}
 				}
-				
+
 				if(!setKeybinds(keyMap))
 					console.error("Failed to set keybinds"); // TODO: fallback
 			});
 
 		useAppState.getState().setWorkspace("DirBrowser", true);
 		nextNavProvider(useAppState);
+	}, []);
+
+	//
+	// event listener registration 
+	//
+
+	useEffect(() => {
+		const setupListenerMsgInfoWindow = async () => {
+			return await listen<IPC_MsgInfoWindow>(
+				'msg-info-window', (event) => { eventHandleMsgInfoWindow(event, useAppState) }, { target: 'global-handler' });
+		};
+
+		const cleanupMsgInfoWindow = setupListenerMsgInfoWindow();
+
+		return () => {
+			cleanupMsgInfoWindow.then(unlisten => unlisten?.());
+		};
 	}, []);
 
 	//
@@ -97,6 +119,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 	const handleModeNormal = (resultNormal: resultModeNormal) => {
 		NormalModeHandler(resultNormal);
 	}
+
 	return (
 		<AppContext.Provider value={{ 
 			handleModeNormal,
