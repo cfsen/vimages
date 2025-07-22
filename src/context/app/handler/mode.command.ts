@@ -31,11 +31,11 @@ const cmdParam: ParamCommand[] = [
 
 	b(":get")
 	.param(ParamType.Keyword, ConsoleCmd.GetVerison, "version")
-	.param(ParamType.Keyword, ConsoleCmd.GetCacheInfo, "cache")
 	.param(ParamType.Keyword, ConsoleCmd.GetQueueSize, "queue")
 	.build(),
 
 	b(":cache")
+	.param(ParamType.Keyword, ConsoleCmd.GetCacheInfo, "info")
 	.param(ParamType.Keyword, ConsoleCmd.RunCacheCleanup, "clean")
 	.build(),
 
