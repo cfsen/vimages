@@ -3,6 +3,7 @@ mod img_cache;
 mod server;
 mod user_config;
 mod journal;
+mod ipc;
 
 use queue::Queue;
 use server::{start_server, ServerState};
@@ -14,13 +15,14 @@ use std::{
 use crate::{
     img_cache::queue, 
     journal::database::Database,
-    user_config::vimages_config
+    user_config::vimages_config,
 };
 
 static GLOBAL_SERVER_STATE: OnceLock<ServerState> = OnceLock::new();
 static GLOBAL_SERVER_PORT: OnceLock<u16> = OnceLock::new();
 static GLOBAL_QUEUE: OnceLock<Queue> = OnceLock::new();
 static GLOBAL_JOURNAL: OnceLock<Database> = OnceLock::new();
+static GLOBAL_APP_HANDLE: OnceLock<tauri::AppHandle> = OnceLock::new();
 
 pub fn get_server_state() -> &'static ServerState {
     GLOBAL_SERVER_STATE.get().expect("axum not initialized")
@@ -37,12 +39,21 @@ pub fn get_db() -> &'static Database {
     GLOBAL_JOURNAL.get().expect("Database not initialized")
 }
 
+pub fn get_app_handle() -> &'static tauri::AppHandle {
+    GLOBAL_APP_HANDLE.get().expect("App handle not initialized")
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_opener::init())
-        .setup(move |_app| {
+        .setup(move |app| {
+
+            GLOBAL_APP_HANDLE
+                .set(app.handle().clone())
+                .expect("Failed to set global app handle");
+
             // Init axum
             tauri::async_runtime::spawn(async move {
                 let server_state: ServerState = Arc::new(RwLock::new(PathBuf::from(".")));
@@ -78,6 +89,7 @@ pub fn run() {
             endpoints::cache::cache_cleanup,
             vimages_config::save_config,
             vimages_config::get_or_create_config,
+            vimages_debug::debug_ipc::debug_emitter,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
