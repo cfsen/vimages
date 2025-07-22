@@ -8,6 +8,8 @@ import { getCurrentKeybinds } from '@key/key.module';
 import { Keybinds } from '@key/key.types';
 import { Command } from '@key/key.command';
 
+import { timestamp } from '@context/helpers';
+
 // enable/disable navigation context
 export function setNavProviderActive(store: StoreApi<IAppState>, component: UIComponent, state: boolean) {
 	// TODO: this also needs to handle setting the active navctx if the current one gets hidden
@@ -99,13 +101,8 @@ export function raiseError(store: StoreApi<IAppState>, error: string){
 }
 
 export function addInfoMessage(store: StoreApi<IAppState>, msg: string){
-	const timestamp = new Date().toLocaleTimeString('en-GB', {
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: false
-	});
 	store.getState().setShowInfo(true);
-	store.getState().addInfoMessage("[" + timestamp + "] " + msg);
+	store.getState().addInfoMessage("[" + timestamp() + "] " + msg);
 }
 
 // TODO: improve logic when more workspaces are added TODO_WORKSPACE_SELECTION
