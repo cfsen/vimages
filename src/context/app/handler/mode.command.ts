@@ -35,6 +35,10 @@ const cmdParam: ParamCommand[] = [
 	.param(ParamType.Keyword, ConsoleCmd.GetQueueSize, "queue")
 	.build(),
 
+	b(":cache")
+	.param(ParamType.Keyword, ConsoleCmd.RunCacheCleanup, "clean")
+	.build(),
+
 	b(":cd").param(ParamType.Action, ConsoleCmd.ChangeDir).build(),
 ];
 
@@ -114,6 +118,14 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 						addInfoMessage(useAppState, "CACHE INFO:");
 						addInfoMessage(useAppState, "entries_hashes: " + jinfo.entries_hashes);
 						addInfoMessage(useAppState, "entries_metadata: " + jinfo.entries_metadata);
+					});
+				break;
+
+			case ConsoleCmd.RunCacheCleanup:
+				invoke(RustApiAction.RunCacheCleanup)
+					.then((api) => {
+						let processStarted = api as boolean;
+						addInfoMessage(useAppState, api ? "Cache cleanup started." : "Failed to start cache cleanup.");
 					});
 				break;
 

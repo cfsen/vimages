@@ -7,7 +7,8 @@ export enum RustApiAction {
 	GetQueueSize = "rt_get_queue_size",
 	GetConfig = "get_or_create_config",
 	SaveConfig = "save_config",
-	GetCacheInfo = "cache_get_info"
+	GetCacheInfo = "cache_get_info",
+	RunCacheCleanup = "cache_cleanup"
 }
 
 export type VimagesConfig = {
