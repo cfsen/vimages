@@ -11,7 +11,7 @@ use tokio::{
     task,
 };
 
-use crate::img_cache::{cache, img};
+use crate::{img_cache::{cache, img}, ipc::send};
 use crate::get_db;
 
 #[derive(Debug, Clone)]
@@ -128,6 +128,12 @@ impl QueueWorker {
 
             let remaining = size.fetch_sub(1, Ordering::SeqCst).saturating_sub(1);
             if remaining % 10 == 0 || remaining < 10 {
+                if remaining > 0 {
+                    send::info_window_msg(&format!("{remaining:?} thumbnails in queue."));
+                }
+                else {
+                    send::info_window_msg("Thumbnails generated.");
+                }
                 info!("{remaining:?} images remaining in queue.");
             }
         }
