@@ -64,9 +64,16 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 	if(resultCommand.cmd !== Command.Return) return;
 
 	const parser = getParser(resultCommand.sequence, registeredCommands);
-	if(parser === undefined) return;
+	if(parser === undefined) {
+		raiseError(useAppState, `Command not found: '${resultCommand.sequence}'`);
+		return
+	};
 
 	const results = parseInput(resultCommand.sequence, parser);
+
+	if(results.length === 0) {
+		raiseError(useAppState, `No handler found: '${resultCommand.sequence}'`);
+	}
 
 	for(const res of results) {
 		switch(res.action) {
