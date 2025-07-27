@@ -5,6 +5,7 @@ use std::fs;
 use crate::endpoints::types::{EntityDirectory, EntityImage};
 use crate::get_queue;
 use crate::img_cache;
+use crate::ipc::send;
 use crate::{get_server_state, server::set_serve_directory};
 
 #[tauri::command]
@@ -79,6 +80,8 @@ fn fsx_parse_path_traversal(path: &Path, rel_path: &str) -> Result<PathBuf, Stri
 fn fsx_get_images(path: &Path, path_hash: &str) -> Result<Vec<EntityImage>, String> {
     let allowed_exts = ["png", "jpg", "jpeg", "webp", "gif", "svg", "bmp"];
 
+    let mut queue_count = 0;
+
     let mut images: Vec<EntityImage> = fs::read_dir(path)
         .map_err(|e| e.to_string())?
         .filter_map(Result::ok)
@@ -105,7 +108,10 @@ fn fsx_get_images(path: &Path, path_hash: &str) -> Result<Vec<EntityImage>, Stri
 
             let cache = img_cache::cache::check_cache(path_hash, &file_hash);
 
+
             if cache.is_none() {
+                queue_count += 1;
+
                 let queue_item = img_cache::queue::QueueItem {
                     full_path: full_path.to_path_buf(),
                     path_hash: path_hash.to_string().clone(),
@@ -117,6 +123,7 @@ fn fsx_get_images(path: &Path, path_hash: &str) -> Result<Vec<EntityImage>, Stri
                     }
                 });
             }
+
 
             debug!("EntityImage:");
             debug!("full_path: {full_path:?}");
@@ -131,6 +138,12 @@ fn fsx_get_images(path: &Path, path_hash: &str) -> Result<Vec<EntityImage>, Stri
             })
         })
         .collect::<Result<Vec<_>, String>>()?;
+
+    // notify frontend
+    if queue_count > 0 {
+        let msg_path = path.to_string_lossy();
+        send::info_window_msg(&format!("Generating {queue_count} thumbnails for: {msg_path}"));
+    }
 
     images.sort_by(|a, b| a.filename.cmp(&b.filename));
 
