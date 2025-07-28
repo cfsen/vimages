@@ -1,5 +1,5 @@
 import { useAppState } from "@app/app.context.store";
-import { getDirectory, nextNavProvider, nextWorkspace, raiseError } from "@app/app.context.actions";
+import { addInfoMessage, getDirectory, nextNavProvider, nextWorkspace, raiseError } from "@app/app.context.actions";
 
 import { Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
@@ -14,6 +14,8 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 		setShowError,
 		showInfo,
 		setShowInfo,
+		fullscreenImage,
+		setFullscreenImage,
 		activeNavigationContext, 
 	} = useAppState.getState();
 
@@ -35,15 +37,19 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 
 		case Command.Refresh:
 			getDirectory(useAppState, ".");
+			if(fullscreenImage) setFullscreenImage(false);
+			addInfoMessage(useAppState, "Refreshing directory.");
 			break;
 
 		case Command.WorkspaceNext:
 			// TODO: TODO_WORKSPACE_SELECTION
+			if(fullscreenImage) setFullscreenImage(false);
 			nextWorkspace(useAppState);
 			break;
 
 		case Command.WorkspacePrev:
 			// TODO: TODO_WORKSPACE_SELECTION
+			if(fullscreenImage) setFullscreenImage(false);
 			nextWorkspace(useAppState);
 			break;
 
@@ -54,6 +60,7 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 
 		case Command.Escape:
 			if(showHelp) setShowHelp(false);
+			if(fullscreenImage) setFullscreenImage(false);
 			console.log("ctx:handleCmd:escape");
 			break;
 

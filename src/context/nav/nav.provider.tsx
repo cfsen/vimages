@@ -79,12 +79,6 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 			return true;
 		}
 
-		// TODO: refactor out
-		if(seq.cmd === Command.Escape){
-			if(useAppState.getState().fullscreenImage)
-				setFullscreenImage(false);
-			return true;
-		}
 		if(seq.cmd === Command.Return){
 			let item  = navigationState.getState().navItems
 			.find((i) => i.id === navigationState.getState().navItemActive);
@@ -97,11 +91,6 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 				setFullscreenImagePath(item.data);
 			}
 			return true;
-		}
-		if(seq.cmd === Command.Error){
-			console.log("navctx:handleCmd:error");
-
-			return false;
 		}
 
 		// Handle cursor navigation
