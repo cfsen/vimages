@@ -19,9 +19,9 @@ function DirBrowserMain(){
 
 	return (
 		<div className={styles.fsActiveColumn}>
-					<div className={styles.fsElement}>
-						./
-					</div>
+			<div className={styles.fsElement}>
+				./
+			</div>
 			<NavWrapper
 				key={"fileBrowserItemGoParentDir.h." + currentDirHash}
 				id={"fileBrowserItemGoParentDir"}

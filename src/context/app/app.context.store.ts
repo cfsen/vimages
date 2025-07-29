@@ -38,6 +38,8 @@ interface IAppProps {
 	inputBufferCommand: string
 	inputBufferCursor: number
 
+	dirBrowserRenderParentDir: boolean
+
 	//
 	// Image grid UI
 	// key_imgrid
@@ -88,6 +90,8 @@ export interface IAppState extends IAppProps {
 
 	setInputBufferCommand: (_: string) => void
 	setInputBufferCursor: (_: number) => void
+
+	setDirBrowserRenderParentDir: (render: boolean) => void
 	
 	//
 	// Image grid UI
@@ -192,6 +196,9 @@ export const useAppState = create<IAppState>((set) => ({
 	setInputBufferCommand: (_) => set({ inputBufferCommand: _ }),
 	inputBufferCursor: 1,
 	setInputBufferCursor: (_) => set ({ inputBufferCursor: _ }),
+
+	dirBrowserRenderParentDir: false,
+	setDirBrowserRenderParentDir: (render) => set({ dirBrowserRenderParentDir: render }),
 
 	//
 	// Image grid UI
