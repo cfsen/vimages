@@ -1,4 +1,5 @@
 import { getCurrentWindow } from '@tauri-apps/api/window';
+import { invoke } from '@tauri-apps/api/core';
 
 import { useAppState } from "@app/app.context.store";
 import { addInfoMessage, getDirectory, raiseError, saveConfig } from "@app/app.context.actions"
@@ -6,12 +7,11 @@ import { addInfoMessage, getDirectory, raiseError, saveConfig } from "@app/app.c
 import { Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
 import { resultModeCommand } from '@key/key.module.handler.cmd';
-
 import {
 	ConsoleCmd, getParser, ParamCommand, ParamCommandBuilder, ParamType, parseInput
 } from "@app/handler/mode.command.input.builder";
-import { invoke } from '@tauri-apps/api/core';
-import { JournalInfo, RustApiAction } from '@/context/context.types';
+
+import { JournalInfo, RustApiAction } from '@context/context.types';
 
 function b(call: string) { return new ParamCommandBuilder(call) };
 const cmdParam: ParamCommand[] = [
@@ -27,6 +27,7 @@ const cmdParam: ParamCommand[] = [
 	b(":set")
 	.param(ParamType.Number, ConsoleCmd.SetImgScale, "imgscale")
 	.param(ParamType.Number, ConsoleCmd.SetErrorDisplayLv, "errorlv")
+	.param(ParamType.Keyword, ConsoleCmd.SetDirBrowserParentPane, "parentpane")
 	.build(),
 
 	b(":get")
@@ -108,6 +109,11 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 				break;
 			case ConsoleCmd.SetErrorDisplayLv:
 				console.warn("errorlv not implemented");
+				break;
+			case ConsoleCmd.SetDirBrowserParentPane:
+				let val = !useAppState.getState().dirBrowserRenderParentDir;
+				useAppState.getState().setDirBrowserRenderParentDir(val);
+				addInfoMessage(useAppState, "Browser: " + (val ? "enabling" : "disabling") + " parent pane.");
 				break;
 
 			case ConsoleCmd.GetVerison:
