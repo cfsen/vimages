@@ -2,7 +2,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import { invoke } from '@tauri-apps/api/core';
 
 import { useAppState } from "@app/app.context.store";
-import { addInfoMessage, getDirectory, raiseError, saveConfig } from "@app/app.context.actions"
+import { addInfoMessage, addInfoMessageArray, getDirectory, raiseError, saveConfig } from "@app/app.context.actions"
 
 import { Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
@@ -126,11 +126,12 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 			case ConsoleCmd.GetCacheInfo:
 				invoke(RustApiAction.GetCacheInfo)
 					.then((api) => { 
-						// TODO: helper for setting multiple lines of output at once.
 						const jinfo = api as JournalInfo;
-						addInfoMessage(useAppState, "CACHE INFO:");
-						addInfoMessage(useAppState, "entries_hashes: " + jinfo.entries_hashes);
-						addInfoMessage(useAppState, "entries_metadata: " + jinfo.entries_metadata);
+						addInfoMessageArray(useAppState, [
+							"CACHE INFO:",
+							"entries_hashes: " + jinfo.entries_hashes,
+							"entries_metadata: " + jinfo.entries_metadata
+						]);
 					});
 				break;
 

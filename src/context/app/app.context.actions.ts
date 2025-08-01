@@ -105,6 +105,13 @@ export function addInfoMessage(store: StoreApi<IAppState>, msg: string){
 	store.getState().addInfoMessage("[" + timestamp() + "] " + msg);
 }
 
+export function addInfoMessageArray(store: StoreApi<IAppState>, msg: string[]){
+	let ts = timestamp();
+	msg.forEach((x) => {
+		store.getState().addInfoMessage(`[${ts}] ${x}`);
+	});
+}
+
 // TODO: improve logic when more workspaces are added TODO_WORKSPACE_SELECTION
 export function nextWorkspace(store: StoreApi<IAppState>){
 	const spaces = store.getState().workspace;
