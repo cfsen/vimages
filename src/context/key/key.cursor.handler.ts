@@ -5,6 +5,7 @@ export function KeyboardCursorHandle(
 	items_length: number,
 	cursor_position: number,
 	itemsPerRow: number,
+	halfPageRows: number,
 ): number | null {
 
 	let cur = cursor_position;
@@ -77,14 +78,16 @@ export function KeyboardCursorHandle(
 			cur = len-1;
 			break;
 		/*
-		 * TODO: ctrl+u, ctrl+d half page scrolling
+		 * TODO: ctrl+u, ctrl+d half page scrolling TODO_DYNAMIC_HALFPAGE
 		 * needs amount of visible elements/rows
 		 * scroll should equal half the visible elements
 		 **/
 		case Command.PageUp:
+			cur = Math.max(0, cur - halfPageRows * itemsPerRow);
 			console.log("ctx.handleCmd:pageup");
 			break;
 		case Command.PageDown:
+			cur = Math.min(len-1, cur + halfPageRows * itemsPerRow);
 			console.log("ctx.handleCmd:pagedown");
 			break;
 		default:

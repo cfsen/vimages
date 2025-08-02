@@ -122,6 +122,9 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 
 		let curpos = navigationState.getState().navItems.findIndex((i) => i.id === activeItemID);
 		let perRow = navigationState.getState().navItemsPerRow;
+		// TODO: should be determined dynamically based on shown elements TODO_DYNAMIC_HALFPAGE
+		// directory browser jumps 10 rows, thumbnail grid 3 rows
+		let halfPage = component === UIComponent.dirBrowserMain ? 10 : 3;
 
 		if(curpos === -1 || length === 0 || perRow === 0) {
 			// TODO: logging
@@ -129,7 +132,7 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 			return false;
 		}
 
-		let cur = KeyboardCursorHandle(seq.cmdSequence, _length, _curpos, _perRow);
+		let cur = KeyboardCursorHandle(seq.cmdSequence, length, curpos, perRow, halfPage);
 
 		if(cur === null)
 			return false;
