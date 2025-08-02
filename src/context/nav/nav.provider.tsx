@@ -67,70 +67,84 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 	//
 
 	const handleNavigationCmd = (seq: resultModeNormal): boolean => {
-		if(navigationState.getState().navItems.length > 0 && navigationState.getState().navItemActive === null) {
-			setNavItemActive(navigationState.getState().navItems[0].id);
-		}
-
-		//setCmdLog(prev => [...prev, seq]);
-
-		if(seq.cmd === Command.Debug){
+		if(seq.cmd === Command.Debug) {
 			console.log(">>> Active NavigationContext (" + navigationId.current + ")");
 			console.log("> Instanced Zustand store:", navigationState.getState());
 			return true;
 		}
 
-		if(seq.cmd === Command.Return){
-			let item  = navigationState.getState().navItems
-			.find((i) => i.id === navigationState.getState().navItemActive);
+		let length = navigationState.getState().navItems.length;
+		// no items to navigate
+		if(length === 0)
+			return false;
 
-			if(item?.itemType === NavWrapperItemType.FileBrowser){
-				getDirectory(useAppState, item.data);
-			}
-			else if(item?.itemType === NavWrapperItemType.Image){
-				setFullscreenImage(true);
-				setFullscreenImagePath(item.data);
-			}
-			return true;
+		let activeItemID = navigationState.getState().navItemActive;
+		// no active item, set first in array as active
+		if(activeItemID === null) {
+			activeItemID = navigationState.getState().navItems[0].id;
+			setNavItemActive(activeItemID);
 		}
 
-		// Handle cursor navigation
-		let _length = navigationState.getState().navItems.length;
-		let _curpos = navigationState.getState().navItems
-		.findIndex((i) => i.id === navigationState.getState().navItemActive);
-		let _perRow = navigationState.getState().navItemsPerRow;
+		let item = navigationState.getState().navItems.find((i) => i.id === activeItemID);
+		// this should never occur
+		if(item === undefined) return false;
 
-		if(_curpos === -1 || _length === 0 || _perRow === 0) {
-			// TODO: UI: empty directory
+		// TODO: command log, consider if it should be handled in orchestrator
+		//setCmdLog(prev => [...prev, seq]);
+
+		// handle input for directory browser
+		if(component === UIComponent.dirBrowserMain) {
+			switch(seq.cmd){
+				case Command.CursorLeft:
+					getDirectory(useAppState, "..");
+					return true;
+
+				case Command.CursorRight:
+					// ensure CursorRight will not ascend in the directory tree even when ".." is selected
+					if(item.data === "..")
+						return false;
+					
+					getDirectory(useAppState, item.data);
+					return true;
+
+				case Command.Return:
+					getDirectory(useAppState, item.data);
+					return true;
+			};
+		}
+
+		switch(seq.cmd){
+			case Command.Return:
+				setFullscreenImage(true);
+				setFullscreenImagePath(item.data);
+				return true;
+		};
+
+		let curpos = navigationState.getState().navItems.findIndex((i) => i.id === activeItemID);
+		let perRow = navigationState.getState().navItemsPerRow;
+
+		if(curpos === -1 || length === 0 || perRow === 0) {
+			// TODO: logging
+			console.error(`nav.provider: invalid cursor state: length=${length}, curpos=${curpos}, perRow=${perRow}`);
 			return false;
 		}
 
 		let cur = KeyboardCursorHandle(seq.cmdSequence, _length, _curpos, _perRow);
 
-		if(cur != null)  {
-			if(component === UIComponent.dirBrowserMain && seq.cmd === Command.CursorLeft){
-				getDirectory(useAppState, "..");
-				return true;
-			}
-			if(component === UIComponent.dirBrowserMain && seq.cmd === Command.CursorRight){
-				let path  = navigationState.getState().navItems
-				.find((i) => i.id === navigationState.getState().navItemActive);
-				if(path !== undefined) {
-					getDirectory(useAppState, path.data)
-					return true;
-				}
-			}
-			// update cursor position
-			navigationState.getState().setNavItemActive(
-				navigationState.getState().navItems[cur].id
-			);
-			// Swap images in fullscreen
-			if(useAppState.getState().fullscreenImage){
-				setFullscreenImagePath(navigationState.getState().navItems[cur].data);
-			}
+		if(cur === null)
+			return false;
 
-			return true;
+		// update cursor position
+		navigationState.getState().setNavItemActive(
+			navigationState.getState().navItems[cur].id
+		);
+
+		// Swap images in fullscreen
+		if(useAppState.getState().fullscreenImage) {
+			setFullscreenImagePath(navigationState.getState().navItems[cur].data);
 		}
-		return false;
+
+		return true;
 	};
 
 	//
