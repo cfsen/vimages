@@ -107,6 +107,7 @@ export function addInfoMessage(store: StoreApi<IAppState>, msg: string){
 
 export function addInfoMessageArray(store: StoreApi<IAppState>, msg: string[]){
 	let ts = timestamp();
+	store.getState().setShowInfo(true);
 	msg.forEach((x) => {
 		store.getState().addInfoMessage(`[${ts}] ${x}`);
 	});
