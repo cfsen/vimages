@@ -130,6 +130,11 @@ export function nextWorkspace(store: StoreApi<IAppState>){
 		nextNavProvider(store);
 	}
 	else {
+		if(store.getState().images.length === 0) {
+			raiseError(store, "Unable to open image grid: no images in directory.");
+			return;
+		}
+
 		store.getState().setWorkspace("DirBrowser", false);
 		store.getState().setWorkspace("ImgGrid", true);
 		setNavProviderActive(store, UIComponent.imgGrid, true);
