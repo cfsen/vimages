@@ -2,7 +2,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import { invoke } from '@tauri-apps/api/core';
 
 import { useAppState } from "@app/app.context.store";
-import { addInfoMessage, addInfoMessageArray, getDirectory, raiseError, saveConfig } from "@app/app.context.actions"
+import { addInfoMessage, addInfoMessageArray, getDirectory, raiseError, saveConfig, setWorkspace } from "@app/app.context.actions"
 
 import { Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
@@ -11,7 +11,7 @@ import {
 	ConsoleCmd, getParser, ParamCommand, ParamCommandBuilder, ParamType, parseInput
 } from "@app/handler/mode.command.input.builder";
 
-import { JournalInfo, RustApiAction } from '@context/context.types';
+import { JournalInfo, RustApiAction, Workspace } from '@context/context.types';
 
 function b(call: string) { return new ParamCommandBuilder(call) };
 const cmdParam: ParamCommand[] = [
@@ -101,6 +101,7 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 			case ConsoleCmd.ChangeDir:
 				// TODO: path hints while typing
 				setFullscreenImage(false);
+				setWorkspace(useAppState, Workspace.DirectoryBrowser);
 				getDirectory(useAppState, res.payload as string);
 				break;
 			case ConsoleCmd.SetImgScale:
