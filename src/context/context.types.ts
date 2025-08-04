@@ -68,3 +68,8 @@ export type Workspaces = {
 	DirBrowser: boolean;
 	ImgGrid: boolean;
 }
+
+export enum Workspace {
+	DirectoryBrowser,
+	ImageGrid,
+}

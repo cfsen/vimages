@@ -5,7 +5,7 @@ import { getVersion } from "@tauri-apps/api/app";
 import { createContext, useEffect, useContext } from "react";
 
 import { useAppState } from "./app.context.store";
-import { getDirectory, nextNavProvider } from "./app.context.actions";
+import { getDirectory, nextNavProvider, setWorkspace } from "./app.context.actions";
 
 import { NormalModeHandler } from "@app/handler/mode.normal";
 import { CommandModeHandler } from "@app/handler/mode.command";
@@ -14,7 +14,7 @@ import { InsertModeHandler } from "@app/handler/mode.insert";
 import { eventHandleMsgInfoWindow } from "@app/app.event.listeners";
 import { IPC_MsgInfoWindow } from "@app/app.event.types";
 
-import { NavigationHandle, RustApiAction, VimagesConfig } from "@context/context.types";
+import { NavigationHandle, RustApiAction, VimagesConfig, Workspace } from "@context/context.types";
 
 import { Command, CommandSequence } from "@key/key.command";
 import { resultModeCommand } from "@key/key.module.handler.cmd";
@@ -68,8 +68,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 					console.error("Failed to set keybinds"); // TODO: fallback
 			});
 
-		useAppState.getState().setWorkspace("DirBrowser", true);
-		nextNavProvider(useAppState);
+		setWorkspace(useAppState, Workspace.DirectoryBrowser);
 	}, []);
 
 	//

@@ -1,7 +1,7 @@
 import { invoke } from '@tauri-apps/api/core';
 import { StoreApi } from 'zustand';
 
-import { EntityDirectory, Keybind, RustApiAction, UIComponent, VimagesConfig } from "@context/context.types";
+import { EntityDirectory, Keybind, RustApiAction, UIComponent, VimagesConfig, Workspace } from "@context/context.types";
 import { IAppState } from "./app.context.store";
 
 import { getCurrentKeybinds } from '@key/key.module';
@@ -10,31 +10,9 @@ import { Command } from '@key/key.command';
 
 import { timestamp } from '@context/helpers';
 
-// enable/disable navigation context
-export function setNavProviderActive(store: StoreApi<IAppState>, component: UIComponent, state: boolean) {
-	// TODO: this also needs to handle setting the active navctx if the current one gets hidden
-	store.getState().navigationHandlersByComp.get(component)?.setActive(state);
-}
-
-// Cycle registered navigation contexts sequentially
-export function nextNavProvider(store: StoreApi<IAppState>): boolean {
-	// TODO: needs to check if a navctx has any selectable elements, and skip if it doesnt
-	const handlerIds = store.getState().navigationHandlersArray
-	.filter((a) => a.active() === true)
-	.filter((a) => a.getRegisteredElements() > 0)
-	.sort((a,b) => a.tabOrder-b.tabOrder)
-	.map((key) => key.id)
-
-	// TODO: review TODO_NAVCTX_DS
-	if (handlerIds.length >= 1) {
-		const activeId = store.getState().activeNavigationContext;
-		const currentIndex = activeId ? handlerIds.indexOf(activeId) : -1;
-		const nextIndex = (currentIndex + 1) % handlerIds.length;
-		store.getState().setActiveNavigationContext(handlerIds[nextIndex]);
-		return true;
-	}
-	return false;
-}
+//
+// State
+//
 
 export function getDirectory(store: StoreApi<IAppState>, relPath: string){
 	invoke(RustApiAction.GetDir, { 
@@ -95,6 +73,10 @@ function packageKeybinds(keybinds: Keybinds): Keybind[] {
 	return result;
 }
 
+//
+// UI: info/error
+//
+
 export function raiseError(store: StoreApi<IAppState>, error: string){
 	store.getState().setShowError(true);
 	store.getState().setErrorMsg(error);
@@ -113,20 +95,71 @@ export function addInfoMessageArray(store: StoreApi<IAppState>, msg: string[]){
 	});
 }
 
-// TODO: improve logic when more workspaces are added TODO_WORKSPACE_SELECTION
+//
+// Navigation provider handling
+//
+
+// enable/disable navigation context
+export function setNavProviderInteractable(store: StoreApi<IAppState>, component: UIComponent, state: boolean) {
+	store.getState().navigationHandlersByComp.get(component)?.setActive(state);
+}
+
+export function setNavProvidersInteractable(store: StoreApi<IAppState>, components: UIComponent[], state: boolean) {
+	components.forEach((comp) => {
+		store.getState().navigationHandlersByComp.get(comp)?.setActive(state);
+	});
+}
+
+// Cycle registered navigation contexts sequentially
+export function nextNavProvider(store: StoreApi<IAppState>): boolean {
+	const handlerIds = store.getState().navigationHandlersArray
+	.filter((a) => a.active() === true)
+	.filter((a) => a.getRegisteredElements() > 0)
+	.sort((a,b) => a.tabOrder-b.tabOrder)
+	.map((key) => key.id)
+
+	// TODO: review TODO_NAVCTX_DS
+	if (handlerIds.length >= 1) {
+		const activeId = store.getState().activeNavigationContext;
+		const currentIndex = activeId ? handlerIds.indexOf(activeId) : -1;
+		const nextIndex = (currentIndex + 1) % handlerIds.length;
+		store.getState().setActiveNavigationContext(handlerIds[nextIndex]);
+		return true;
+	}
+	return false;
+}
+
+function canNavProviderBecomeInteractable(store: StoreApi<IAppState>, comp: UIComponent): boolean {
+	const registeredElements = store.getState().navigationHandlersByComp.get(comp)?.getRegisteredElements();
+
+	if(registeredElements === undefined)
+		return false;
+
+	return registeredElements >= 1;
+}
+
+function setCursorToNavProvider(store: StoreApi<IAppState>, comp: UIComponent): boolean {
+	let id = store.getState().navigationHandlersByComp.get(comp)?.id;
+
+	if(id === undefined)
+		return false;
+
+	// TODO: return success indicator
+	store.getState().setActiveNavigationContext(id);
+
+	return true;
+}
+
+//
+// Workspace handling
+//
+
 export function nextWorkspace(store: StoreApi<IAppState>){
 	const spaces = store.getState().workspace;
+	
 	if(spaces.ImgGrid) {
-		store.getState().setWorkspace("DirBrowser", true);
-		store.getState().setWorkspace("ImgGrid", false);
-		setNavProviderActive(store, UIComponent.imgGrid, false);
-		setNavProviderActive(store, UIComponent.fsBrowser, false);
-		setNavProviderActive(store, UIComponent.dirBrowserParent, true);
-		setNavProviderActive(store, UIComponent.dirBrowserMain, true);
-		setNavProviderActive(store, UIComponent.dirBrowserPreview, true);
+		setWorkspace(store, Workspace.DirectoryBrowser);
 
-		// TODO: quick fix to select dir.browsers.main navprovider
-		nextNavProvider(store);
 		nextNavProvider(store);
 	}
 	else {
@@ -135,13 +168,51 @@ export function nextWorkspace(store: StoreApi<IAppState>){
 			return;
 		}
 
-		store.getState().setWorkspace("DirBrowser", false);
-		store.getState().setWorkspace("ImgGrid", true);
-		setNavProviderActive(store, UIComponent.imgGrid, true);
-		setNavProviderActive(store, UIComponent.fsBrowser, false);
-		setNavProviderActive(store, UIComponent.dirBrowserParent, false);
-		setNavProviderActive(store, UIComponent.dirBrowserMain, false);
-		setNavProviderActive(store, UIComponent.dirBrowserPreview, false);
+		setWorkspace(store, Workspace.ImageGrid);
+
 		nextNavProvider(store);
 	}
+}
+
+export function setWorkspace(store: StoreApi<IAppState>, workspace: Workspace) {
+	let compsDirBrowser = [
+		UIComponent.dirBrowserMain,
+		UIComponent.dirBrowserParent,
+		UIComponent.dirBrowserPreview
+	];
+
+	let compsImageGrid = [
+		UIComponent.imgGrid,
+	];
+
+	switch(workspace){
+		case Workspace.DirectoryBrowser:
+			store.getState().setWorkspace("DirBrowser", true);
+			store.getState().setWorkspace("ImgGrid", false);
+
+			setNavProvidersInteractable(store, compsDirBrowser, true);
+			setNavProvidersInteractable(store, compsImageGrid, false);
+
+			if(!setCursorToNavProvider(store, UIComponent.dirBrowserMain))
+				raiseError(store, "Internal error when setting cursor to directory browser");
+
+			break;
+
+		case Workspace.ImageGrid:
+			if(!canNavProviderBecomeInteractable(store, UIComponent.imgGrid)) {
+				raiseError(store, "Unable to open image grid: no images in directory.");
+				return;
+			}
+
+			store.getState().setWorkspace("DirBrowser", false);
+			store.getState().setWorkspace("ImgGrid", true);
+
+			setNavProvidersInteractable(store, compsDirBrowser, false);
+			setNavProvidersInteractable(store, compsImageGrid, true);
+
+			if(!setCursorToNavProvider(store, UIComponent.imgGrid))
+				raiseError(store, "Internal error when setting cursor to image grid.");
+
+			break;
+	};
 }
