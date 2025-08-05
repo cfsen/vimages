@@ -39,9 +39,6 @@ function DirBrowserParentSiblings(){
 	if(parent_siblings.length > 0) {
 		return (
 			<div className={styles.fsParentColumn}>
-				<div className={styles.fsElement}>
-					../
-				</div>
 				{parent_siblings.map((dir, idx) => (
 					<NavWrapper
 						key={"fs.dir.browser.parent.i." + idx + ".h." + dir.path_hash}

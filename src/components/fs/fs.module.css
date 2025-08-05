@@ -32,11 +32,12 @@
 	display: flex;
 	align-items: flex-start;
 	justify-content: flex-start;
+	gap: 1em;
 }
 
 .fsBrowser {
 	padding: 0em 1.5em 1.5em 1.5em;
-	min-width: calc(400px + 16em);
+	/* min-width: calc(400px + 24em); */
 	max-width: calc(1200px + 32em);
 	flex-direction: row;
 	align-items: center;
@@ -45,13 +46,16 @@
 }
 
 .fsImgBox {
-	width: 400px;
+	max-width: 400px;
 	max-height: 400px;
+	object-fit: cover;
+	display: block;
 }
 .fsImgPreview {
 	max-width: 400px;
 	max-height: 400px;
 	object-fit: cover;
+	display: block;
 }
 
 .fsHeaderPath {
@@ -59,32 +63,41 @@
 }
 
 .fsBrowserContainer {
-	padding: 3em;
+	padding: 1.5em;
 }
 
 .fsParentColumn {
-	max-width: 16em;
-	min-width: 16em;
+	max-width: 24em;
+	min-width: 24em;
 }
 .fsActiveColumn {
-	max-width: 16em;
-	min-width: 16em;
+	max-width: 24em;
+	min-width: 24em;
 }
 .fsPreview {
 	display: grid;
 	grid-template-columns: repeat(3, 400px);
 	justify-content: center;
+	gap: 0.75em;
 }
 
-@media (max-width: 1800px) {
+@media (max-width: 1700px) {
 	.fsPreview {
-		grid-template-columns: repeat(2, 400px);
+		grid-template-columns: repeat(3, 400px);
 	}
-	.fsBrowser {
-		width: calc(800px + 32em);
+	/* .fsBrowser { */
+	/* 	width: calc(980px + 32em); */
+	/* } */
+	.fsParentColumn {
+		max-width: 20em;
+		min-width: 20em;
+	}
+	.fsActiveColumn {
+		max-width: 20em;
+		min-width: 20em;
 	}
 }
-@media (max-width: 1440px) {
+@media (max-width: 1640px) {
 	.fsPreview {
 		grid-template-columns: repeat(2, 400px);
 	}
@@ -92,19 +105,55 @@
 		display: none;
 		width: 0;
 	}
-	.fsBrowser {
-		width: calc(800px + 16em);
+	.fsParentColumn {
+		max-width: 18em;
+		min-width: 18em;
+	}
+	.fsActiveColumn {
+		max-width: 18em;
+		min-width: 18em;
 	}
 }
-@media (max-width: 1180px) {
+@media (max-width: 1200px) {
 	.fsPreview {
-		grid-template-columns: repeat(1, 400px);
+		grid-template-columns: repeat(2, 300px);
 	}
 	.fsParentColumn {
 		display: none;
 		width: 0;
 	}
-	.fsBrowser {
-		width: calc(400px + 16em);
+	.fsImgPreview {
+		max-width: 300px;
+		max-height: 300px;
+		object-fit: cover;
+	}
+	.fsImgBox {
+		width: 300px;
+		max-height: 300px;
+	}
+}
+
+@media (max-width: 1000px) {
+	.fsPreview {
+		grid-template-columns: repeat(2, 200px);
+	}
+	.fsImgPreview {
+		max-width: 200px;
+		max-height: 200px;
+		object-fit: cover;
+	}
+	.fsImgBox {
+		width: 200px;
+		max-height: 200px;
+	}
+}
+@media (max-width: 800px) {
+	.fsPreview {
+		grid-template-columns: repeat(1, 200px);
+	}
+}
+@media (max-width: 600px) {
+	.fsPreview {
+		display: none;
 	}
 }

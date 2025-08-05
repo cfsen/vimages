@@ -16,7 +16,6 @@ import styles from "./fs.module.css";
 function DirBrowser(){
 	const active = useAppState(s => s.workspace);
 	const path = useAppState(s => s.currentDir);
-	// TODO: command for toggling, store in settings
 	const parentDirectoryRender = useAppState(s => s.dirBrowserRenderParentDir); 
 
 	const [render, setRender] = useState<boolean>(false);
