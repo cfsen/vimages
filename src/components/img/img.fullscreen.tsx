@@ -72,14 +72,14 @@ function VimageFullscreen() {
 			<img 
 				onLoad={ () => { swap(); }}
 				style={{ display: activeBuf === 0 ? 'block' : 'none' }}
-				src={imgBuf0 !== undefined ? `http://127.0.0.1:${axum_port}/image?file=${imgBuf0}` : TRANSPARENT_PIXEL }
+				src={imgBuf0 !== undefined ? `http://127.0.0.1:${axum_port}/image?file=${encodeURIComponent(imgBuf0)}` : TRANSPARENT_PIXEL }
 				alt="Fullscreen view"
 				className={styles.fullscreenImage}
 			/>
 			<img 
 				onLoad={ () => { swap(); }}
 				style={{ display: activeBuf === 1 ? 'block' : 'none' }}
-				src={imgBuf1 !== undefined ? `http://127.0.0.1:${axum_port}/image?file=${imgBuf1}` : TRANSPARENT_PIXEL }
+				src={imgBuf1 !== undefined ? `http://127.0.0.1:${axum_port}/image?file=${encodeURIComponent(imgBuf1)}` : TRANSPARENT_PIXEL }
 				alt="Fullscreen view"
 				className={styles.fullscreenImage}
 			/>

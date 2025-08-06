@@ -14,7 +14,7 @@ export function getImgFromCache(img: EntityImage, path_hash: string | null) {
 	}
 
 	if(!img.has_thumbnail || path_hash === null) {
-		return `http://127.0.0.1:${axum_port}/image?file=${img.filename}`;
+		return `http://127.0.0.1:${axum_port}/image?file=${encodeURIComponent(img.filename)}`;
 	}
 	return `http://127.0.0.1:${axum_port}/cache/${path_hash}/${img.img_hash}`;
 }
