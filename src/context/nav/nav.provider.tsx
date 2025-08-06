@@ -176,6 +176,21 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 	// Child navigation element registration
 	//
 
+	// nav element registration
+	const navRegister = (navItem: NavigationItem) => {
+		registerNavItem(navItem);
+	};
+
+	// nav element unregistration
+	const navUnregister = (id: string) => {
+		if(navItems.length === 1) setNavItemActive(null);
+		unregisterNavItem(id);
+	}
+
+	//
+	// Effects
+	//
+
 	// default cursor to first nav element
 	useEffect(() => {
 		if(component === UIComponent.dirBrowserMain) {
@@ -208,16 +223,6 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 		scrollToActive(navigationState);
 	}, [active]);
 
-	// nav element registration
-	const navRegister = (navItem: NavigationItem) => {
-		registerNavItem(navItem);
-	};
-
-	// nav element unregistration
-	const navUnregister = (id: string) => {
-		if(navItems.length === 1) setNavItemActive(null);
-		unregisterNavItem(id);
-	}
 
 	//
 	// Exports
