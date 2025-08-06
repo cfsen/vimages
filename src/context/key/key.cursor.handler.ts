@@ -38,26 +38,10 @@ export function KeyboardCursorHandle(
 				cur = cur - (cur % itemsPerRow);
 			break;
 		case Command.CursorUp:
-			// no repeat count, allow movement if inside bounds of rows/array
-			if(n <= 0 && (cur - itemsPerRow) >= 0)
-				cur -= itemsPerRow;
-			// repeat count inside row bounds
-			else if(n > 0 && (cur-(n*itemsPerRow) >= 0))
-				cur -= n*itemsPerRow;
-			// repeat count outside row bounds
-			else if(n > 0)
-				cur = cur % itemsPerRow;
+			cur -= moveCursorUpByRows(cur, n === 0 ? 1 : n, itemsPerRow);
 			break;
 		case Command.CursorDown:
-			// no repeat count, allow movement if inside bounds of rows/array
-			if(n <= 0 && (cur + itemsPerRow) < len)
-				cur += itemsPerRow;
-			// repeat count inside row bounds
-			else if(n > 0 && (cur+(n*itemsPerRow) < len))
-				cur += n*itemsPerRow;
-			// repeat count outside row bounds
-			else if(n > 0)
-				cur = Math.min(Math.floor(len / itemsPerRow)*itemsPerRow + (cur % itemsPerRow), len-1);
+			cur += moveCursorDownByRows(cur, n === 0 ? 1 : n, itemsPerRow, len);
 			break;
 		case Command.CursorBOL:
 			cur = cur - (cur % itemsPerRow);
@@ -77,21 +61,28 @@ export function KeyboardCursorHandle(
 		case Command.JumpLast:
 			cur = len-1;
 			break;
-		/*
-		 * TODO: ctrl+u, ctrl+d half page scrolling TODO_DYNAMIC_HALFPAGE
-		 * needs amount of visible elements/rows
-		 * scroll should equal half the visible elements
-		 **/
 		case Command.PageUp:
-			cur = Math.max(0, cur - halfPageRows * itemsPerRow);
-			console.log("ctx.handleCmd:pageup");
+			cur -= moveCursorUpByRows(cur, halfPageRows, itemsPerRow);
 			break;
 		case Command.PageDown:
-			cur = Math.min(len-1, cur + halfPageRows * itemsPerRow);
-			console.log("ctx.handleCmd:pagedown");
+			cur += moveCursorDownByRows(cur, halfPageRows, itemsPerRow, len);
 			break;
 		default:
 			break;
 	}
 	return cur;
+}
+
+function moveCursorDownByRows(cur: number, targetRows: number, itemsPerRow: number, len: number) {
+	for(let i = targetRows; i > 0; i--)
+		if(cur + i * itemsPerRow <= len-1)
+			return i * itemsPerRow;
+	return 0;
+}
+
+function moveCursorUpByRows(cur: number, targetRows: number, itemsPerRow: number) {
+	for(let i = targetRows; i > 0; i--)
+		if(cur - i * itemsPerRow >= 0)
+			return i * itemsPerRow;
+	return 0;
 }
