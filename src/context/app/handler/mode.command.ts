@@ -28,6 +28,7 @@ const cmdParam: ParamCommand[] = [
 	.param(ParamType.Number, ConsoleCmd.SetImgScale, "imgscale")
 	.param(ParamType.Number, ConsoleCmd.SetErrorDisplayLv, "errorlv")
 	.param(ParamType.Keyword, ConsoleCmd.SetDirBrowserParentPane, "parentpane")
+	.param(ParamType.Keyword, ConsoleCmd.SetTitlebarRender, "titlebar")
 	.build(),
 
 	b(":get")
@@ -109,7 +110,13 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 				addInfoMessage(useAppState, "Thumbnail scale set: " + res.payload);
 				break;
 			case ConsoleCmd.SetErrorDisplayLv:
+				// TODO:
 				console.warn("errorlv not implemented");
+				break;
+			case ConsoleCmd.SetTitlebarRender:
+				let titlebarRender = useAppState.getState().titlebarRender;
+				useAppState.getState().setTitlebarRender(!titlebarRender);
+				addInfoMessage(useAppState, "App: " + (titlebarRender ? "hiding" : "showing") + " titlebar.");
 				break;
 			case ConsoleCmd.SetDirBrowserParentPane:
 				let val = !useAppState.getState().dirBrowserRenderParentDir;

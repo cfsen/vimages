@@ -6,6 +6,10 @@ import { useAppState } from '@/context/app/app.context.store';
 function TitleBar() {
 	const currentWindow = getCurrentWindow();
 	const version = useAppState(state => state.vimages_version);
+	const render = useAppState(s => s.titlebarRender);
+
+	if(!render)
+		return;
 
 	return (
 		<div className={styles.titlebar} data-tauri-drag-region>

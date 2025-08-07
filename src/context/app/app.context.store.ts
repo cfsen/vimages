@@ -38,6 +38,7 @@ interface IAppProps {
 	inputBufferCommand: string
 	inputBufferCursor: number
 
+	titlebarRender: boolean
 	dirBrowserRenderParentDir: boolean
 
 	//
@@ -91,6 +92,7 @@ export interface IAppState extends IAppProps {
 	setInputBufferCommand: (_: string) => void
 	setInputBufferCursor: (_: number) => void
 
+	setTitlebarRender: (render: boolean) => void
 	setDirBrowserRenderParentDir: (render: boolean) => void
 	
 	//
@@ -197,6 +199,8 @@ export const useAppState = create<IAppState>((set) => ({
 	inputBufferCursor: 1,
 	setInputBufferCursor: (_) => set ({ inputBufferCursor: _ }),
 
+	titlebarRender: true, // TODO persistent config
+	setTitlebarRender: (render) => set({ titlebarRender: render }),
 	dirBrowserRenderParentDir: false,
 	setDirBrowserRenderParentDir: (render) => set({ dirBrowserRenderParentDir: render }),
 
