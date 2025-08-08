@@ -13,6 +13,11 @@ function VimageFullscreen() {
 	const setImagePath = useAppState(state => state.setFullscreenImagePath);
 	const axum_port = useAppState(state => state.axum_port);
 
+	const fullscreenRotate = useAppState(s => s.fullscreenRotate); // number, 0.25 -> 90 deg
+	const fullscreenOffsetY = useAppState(s => s.fullscreenOffsetY); // number | null
+	const fullscreenOffsetX = useAppState(s => s.fullscreenOffsetX);
+	const fullscreenZoom = useAppState(s => s.fullscreenZoom); // number | null
+
 	const [activeBuf, setActiveBuf] = useState<0 | 1>(0);
 	const [imgBuf0, setImgBuf0] = useState<string>();
 	const [imgBuf1, setImgBuf1] = useState<string>();
@@ -71,14 +76,44 @@ function VimageFullscreen() {
 		>
 			<img 
 				onLoad={ () => { swap(); }}
-				style={{ display: activeBuf === 0 ? 'block' : 'none' }}
+				style={{
+					display: activeBuf === 0 ? 'block' : 'none',
+
+					transition: 'transform 0.3s ease',
+
+					transform:
+					`translateX(${fullscreenOffsetX != null ? fullscreenOffsetX : '0'}px)` +
+						`translateY(${fullscreenOffsetY != null ? fullscreenOffsetY : '0'}px)` +
+						`rotate(${fullscreenRotate}turn)` + 
+						`${fullscreenZoom != null ? `scale(${fullscreenZoom})` : ''}`,
+
+					...(fullscreenZoom != null && {
+						maxWidth: 'none',
+						maxHeight: 'none',
+					}),
+				}}
 				src={imgBuf0 !== undefined ? `http://127.0.0.1:${axum_port}/image?file=${encodeURIComponent(imgBuf0)}` : TRANSPARENT_PIXEL }
 				alt="Fullscreen view"
 				className={styles.fullscreenImage}
 			/>
 			<img 
 				onLoad={ () => { swap(); }}
-				style={{ display: activeBuf === 1 ? 'block' : 'none' }}
+				style={{
+					display: activeBuf === 1 ? 'block' : 'none',
+
+					transition: 'transform 0.3s ease',
+
+					transform:
+					`translateX(${fullscreenOffsetX != null ? fullscreenOffsetX : '0'}px)` +
+						`translateY(${fullscreenOffsetY != null ? fullscreenOffsetY : '0'}px)` +
+						`rotate(${fullscreenRotate}turn)` + 
+						`${fullscreenZoom != null ? `scale(${fullscreenZoom})` : ''}`,
+
+					...(fullscreenZoom != null && {
+						maxWidth: 'none',
+						maxHeight: 'none',
+					}),
+				}}
 				src={imgBuf1 !== undefined ? `http://127.0.0.1:${axum_port}/image?file=${encodeURIComponent(imgBuf1)}` : TRANSPARENT_PIXEL }
 				alt="Fullscreen view"
 				className={styles.fullscreenImage}

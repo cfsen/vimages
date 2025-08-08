@@ -42,6 +42,11 @@ export function getDefaultKeyMap(): Map<string, Command> {
 
 	keyMap.set('R', Command.Refresh);
 
+	keyMap.set('r', Command.ImageRotate);
+	keyMap.set('zi', Command.ImageZoomIn);
+	keyMap.set('zo', Command.ImageZoomOut);
+	keyMap.set('zd', Command.ImageZoomDefault);
+
 	return keyMap;
 }
 
@@ -108,5 +113,10 @@ export enum Command {
 
 	WorkspaceNext,
 	WorkspacePrev,
+
+	ImageRotate,
+	ImageZoomIn,
+	ImageZoomOut,
+	ImageZoomDefault,
 }
 

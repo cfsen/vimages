@@ -216,3 +216,14 @@ export function setWorkspace(store: StoreApi<IAppState>, workspace: Workspace) {
 			break;
 	};
 }
+
+//
+// Fullscreen helpers
+//
+
+export function resetFullscreen(store: StoreApi<IAppState>){
+	store.getState().setFullscreenOffsetY(null);
+	store.getState().setFullscreenOffsetX(null);
+	store.getState().setFullscreenZoom(null);
+	store.getState().setFullscreenRotate(0.0);
+}

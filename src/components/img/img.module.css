@@ -22,12 +22,13 @@
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	background: rgba(0, 0, 0, 0.8);
+	background-color: var(--neutral-900);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	z-index: 1000;
-	transition: opacity 0.2s ease-in-out;}
+	transition: opacity 0.3s ease-in-out;
+}
 
 .fullscreenImg {
 	max-width: 90vw;

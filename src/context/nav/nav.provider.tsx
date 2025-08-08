@@ -35,6 +35,7 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 	//
 
 	// global state
+	const fullscreenImage = useAppState(state => state.fullscreenImage);
 	const setFullscreenImage = useAppState(state => state.setFullscreenImage);
 	const setFullscreenImagePath = useAppState(state => state.setFullscreenImagePath);
 
@@ -221,7 +222,7 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 		}
 
 		scrollToActive(navigationState);
-	}, [active]);
+	}, [active, fullscreenImage]);
 
 
 	//

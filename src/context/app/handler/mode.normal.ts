@@ -1,5 +1,5 @@
 import { useAppState } from "@app/app.context.store";
-import { addInfoMessage, getDirectory, nextNavProvider, nextWorkspace, raiseError } from "@app/app.context.actions";
+import { addInfoMessage, getDirectory, nextNavProvider, nextWorkspace, raiseError, resetFullscreen } from "@app/app.context.actions";
 
 import { Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
@@ -16,8 +16,68 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 		setShowInfo,
 		fullscreenImage,
 		setFullscreenImage,
-		activeNavigationContext, 
+		activeNavigationContext,
+		keepOpenInfo,
+		fullscreenZoom,
+		setFullscreenZoom,
+		fullscreenOffsetX,
+		setFullscreenOffsetX,
+		fullscreenOffsetY,
+		setFullscreenOffsetY,
+		fullscreenRotate,
+		setFullscreenRotate,
 	} = useAppState.getState();
+
+	if(fullscreenImage) {
+		let invertCursor = -1; // TODO: configurable. set to 1 for non-inverted (does not feel right when navigating)
+		let moveDistance = 200; // TODO: configurable
+		let rotateTurns = 0.25;
+		let zoomBy = 0.25; // TODO: zoom is functional, but could feel better.
+
+		switch(resultNormal.cmd){
+			case Command.Escape:
+				setFullscreenImage(false);
+				resetFullscreen(useAppState);
+				break;
+			case Command.ImageRotate:
+				setFullscreenRotate(fullscreenRotate+rotateTurns);
+				break;
+			case Command.ImageZoomOut:
+				setFullscreenZoom(fullscreenZoom != null ? fullscreenZoom - zoomBy : 1.0);
+				break;
+			case Command.ImageZoomIn:
+				setFullscreenZoom(fullscreenZoom != null ? fullscreenZoom + zoomBy : 1.0);
+				break;
+			case Command.ImageZoomDefault:
+				setFullscreenZoom(null);
+				break;
+			case Command.CenterView:
+				resetFullscreen(useAppState);
+				break;
+		};
+
+		// hijack cursor target if in fullscreen, to navigate around the image
+		if(fullscreenZoom != null) {
+			let mod = resultNormal.cmdSequence.modInt ?? 1;
+			let repeatMod = mod > 1 ? mod : 1;
+			let moveBy = invertCursor*moveDistance*repeatMod;
+			switch(resultNormal.cmd){
+				case Command.CursorUp:
+					setFullscreenOffsetY(fullscreenOffsetY != null ? fullscreenOffsetY-moveBy : -moveBy);
+					break;
+				case Command.CursorDown:
+					setFullscreenOffsetY(fullscreenOffsetY != null ? fullscreenOffsetY+moveBy : moveBy);
+					break;
+				case Command.CursorLeft:
+					setFullscreenOffsetX(fullscreenOffsetX != null ? fullscreenOffsetX-moveBy : -moveBy);
+					break;
+				case Command.CursorRight:
+					setFullscreenOffsetX(fullscreenOffsetX != null ? fullscreenOffsetX+moveBy : moveBy);
+					break;
+			}
+			return;
+		}
+	}
 
 	switch(resultNormal.cmd){
 		case Command.ModeVisual:
@@ -42,13 +102,11 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 			break;
 
 		case Command.WorkspaceNext:
-			// TODO: TODO_WORKSPACE_SELECTION
 			if(fullscreenImage) setFullscreenImage(false);
 			nextWorkspace(useAppState);
 			break;
 
 		case Command.WorkspacePrev:
-			// TODO: TODO_WORKSPACE_SELECTION
 			if(fullscreenImage) setFullscreenImage(false);
 			nextWorkspace(useAppState);
 			break;

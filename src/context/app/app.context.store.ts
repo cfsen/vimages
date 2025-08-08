@@ -49,6 +49,14 @@ interface IAppProps {
 	imageGridScale: number
 
 	//
+	// Fullscreen image UI
+	// key_fullscreen
+	fullscreenRotate: number // 0.25 -> 90 deg CW
+	fullscreenOffsetY: number | null
+	fullscreenOffsetX: number | null
+	fullscreenZoom: number | null // 1.0 -> full sized image
+
+	//
 	// Navigation contexts
 	// key_navctx
 	navigationHandlers: Map<string, NavigationHandle>
@@ -102,6 +110,15 @@ export interface IAppState extends IAppProps {
 	// key_imgrid
 	setImageGridSize: (pixels: number) => void
 	setImageGridScale: (scalar: number) => void
+
+	//
+	// Fullscreen image UI
+	// key_fullscreen
+	setFullscreenRotate: (turns: number) => void
+	setFullscreenOffsetY: (pixels: number | null) => void
+	setFullscreenOffsetX: (pixels: number | null) => void
+	setFullscreenZoom: (scalar: number | null) => void
+	
 
 	//
 	// Navigation contexts
@@ -216,6 +233,18 @@ export const useAppState = create<IAppState>((set) => ({
 	imageGridScale: 1,
 	setImageGridScale: (scalar) => set({ imageGridScale: scalar }),
 
+	//
+	// Fullscreen image UI
+	// key_fullscreen
+	fullscreenRotate: 0,
+	setFullscreenRotate: (turns) => set({ fullscreenRotate: turns }),
+	fullscreenOffsetY: null,
+	setFullscreenOffsetY: (pixels) => set({ fullscreenOffsetY: pixels }),
+	fullscreenOffsetX: null,
+	setFullscreenOffsetX: (pixels) => set({ fullscreenOffsetX: pixels }),
+	fullscreenZoom: null,
+	setFullscreenZoom: (scalar) => set({ fullscreenZoom: scalar }),
+	
 	//
 	// Navigation contexts
 	// key_navctx

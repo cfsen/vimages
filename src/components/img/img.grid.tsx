@@ -20,6 +20,9 @@ const VimageGrid: React.FC = () => {
 	const { itemsPerRow, setItemsPerRow } = useCommand();
 	const [containerWidth, setContainerWidth] = useState(window.innerWidth);
 
+	const fullscreen = useAppState(state => state.fullscreenImage);
+	const [displayGrid, setDisplayGrid] = useState(fullscreen);
+
 	// TODO: hoist to store TODO_IMGGRID_HOIST
 	const gap = 7;
 	const border = 1;
@@ -35,6 +38,23 @@ const VimageGrid: React.FC = () => {
 		return () => window.removeEventListener('resize', handleResize);
 	}, []);
 
+	// hide grid when entering fullscreen to also hide scrollbar
+	useEffect(() => {
+		let timeoutId: ReturnType<typeof setTimeout>;
+
+		if (fullscreen) {
+			timeoutId = setTimeout(() => {
+				setDisplayGrid(false);
+			}, 2000);
+		} else {
+			setDisplayGrid(true);
+		}
+
+		return () => {
+			clearTimeout(timeoutId);
+		};
+	}, [fullscreen]);
+
 	useEffect(() => {
 		const imgContainerSize = squareBaseSize * scale + 2*gap + 2*border; // account for space between elements
 		const perRow = Math.floor((containerWidth) / imgContainerSize);
@@ -44,7 +64,11 @@ const VimageGrid: React.FC = () => {
 
 
 	return (
-		<div>
+		<div style={{
+			display: displayGrid ? '' : 'none',
+			opacity: fullscreen ? 0 : 1,
+			transition: 'opacity 1.0s ease'
+		}}>
 			<div
 				style={{
 					display: 'grid',
@@ -71,7 +95,7 @@ const VimageGrid: React.FC = () => {
 									alignItems: 'center',
 									justifyContent: 'center',
 									fontSize: '1rem',
-									border: `${border}px solid rgba(0,0,0,0.3)`,
+									border: `${border}px solid rgba(0,0,0,0.2)`,
 								}}
 							>
 								<Vimage id={"vimage" + idx} src={getImgFromCache(img, path_hash) } />
