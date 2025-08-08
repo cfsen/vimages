@@ -16,7 +16,7 @@ import { IPC_MsgInfoWindow } from "@app/app.event.types";
 
 import { NavigationHandle, RustApiAction, VimagesConfig, Workspace } from "@context/context.types";
 
-import { Command, CommandSequence } from "@key/key.command";
+import { Command, CommandSequence, getDefaultKeyMap } from "@key/key.command";
 import { resultModeCommand } from "@key/key.module.handler.cmd";
 import { resultModeNormal } from "@key/key.module.handler.normal";
 import { parseCommand, setKeybinds } from "@key/key.module";
@@ -45,6 +45,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
 		invoke(RustApiAction.GetAxumPort)
 			.then(res => { setAxumPort(res as string) });
+
 		// TODO: proper result parsing, version check, etc.
 		invoke(RustApiAction.GetConfig)
 			.then(response => {
@@ -52,16 +53,30 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 				getDirectory(useAppState, res.last_path);
 
 				let keyMap = new Map<string, Command>();
+				let defaultKeybinds = getDefaultKeyMap();
+				let expectedKeybinds = defaultKeybinds.size;
+				let mappedKeys = 0;
+
 				for(const k of res.keybinds) {
 					let cmd = parseCommand(k.command);
-					// TODO: robust tests
 					if(cmd !== null) {
 						keyMap.set(k.keybind, cmd);
 						console.log("Mapping: " + k.keybind + " -> " + Command[cmd]);
+						mappedKeys += 1;
 					}
 					else {
 						console.log("Failed to map: " + k.keybind);
 					}
+				}
+
+				// NOTE: needs to be updated in the future.
+				// should only revert to defaults if core commands are unbound,
+				// which the app can't work without.
+				// this will regenerate eagerly, which is good enough for now.
+				if(mappedKeys != expectedKeybinds) {
+					console.error(`Mapped ${mappedKeys} keys, expected ${expectedKeybinds}`);
+					console.error("Failed to map keys, restoring defaults.");
+					keyMap = defaultKeybinds;
 				}
 
 				if(!setKeybinds(keyMap))
