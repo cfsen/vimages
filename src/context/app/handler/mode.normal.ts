@@ -81,8 +81,7 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 	}
 
 	// Hide info overlay
-	// TODO: config toggle for behavior, allow keep-open
-	if(showInfo) {
+	if(showInfo && !keepOpenInfo) {
 		setShowInfo(false);
 	}
 

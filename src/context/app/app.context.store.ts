@@ -31,6 +31,7 @@ interface IAppProps {
 
 	showHelp: boolean
 	showInfo: boolean
+	keepOpenInfo: boolean
 	infoMessages: string[]
 	showError: boolean
 	errorMsg: string
@@ -85,6 +86,7 @@ export interface IAppState extends IAppProps {
 
 	setShowHelp: (_: boolean) => void
 	setShowInfo: (_: boolean) => void
+	setKeepOpenInfo: (state: boolean) => void
 	addInfoMessage: (msg: string) => void
 	setShowError: (_: boolean) => void
 	setErrorMsg: (_: string) => void
@@ -181,6 +183,8 @@ export const useAppState = create<IAppState>((set) => ({
 
 	showInfo: false,
 	setShowInfo: (display) => set({ showInfo: display }),
+	keepOpenInfo: false,
+	setKeepOpenInfo: (display) => set({ keepOpenInfo: display }),
 	infoMessages: [],
 	addInfoMessage: (msg) => set((state) => {
 		const maxMessages = 10;

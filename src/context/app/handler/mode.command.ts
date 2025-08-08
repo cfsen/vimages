@@ -29,6 +29,7 @@ const cmdParam: ParamCommand[] = [
 	.param(ParamType.Number, ConsoleCmd.SetErrorDisplayLv, "errorlv")
 	.param(ParamType.Keyword, ConsoleCmd.SetDirBrowserParentPane, "parentpane")
 	.param(ParamType.Keyword, ConsoleCmd.SetTitlebarRender, "titlebar")
+	.param(ParamType.Keyword, ConsoleCmd.SetInfoMsgWindowPersists, "infowindow")
 	.build(),
 
 	b(":get")
@@ -117,6 +118,12 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 				let titlebarRender = useAppState.getState().titlebarRender;
 				useAppState.getState().setTitlebarRender(!titlebarRender);
 				addInfoMessage(useAppState, "App: " + (titlebarRender ? "hiding" : "showing") + " titlebar.");
+				break;
+			case ConsoleCmd.SetInfoMsgWindowPersists:
+				let infoWindowPersists = useAppState.getState().keepOpenInfo;
+				useAppState.getState().setKeepOpenInfo(!infoWindowPersists);
+				addInfoMessage(useAppState,
+					"App: " + (infoWindowPersists? "hiding this window on next input." : "keeping this window open"));
 				break;
 			case ConsoleCmd.SetDirBrowserParentPane:
 				let val = !useAppState.getState().dirBrowserRenderParentDir;
