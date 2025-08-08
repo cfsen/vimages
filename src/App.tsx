@@ -18,6 +18,8 @@ import Leader from "@ui/leader/ui.leader";
 import ErrorPopup from "@ui/error/ui.error";
 import InfoPopup from "@ui/info/ui.info";
 
+import { Modal } from "@key/key.types";
+
 function App() {
 	const { handleModeVisual, handleModeNormal, handleModeInsert, handleModeCommand } = useGlobalCtx();
 	const keyboardMode = useAppState(state => state.mode);
@@ -69,7 +71,12 @@ function App() {
 					</div>
 				</div>
 			</div>
-			<div className="bottom-overlay">
+			<div 
+				className="bottom-overlay"
+				style={{
+					zIndex: keyboardMode === Modal.Command ? 1005 : 'auto',
+				}}
+			>
 				<Navbar />
 			</div>
 		</main>
