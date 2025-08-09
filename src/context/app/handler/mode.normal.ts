@@ -6,10 +6,10 @@ import { Modal } from "@key/key.types";
 import { resultModeNormal } from "@/context/key/key.module.handler.normal";
 
 export function NormalModeHandler(resultNormal: resultModeNormal){
-	const { 
-		setMode, 
-		showHelp, 
-		setShowHelp, 
+	const {
+		setMode,
+		showHelp,
+		setShowHelp,
 		showError,
 		setShowError,
 		showInfo,
@@ -26,13 +26,17 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 		setFullscreenOffsetY,
 		fullscreenRotate,
 		setFullscreenRotate,
+		fullscreenInvertCursor,
+		fullscreenMoveStep,
+		fullscreenRotateStep,
+		fullscreenZoomStep,
 	} = useAppState.getState();
 
 	if(fullscreenImage) {
-		let invertCursor = -1; // TODO: configurable. set to 1 for non-inverted (does not feel right when navigating)
-		let moveDistance = 200; // TODO: configurable
-		let rotateTurns = 0.25;
-		let zoomBy = 0.25; // TODO: zoom is functional, but could feel better.
+		let invertCursor = fullscreenInvertCursor; // set to 1 for non-inverted. does not feel right when panning.
+		let moveDistance = fullscreenMoveStep;
+		let rotateTurns = fullscreenRotateStep;
+		let zoomBy = fullscreenZoomStep; // works, but could feel better.
 
 		switch(resultNormal.cmd){
 			case Command.Escape:

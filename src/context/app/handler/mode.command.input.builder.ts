@@ -19,7 +19,13 @@ export enum ConsoleCmd {
 
 	RunCacheCleanup,
 
-	ChangeDir
+	ChangeDir,
+
+	FullscreenSetInvertCursor,
+	FullscreenSetMoveStep,
+	FullscreenSetRotateStep,
+	FullscreenSetZoomStep,
+	
 };
 
 export enum ParamType {

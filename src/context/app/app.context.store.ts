@@ -56,6 +56,11 @@ interface IAppProps {
 	fullscreenOffsetX: number | null
 	fullscreenZoom: number | null // 1.0 -> full sized image
 
+	fullscreenInvertCursor: number
+	fullscreenMoveStep: number
+	fullscreenRotateStep: number
+	fullscreenZoomStep: number
+
 	//
 	// Navigation contexts
 	// key_navctx
@@ -119,6 +124,10 @@ export interface IAppState extends IAppProps {
 	setFullscreenOffsetX: (pixels: number | null) => void
 	setFullscreenZoom: (scalar: number | null) => void
 	
+	setFullscreenInvertCursor: (invert: number) => void
+	setFullscreenMoveStep: (step: number) => void
+	setFullscreenRotateStep: (step: number) => void
+	setFullscreenZoomStep: (step: number) => void
 
 	//
 	// Navigation contexts
@@ -245,6 +254,15 @@ export const useAppState = create<IAppState>((set) => ({
 	fullscreenZoom: null,
 	setFullscreenZoom: (scalar) => set({ fullscreenZoom: scalar }),
 	
+	fullscreenInvertCursor: -1,
+	setFullscreenInvertCursor: (invert) => set({ fullscreenInvertCursor: invert }),
+	fullscreenMoveStep: 200,
+	setFullscreenMoveStep: (step) => set({ fullscreenMoveStep: step }),
+	fullscreenRotateStep: 0.25,
+	setFullscreenRotateStep: (step) => set({ fullscreenRotateStep: step }),
+	fullscreenZoomStep: 0.25,
+	setFullscreenZoomStep: (step) => set({ fullscreenZoomStep: step }),
+
 	//
 	// Navigation contexts
 	// key_navctx

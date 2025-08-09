@@ -37,6 +37,13 @@ const cmdParam: ParamCommand[] = [
 	.param(ParamType.Keyword, ConsoleCmd.GetQueueSize, "queue")
 	.build(),
 
+	b(":fullscreen")
+	.param(ParamType.Number, ConsoleCmd.FullscreenSetInvertCursor, "invertCursor")
+	.param(ParamType.Number, ConsoleCmd.FullscreenSetMoveStep, "moveStep")
+	.param(ParamType.Number, ConsoleCmd.FullscreenSetRotateStep, "rotateStep")
+	.param(ParamType.Number, ConsoleCmd.FullscreenSetZoomStep, "zoomStep")
+	.build(),
+
 	b(":cache")
 	.param(ParamType.Keyword, ConsoleCmd.GetCacheInfo, "info")
 	.param(ParamType.Keyword, ConsoleCmd.RunCacheCleanup, "clean")
@@ -58,6 +65,7 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 		setInputBufferCommand,
 		setInputBufferCursor,
 		setFullscreenImage,
+		setFullscreenInvertCursor, setFullscreenMoveStep, setFullscreenRotateStep, setFullscreenZoomStep,
 	} = useAppState.getState();
 
 	// update buffer
@@ -138,6 +146,10 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 				invoke(RustApiAction.GetQueueSize)
 					.then((api) => { addInfoMessage(useAppState, "Images in queue: " + api) });
 				break;
+
+			//
+			// Cache
+			//
 			case ConsoleCmd.GetCacheInfo:
 				invoke(RustApiAction.GetCacheInfo)
 					.then((api) => { 
@@ -149,13 +161,32 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 						]);
 					});
 				break;
-
 			case ConsoleCmd.RunCacheCleanup:
 				invoke(RustApiAction.RunCacheCleanup)
 					.then((api) => {
 						let processStarted = api as boolean;
 						addInfoMessage(useAppState, api ? "Cache cleanup started." : "Failed to start cache cleanup.");
 					});
+				break;
+
+			//
+			// Fullscreen
+			//
+			case ConsoleCmd.FullscreenSetInvertCursor:
+				setFullscreenInvertCursor(res.payload as number);
+				addInfoMessage(useAppState, `Setting full screen invert cursor to: ${res.payload} (default is -1).`);
+				break;
+			case ConsoleCmd.FullscreenSetMoveStep:
+				setFullscreenMoveStep(res.payload as number);
+				addInfoMessage(useAppState, `Setting full screen move step to: ${res.payload}`);
+				break;
+			case ConsoleCmd.FullscreenSetRotateStep:
+				setFullscreenRotateStep(res.payload as number);
+				addInfoMessage(useAppState, `Setting full screen rotate step to: ${res.payload}`);
+				break;
+			case ConsoleCmd.FullscreenSetZoomStep:
+				setFullscreenZoomStep(res.payload as number);
+				addInfoMessage(useAppState, `Setting full screen zoom step to: ${res.payload}`);
 				break;
 
 			default:
