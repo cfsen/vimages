@@ -82,10 +82,10 @@ function VimageFullscreen() {
 					transition: 'transform 0.3s ease',
 
 					transform:
-					`translateX(${fullscreenOffsetX != null ? fullscreenOffsetX : '0'}px)` +
-						`translateY(${fullscreenOffsetY != null ? fullscreenOffsetY : '0'}px)` +
-						`rotate(${fullscreenRotate}turn)` + 
-						`${fullscreenZoom != null ? `scale(${fullscreenZoom})` : ''}`,
+					`translateX(${fullscreenOffsetX != null ? fullscreenOffsetX : '0'}px) ` +
+						`translateY(${fullscreenOffsetY != null ? fullscreenOffsetY : '0'}px) ` +
+						`rotate(${fullscreenRotate}turn) ` + 
+						`${fullscreenZoom != null ? `scale(${fullscreenZoom})` : ''} `,
 
 					...(fullscreenZoom != null && {
 						maxWidth: 'none',
@@ -104,10 +104,10 @@ function VimageFullscreen() {
 					transition: 'transform 0.3s ease',
 
 					transform:
-					`translateX(${fullscreenOffsetX != null ? fullscreenOffsetX : '0'}px)` +
-						`translateY(${fullscreenOffsetY != null ? fullscreenOffsetY : '0'}px)` +
-						`rotate(${fullscreenRotate}turn)` + 
-						`${fullscreenZoom != null ? `scale(${fullscreenZoom})` : ''}`,
+					`translateX(${fullscreenOffsetX != null ? fullscreenOffsetX : '0'}px) ` +
+						`translateY(${fullscreenOffsetY != null ? fullscreenOffsetY : '0'}px) ` +
+						`rotate(${fullscreenRotate}turn) ` + 
+						`${fullscreenZoom != null ? `scale(${fullscreenZoom}) ` : ''}`,
 
 					...(fullscreenZoom != null && {
 						maxWidth: 'none',
