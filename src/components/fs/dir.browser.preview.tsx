@@ -15,11 +15,13 @@ function DirBrowserCurrentPreview(){
 						className={styles.fsImgBox} 
 						key={"fs.dir.browser.preview.imgbox.i." + index + ".h." + path_hash}
 					>
-						<img 
-							key={"fs.dir.browser.preview.i." + index + ".h." + img.img_hash} 
-							src={getImgFromCache(img, path_hash)} 
-							className={styles.fsImgPreview}
-						/>
+						{img.has_thumbnail ? 
+							<img 
+								key={"fs.dir.browser.preview.i." + index + ".h." + img.img_hash} 
+								src={getImgFromCache(img, path_hash)} 
+								className={styles.fsImgPreview}
+							/>
+							: "Processing image."}
 					</div>
 				))}
 			</div>
