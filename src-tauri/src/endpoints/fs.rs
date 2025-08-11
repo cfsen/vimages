@@ -9,6 +9,19 @@ use crate::ipc::send;
 use crate::{get_server_state, server::set_serve_directory};
 
 #[tauri::command]
+pub fn fsx_resolve_rel_path(path: &str, rel_path: &str) -> Result<String, String> {
+    let path_buf = PathBuf::from(path);
+    match fsx_parse_path_traversal(&path_buf, rel_path) {
+        Ok(value) => {
+            Ok(value.to_string_lossy().to_string())
+        }
+        Err(e) => {
+            Err(e)
+        }
+    }
+}
+
+#[tauri::command]
 pub fn fsx_get_dir(path: &str, rel_path: Option<&str>) -> Result<EntityDirectory, String> {
     info!("fsx_get_dir: {} -> {}", path, rel_path.unwrap_or("None"));
 
