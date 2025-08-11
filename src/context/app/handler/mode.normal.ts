@@ -40,6 +40,10 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 
 		switch(resultNormal.cmd){
 			case Command.Escape:
+				if(showHelp) {
+					setShowHelp(false);
+					return;
+				}
 				setFullscreenImage(false);
 				resetFullscreen(useAppState);
 				break;
@@ -121,9 +125,14 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 			break;
 
 		case Command.Escape:
-			if(showHelp) setShowHelp(false);
-			if(fullscreenImage) setFullscreenImage(false);
-			console.log("ctx:handleCmd:escape");
+			if(showHelp) {
+				setShowHelp(false);
+				return;
+			}
+			if(fullscreenImage) {
+				setFullscreenImage(false);
+				return;
+			}
 			break;
 
 		case Command.Error:
