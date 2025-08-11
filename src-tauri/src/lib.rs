@@ -89,7 +89,6 @@ pub fn run() {
             endpoints::cache::cache_cleanup,
             vimages_config::save_config,
             vimages_config::get_or_create_config,
-            vimages_debug::debug_ipc::debug_emitter,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
