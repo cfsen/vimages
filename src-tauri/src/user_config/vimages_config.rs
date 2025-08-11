@@ -97,6 +97,7 @@ pub fn create_default_config() -> ConfigFile {
             .to_string_lossy().to_string(),
         window_width: 1280,
         window_height: 720,
+        // NOTE: source of truth for keybindings is in `key.command.ts`
         keybinds: vec![
             create_keybind("Return", "  "),
         ],
