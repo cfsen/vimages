@@ -132,6 +132,12 @@ impl QueueWorker {
                     send::info_window_msg(&format!("{remaining:?} thumbnails in queue."));
                 }
                 else {
+                    if let Some(parent) = item.full_path.parent() {
+                        // TODO: readability TODO_QUEUE_STATUS_PARAMS
+                        // update to use enum/type params
+                        // sending: redraw=true, queue_empty=true
+                        send::queue_status(parent, &true, &true);
+                    }
                     send::info_window_msg("Thumbnails generated.");
                 }
                 info!("{remaining:?} images remaining in queue.");
