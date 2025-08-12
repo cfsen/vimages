@@ -5,14 +5,14 @@ import { getVersion } from "@tauri-apps/api/app";
 import { createContext, useEffect, useContext } from "react";
 
 import { useAppState } from "./app.context.store";
-import { getDirectory, nextNavProvider, setWorkspace } from "./app.context.actions";
+import { getDirectory, getDirectorySkipLock, nextNavProvider, setWorkspace } from "./app.context.actions";
 
 import { NormalModeHandler } from "@app/handler/mode.normal";
 import { CommandModeHandler } from "@app/handler/mode.command";
 import { VisualModeHandler } from "@app/handler/mode.visual";
 import { InsertModeHandler } from "@app/handler/mode.insert";
-import { eventHandleMsgInfoWindow } from "@app/app.event.listeners";
-import { IPC_MsgInfoWindow } from "@app/app.event.types";
+import { eventHandleMsgInfoWindow, eventHandleQueueState } from "@app/app.event.listeners";
+import { IPC_MsgInfoWindow, IPC_QueueStatus } from "@app/app.event.types";
 
 import { NavigationHandle, RustApiAction, VimagesConfig, Workspace } from "@context/context.types";
 
@@ -50,7 +50,9 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 		invoke(RustApiAction.GetConfig)
 			.then(response => {
 				const res = response as VimagesConfig;
-				getDirectory(useAppState, res.last_path);
+				// NOTE: lock doesn't clean up properly in react strict mode
+				// the callback is cleared before it can remove the path from the lock
+				getDirectorySkipLock(useAppState, res.last_path);
 
 				let keyMap = new Map<string, Command>();
 				let defaultKeybinds = getDefaultKeyMap();
@@ -95,11 +97,19 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 			return await listen<IPC_MsgInfoWindow>(
 				'msg-info-window', (event) => { eventHandleMsgInfoWindow(event, useAppState) }, { target: 'global-handler' });
 		};
+		const setupListenerQueueState = async () => {
+			return await listen<IPC_QueueStatus>(
+				'msg-queue-status', 
+				(event) => { eventHandleQueueState(event, useAppState) }, 
+				{ target: 'global-handler' });
+		};
 
 		const cleanupMsgInfoWindow = setupListenerMsgInfoWindow();
+		const cleanupQueueState = setupListenerQueueState();
 
 		return () => {
 			cleanupMsgInfoWindow.then(unlisten => unlisten?.());
+			cleanupQueueState.then(unlisten => unlisten?.());
 		};
 	}, []);
 
