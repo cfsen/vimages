@@ -3,6 +3,7 @@ import { resultModeNormal } from "@key/key.module.handler.normal";
 export enum RustApiAction {
 	GetCurrentPath = "fs_get_current_path",
 	GetDir = "fsx_get_dir",
+	ResolveRelPath = "fsx_resolve_rel_path",
 	GetAxumPort = "rt_get_axum_port",
 	GetQueueSize = "rt_get_queue_size",
 	GetConfig = "get_or_create_config",
