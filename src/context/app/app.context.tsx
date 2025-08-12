@@ -61,7 +61,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 					let cmd = parseCommand(k.command);
 					if(cmd !== null) {
 						keyMap.set(k.keybind, cmd);
-						console.log("Mapping: " + k.keybind + " -> " + Command[cmd]);
+						// console.log("Mapping: " + k.keybind + " -> " + Command[cmd]);
 						mappedKeys += 1;
 					}
 					else {
