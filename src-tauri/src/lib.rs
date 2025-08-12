@@ -83,6 +83,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             endpoints::fs::fsx_get_dir,
+            endpoints::fs::fsx_resolve_rel_path,
             endpoints::runtime::rt_get_axum_port,
             endpoints::runtime::rt_get_queue_size,
             endpoints::cache::cache_get_info,
