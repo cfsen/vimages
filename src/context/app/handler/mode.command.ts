@@ -2,7 +2,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import { invoke } from '@tauri-apps/api/core';
 
 import { useAppState } from "@app/app.context.store";
-import { addInfoMessage, addInfoMessageArray, getDirectory, raiseError, saveConfig, setWorkspace } from "@app/app.context.actions"
+import { addInfoMessage, addInfoMessageArray, getDirectory, IPC_PendingRemoves, raiseError, saveConfig, setWorkspace } from "@app/app.context.actions"
 
 import { Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
@@ -47,6 +47,7 @@ const cmdParam: ParamCommand[] = [
 	b(":cache")
 	.param(ParamType.Keyword, ConsoleCmd.GetCacheInfo, "info")
 	.param(ParamType.Keyword, ConsoleCmd.RunCacheCleanup, "clean")
+	.param(ParamType.Keyword, ConsoleCmd.GetQueueDirs, "qlocks")
 	.build(),
 
 	b(":cd").param(ParamType.Action, ConsoleCmd.ChangeDir).build(),
@@ -167,6 +168,10 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 						let processStarted = api as boolean;
 						addInfoMessage(useAppState, api ? "Cache cleanup started." : "Failed to start cache cleanup.");
 					});
+				break;
+			case ConsoleCmd.GetQueueDirs:
+				addInfoMessage(useAppState, "Locked directories:");
+				addInfoMessageArray(useAppState, Array.from(IPC_PendingRemoves));
 				break;
 
 			//
