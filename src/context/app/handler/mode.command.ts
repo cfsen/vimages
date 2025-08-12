@@ -166,7 +166,7 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 				invoke(RustApiAction.RunCacheCleanup)
 					.then((api) => {
 						let processStarted = api as boolean;
-						addInfoMessage(useAppState, api ? "Cache cleanup started." : "Failed to start cache cleanup.");
+						addInfoMessage(useAppState, processStarted ? "Cache cleanup started." : "Failed to start cache cleanup.");
 					});
 				break;
 			case ConsoleCmd.GetQueueDirs:
