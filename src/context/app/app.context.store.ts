@@ -44,6 +44,8 @@ interface IAppProps {
 
 	uiWindowInnerWidth: number
 
+	workaroundScrollToDelay: number
+
 	//
 	// Image grid UI
 	// key_imgrid
@@ -126,6 +128,7 @@ export interface IAppState extends IAppProps {
 	setImageGridWindowPadding: (pixels: number) => void
 	setImageGridMaxFilenameLength: (pixels: number) => void
 	setUiWindowInnerWidth: (pixels: number) => void
+	setWorkaroundScrollToDelay: (ms: number) => void
 
 	//
 	// Fullscreen image UI
@@ -247,6 +250,9 @@ export const useAppState = create<IAppState>((set) => ({
 
 	uiWindowInnerWidth: window.innerWidth,
 	setUiWindowInnerWidth: (pixels: number) => set({ uiWindowInnerWidth: pixels }),
+
+	workaroundScrollToDelay: 100,
+	setWorkaroundScrollToDelay: (ms: number) => ({ workaroundScrollToDelay: ms }),
 
 	//
 	// Image grid UI
