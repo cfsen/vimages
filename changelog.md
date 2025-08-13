@@ -1,3 +1,23 @@
+# 0.1.7
+
+## User facing:
+- feature: full screen image viewing improvements, see: 2b0da26 and 0af76fa
+- feature: title bar can be toggled with `:set titlebar`
+- feature: info widget can be made persistent with `:set infowindow`
+- ui: scrollbar now hides after a few seconds in full screen image view.
+- ui: when command mode is active, command line is now visible in full screen image view.
+- ui: no longer uses full resolution images as placeholders if no thumbnails can be found.
+- ui: help overlay can now be displayed on top of full screen images.
+
+### Under the hood:
+- loading keybindings from config will use defaults, if it fails match the exact number of expected binds.
+- fixes for cursor navigation in grid view.
+- support for special characters in image file names.
+- basic safeguards for thumbnail queue duplication.
+- removed reference to uncommitted debug code in lib.rs.
+
+---
+
 # 0.1.6
 
 ## User facing:
