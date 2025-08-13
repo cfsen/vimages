@@ -42,11 +42,17 @@ interface IAppProps {
 	titlebarRender: boolean
 	dirBrowserRenderParentDir: boolean
 
+	uiWindowInnerWidth: number
+
 	//
 	// Image grid UI
 	// key_imgrid
 	imageGridSize: number
 	imageGridScale: number
+	imageGridGap: number
+	imageGridBorder: number
+	imageGridWindowPadding: number
+	imageGridMaxFilenameLength: number
 
 	//
 	// Fullscreen image UI
@@ -115,6 +121,11 @@ export interface IAppState extends IAppProps {
 	// key_imgrid
 	setImageGridSize: (pixels: number) => void
 	setImageGridScale: (scalar: number) => void
+	setImageGridGap: (pixels: number) => void
+	setImageGridBorder: (pixels: number) => void
+	setImageGridWindowPadding: (pixels: number) => void
+	setImageGridMaxFilenameLength: (pixels: number) => void
+	setUiWindowInnerWidth: (pixels: number) => void
 
 	//
 	// Fullscreen image UI
@@ -234,6 +245,9 @@ export const useAppState = create<IAppState>((set) => ({
 	dirBrowserRenderParentDir: false,
 	setDirBrowserRenderParentDir: (render) => set({ dirBrowserRenderParentDir: render }),
 
+	uiWindowInnerWidth: window.innerWidth,
+	setUiWindowInnerWidth: (pixels: number) => set({ uiWindowInnerWidth: pixels }),
+
 	//
 	// Image grid UI
 	// key_imgrid
@@ -241,7 +255,15 @@ export const useAppState = create<IAppState>((set) => ({
 	setImageGridSize: (pixels) => set({ imageGridSize: pixels }),
 	imageGridScale: 1,
 	setImageGridScale: (scalar) => set({ imageGridScale: scalar }),
-
+	imageGridGap: 7,
+	setImageGridGap: (pixels: number) => set({ imageGridGap: pixels }),
+	imageGridBorder: 1,
+	setImageGridBorder: (pixels: number) => set({ imageGridBorder: pixels }),
+	imageGridWindowPadding: 0,
+	setImageGridWindowPadding: (pixels: number) => set({ imageGridWindowPadding: pixels }),
+	imageGridMaxFilenameLength: 50,
+	setImageGridMaxFilenameLength: (pixels: number) => set({ imageGridMaxFilenameLength: pixels }),
+	
 	//
 	// Fullscreen image UI
 	// key_fullscreen

@@ -24,6 +24,7 @@ function App() {
 	const { handleModeVisual, handleModeNormal, handleModeInsert, handleModeCommand } = useGlobalCtx();
 	const keyboardMode = useAppState(state => state.mode);
 	const setKeyboardMode = useAppState(state => state.setMode);
+	const setWindowWidth = useAppState(state => state.setUiWindowInnerWidth);
 
 	// set up keyboard listener
 	useEffect(() => {
@@ -44,6 +45,16 @@ function App() {
 		window.addEventListener('keydown', handleKeyDown);
 		return () => window.removeEventListener('keydown', handleKeyDown);
 	}, [keyboardMode]);
+
+	// track window size
+	useEffect(() => {
+		const handleResize = () => {
+			setWindowWidth(window.innerWidth);
+		};
+		window.addEventListener('resize', handleResize);
+		handleResize();
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
 
 	return (
 		<main

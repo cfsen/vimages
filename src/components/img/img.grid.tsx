@@ -13,31 +13,19 @@ import styles from "./img.module.css";
 const VimageGrid: React.FC = () => {
 	const images = useAppState(state => state.images);
 	const path_hash = useAppState(state => state.currentDirHash);
-
-	const squareBaseSize = useAppState(state => state.imageGridSize);
-	const scale = useAppState(state => state.imageGridScale);
-
-	const { itemsPerRow, setItemsPerRow } = useCommand();
-	const [containerWidth, setContainerWidth] = useState(window.innerWidth);
-
 	const fullscreen = useAppState(state => state.fullscreenImage);
+
+	const {itemsPerRow, setItemsPerRow} = useCommand();
 	const [displayGrid, setDisplayGrid] = useState(fullscreen);
 
-	// TODO: hoist to store TODO_IMGGRID_HOIST
-	const gap = 7;
-	const border = 1;
-	const window_padding = 0;
-	const maxFilenameLength = 50;
-
-	// TODO: Resize handler TODO_MOVE_RESIZE_EVENT
-	useEffect(() => {
-		const handleResize = () => {
-			setContainerWidth(window.innerWidth);
-		};
-		window.addEventListener('resize', handleResize);
-		handleResize();
-		return () => window.removeEventListener('resize', handleResize);
-	}, []);
+	// layout calculation
+	const containerWidth = useAppState(s => s.uiWindowInnerWidth);
+	const squareBaseSize = useAppState(state => state.imageGridSize);
+	const scale = useAppState(state => state.imageGridScale);
+	const gap = useAppState(s => s.imageGridGap);
+	const border = useAppState(s => s.imageGridBorder);
+	const window_padding = useAppState(s => s.imageGridWindowPadding);
+	const maxFilenameLength = useAppState(s => s.imageGridMaxFilenameLength);
 
 	// hide grid when entering fullscreen to also hide scrollbar
 	useEffect(() => {
@@ -56,6 +44,7 @@ const VimageGrid: React.FC = () => {
 		};
 	}, [fullscreen]);
 
+	// elements per row calculation for cursor logic
 	useEffect(() => {
 		const imgContainerSize = squareBaseSize * scale + 2*gap + 2*border; // account for space between elements
 		const perRow = Math.floor((containerWidth) / imgContainerSize);
