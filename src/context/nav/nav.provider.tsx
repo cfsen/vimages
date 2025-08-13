@@ -75,11 +75,13 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 		}
 
 		let length = navigationState.getState().navItems.length;
+
 		// no items to navigate
 		if(length === 0)
 			return false;
 
 		let activeItemID = navigationState.getState().navItemActive;
+
 		// no active item, set first in array as active
 		if(activeItemID === null) {
 			activeItemID = navigationState.getState().navItems[0].id;
@@ -87,11 +89,9 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 		}
 
 		let item = navigationState.getState().navItems.find((i) => i.id === activeItemID);
+
 		// this should never occur
 		if(item === undefined) return false;
-
-		// TODO: command log, consider if it should be handled in orchestrator
-		//setCmdLog(prev => [...prev, seq]);
 
 		// handle input for directory browser
 		if(component === UIComponent.dirBrowserMain) {
@@ -123,12 +123,13 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 
 		let curpos = navigationState.getState().navItems.findIndex((i) => i.id === activeItemID);
 		let perRow = navigationState.getState().navItemsPerRow;
-		// TODO: should be determined dynamically based on shown elements TODO_DYNAMIC_HALFPAGE
-		// directory browser jumps 10 rows, thumbnail grid 3 rows
+		// TODO: FEAT: FEAT_DYNAMIC_HALFPAGE
+		// should be determined dynamically based on shown elements.
+		// placeholder: directory browser jumps 10 rows, thumbnail grid 3 rows
 		let halfPage = component === UIComponent.dirBrowserMain ? 10 : 3;
 
 		if(curpos === -1 || length === 0 || perRow === 0) {
-			// TODO: logging
+			// TODO: FEAT: FEAT_FRONTEND_LOGGING
 			console.error(`nav.provider: invalid cursor state: length=${length}, curpos=${curpos}, perRow=${perRow}`);
 			return false;
 		}

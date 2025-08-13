@@ -37,8 +37,10 @@ impl Queue {
         (queue, receiver)
     }
 
-    // TODO: enqueue allows duplicates to be added to queue,
-    // causing thumbnails to be generated twice
+    // TODO: FUTURE: enqueue allows duplicates to be added to queue,
+    // causing thumbnails to be generated twice.
+    // this should now be mostly resolved by directory locking in frontend.
+    // revisit with REFACTOR_IMAGE_PIPELINE
     pub async fn enqueue(&self, item: QueueItem) -> Result<(), String> {
         match self.sender.send(item) {
             Ok(_) => {

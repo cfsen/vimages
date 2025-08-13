@@ -110,7 +110,7 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 				break;
 
 			case ConsoleCmd.ChangeDir:
-				// TODO: path hints while typing
+				// TODO: FEAT: FEAT_PATH_HINTS
 				setFullscreenImage(false);
 				setWorkspace(useAppState, Workspace.DirectoryBrowser);
 				getDirectory(useAppState, res.payload as string);
@@ -120,7 +120,7 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 				addInfoMessage(useAppState, "Thumbnail scale set: " + res.payload);
 				break;
 			case ConsoleCmd.SetErrorDisplayLv:
-				// TODO:
+				// TODO: FEAT: FEAT_ERROR_LEVELS error levels
 				console.warn("errorlv not implemented");
 				break;
 			case ConsoleCmd.SetTitlebarRender:

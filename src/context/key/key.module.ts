@@ -37,7 +37,7 @@ export function modalKeyboard(
 		return;
 	}
 
-	// TODO: visual, insert, as pure functions
+	// TODO: FEAT: FEAT_MODE_INSERT FEAT_MODE_VISUAL
 	switch(mode){
 		case Modal.Visual:
 			handleModeVisual(visualHandler, event, visualSequence);
@@ -97,7 +97,7 @@ export function parseCommand(cmdStr: string): Command | null {
 	return null;
 }
 
-// TODO: 
+// TODO: FEAT: FEAT_MODE_VISUAL
 function handleModeVisual(
 	handler: modeVisual,
 	event: KeyboardEvent,
@@ -106,7 +106,7 @@ function handleModeVisual(
 	console.log("handleModeVisual", handler, event, sequence);
 }
 
-// TODO: 
+// TODO: FEAT: FEAT_MODE_INSERT
 function handleModeInsert(
 	handler: modeInsert,
 	event: KeyboardEvent,

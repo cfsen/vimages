@@ -7,7 +7,7 @@ export function getImgFromCache(img: EntityImage, path_hash: string | null) {
 
 	if(axum_port === null) {
 		console.error("axum port unavailable");
-		// TODO: 
+		// TODO: FEAT: FEAT_APP_LOCK_ON_CRITICAL_FAILURE
 		// critical errors should lock the UI
 		// this should be handled on launch in app.context
 		raiseError(useAppState, "axum port unavailable");

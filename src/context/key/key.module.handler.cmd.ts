@@ -90,7 +90,7 @@ function handleModeCommandSpecial(key: SpecialKey, sequenceState: resultModeComm
 			}
 			break;
 		case SpecialKey.Dead:
-			// TODO: WORKAROUND, TODO_LOG
+			// TODO: WORKAROUND, FEAT_FRONTEND_LOGGING
 			// ~ is returned as Dead on Hyprland, unsure of cause
 			console.info("Dead key workaround for ~ triggered.");
 			sequence += "~";

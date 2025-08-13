@@ -11,7 +11,8 @@ export const eventHandleMsgInfoWindow = (event: TauriEvent<IPC_MsgInfoWindow>, u
 };
 
 export const eventHandleQueueState = (event: TauriEvent<IPC_QueueStatus>, store: StoreApi<IAppState>) => {
-	// TODO: currently only receives redraw messages when lock should be released. TODO_REFACTOR_IMAGE_DELIVERY
+	// TODO: REFACTOR: REFACTOR_IMAGE_PIPELINE 
+	// currently only receives redraw messages when lock should be released.
 	//  - implement proper opcodes later.
 	//  - backend queue pipeline needs to be improved to discern individual directories.
 
