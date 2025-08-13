@@ -45,7 +45,6 @@
 .imgFilename {
 	flex-shrink: 0;
 	box-sizing: border-box;
-	padding: 0.25em;
 	width: 100%;
 	text-align: center;
 }

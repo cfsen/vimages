@@ -63,6 +63,8 @@ const VimageGrid: React.FC = () => {
 	}, [containerWidth, scale]);
 
 
+	// TODO: long filenames
+
 	return (
 		<div style={{
 			display: displayGrid ? '' : 'none',
@@ -78,35 +80,41 @@ const VimageGrid: React.FC = () => {
 				}}
 			>
 				{images.map((img, idx) => {return (
-					<NavWrapper
-						key={"imgGrid" + idx + "_" + img.img_hash}
-						id={"imgGrid" + idx + "_" + img.img_hash}
-						itemType={NavWrapperItemType.Image}
-						data={img.filename}
+					<div
+						style={{
+							width: `${squareBaseSize * scale}px`,
+							height: `${squareBaseSize * scale}px`,
+							display: 'flex',
+							flexDirection: 'column',
+							alignItems: 'center',
+							justifyContent: 'center',
+							fontSize: '1rem',
+							border: `${border}px solid rgba(0,0,0,0.2)`,
+						}}
 					>
-						<div
-							style={{
-								width: `${squareBaseSize * scale}px`,
-								height: `${squareBaseSize * scale}px`,
-								display: 'flex',
-								flexDirection: 'column',
-								alignItems: 'center',
-								justifyContent: 'center',
-								fontSize: '1rem',
-								border: `${border}px solid rgba(0,0,0,0.2)`,
-							}}
-						>
-							{img.has_thumbnail ? 
-								<Vimage 
-									id={"vimage" + idx} 
-									src={getImgFromCache(img, path_hash) } 
-								/>
-								: "Processing image."}
-							<div className={styles.imgFilename}>
-								{img.filename}
-							</div>
+
+						{img.has_thumbnail ? 
+							<Vimage 
+								id={"vimage" + idx} 
+								src={getImgFromCache(img, path_hash) } 
+							/>
+							: "Processing image."}
+
+						<div className={styles.imgFilename}>
+							<NavWrapper
+								key={"imgGrid" + idx + "_" + img.img_hash}
+								id={"imgGrid" + idx + "_" + img.img_hash}
+								itemType={NavWrapperItemType.Image}
+								data={img.filename}
+							>
+								<div
+									style={{padding: '0.5em 0 0.3em 0'}}
+								>
+									{img.filename}
+								</div>
+							</NavWrapper>
 						</div>
-					</NavWrapper>
+					</div>
 				);})}
 			</div>
 		</div>
