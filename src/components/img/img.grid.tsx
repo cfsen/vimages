@@ -27,6 +27,7 @@ const VimageGrid: React.FC = () => {
 	const gap = 7;
 	const border = 1;
 	const window_padding = 0;
+	const maxFilenameLength = 50;
 
 	// TODO: Resize handler TODO_MOVE_RESIZE_EVENT
 	useEffect(() => {
@@ -61,9 +62,6 @@ const VimageGrid: React.FC = () => {
 
 		setItemsPerRow(perRow);
 	}, [containerWidth, scale]);
-
-
-	// TODO: long filenames
 
 	return (
 		<div style={{
@@ -110,7 +108,7 @@ const VimageGrid: React.FC = () => {
 								<div
 									style={{padding: '0.5em 0 0.3em 0'}}
 								>
-									{img.filename}
+									{trimFilename(img.filename, maxFilenameLength)}
 								</div>
 							</NavWrapper>
 						</div>
@@ -120,5 +118,11 @@ const VimageGrid: React.FC = () => {
 		</div>
 	);
 };
+
+function trimFilename(filename: string, maxLength: number): string {
+	if(filename.length < maxLength)
+		return filename;
+	return filename.substring(0, maxLength);
+}
 
 export default VimageGrid;
