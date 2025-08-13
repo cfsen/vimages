@@ -21,7 +21,8 @@ export function scrollToActive(navProvider: StoreApi<INavigationState>){
 	if(cursorElement.length !== 1 || cursorElement[0].ref.current === null) return;
 
 	const rect = cursorElement[0].ref.current.getBoundingClientRect();
-	const targetY = window.scrollY + rect.top - (window.innerHeight / 2) + (rect.height / 2);
+	// TODO: get rid of magic number tuned layout
+	const targetY = window.scrollY + rect.top - (window.innerHeight / 2) - (rect.height * 4.5);
 
 	scrollTo({
 		left: 0,
