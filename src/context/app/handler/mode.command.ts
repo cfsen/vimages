@@ -7,6 +7,7 @@ import { addInfoMessage, addInfoMessageArray, getDirectory, IPC_PendingRemoves, 
 import { Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
 import { resultModeCommand } from '@key/key.module.handler.cmd';
+import { overwriteBufferCommandMode } from '@key/key.module';
 import {
 	ConsoleCmd, getParser, ParamCommand, ParamCommandBuilder, ParamType, parseInput
 } from "@app/handler/mode.command.input.builder";
@@ -67,7 +68,26 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 		setInputBufferCursor,
 		setFullscreenImage,
 		setFullscreenInvertCursor, setFullscreenMoveStep, setFullscreenRotateStep, setFullscreenZoomStep,
+		modeCmdHistory, modeCmdAddHistory,
 	} = useAppState.getState();
+
+	if(isHistoryRequest(resultCommand)){
+		let sequence = handleHistoryRequest(resultCommand, modeCmdHistory);
+		if(sequence !== null) {
+			let buffer: resultModeCommand = {
+				sequence,
+				cursor: sequence.length,
+				cmd: Command.Ignore,
+			};
+			// update visual buffer
+			setInputBufferCommand(sequence);
+			setInputBufferCursor(sequence.length);
+
+			// update command buffer
+			overwriteBufferCommandMode(buffer);
+		}
+		return;
+	}
 
 	// update buffer
 	setInputBufferCommand(resultCommand.sequence);
@@ -75,10 +95,13 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 
 	if(resultCommand.cmd !== Command.Return) return;
 
+	// capture command for history
+	modeCmdAddHistory(resultCommand.sequence);
+
 	const parser = getParser(resultCommand.sequence, registeredCommands);
 	if(parser === undefined) {
 		raiseError(useAppState, `Command not found: '${resultCommand.sequence}'`);
-		return
+		return;
 	};
 
 	const results = parseInput(resultCommand.sequence, parser);
@@ -204,4 +227,24 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 	// reset to normal, clear buffer
 	setMode(Modal.Normal);
 	setInputBufferCommand(":");
+}
+
+function isHistoryRequest(result: resultModeCommand): boolean {
+	return (result.cmd === Command.OptionUp || result.cmd === Command.OptionDown)
+}
+
+let historyIndex: number | null = null;
+function handleHistoryRequest(result: resultModeCommand, history: string[]): string | null {
+	if(history.length <= 0)
+		return null;
+	
+	if(historyIndex === null)
+		historyIndex = history.length-1;
+
+	if(historyIndex > 0)
+		historyIndex -= 1;
+	else
+		historyIndex = history.length-1;
+
+	return history[historyIndex];
 }

@@ -63,6 +63,12 @@ function handleModeCommandSpecial(key: SpecialKey, sequenceState: resultModeComm
 		case SpecialKey.ArrowRight:
 			if(cursor < sequence.length) cursor += 1;
 			break;
+		case SpecialKey.ArrowUp:
+			cmd = Command.OptionUp;
+			break;
+		case SpecialKey.ArrowDown:
+			cmd = Command.OptionDown;
+			break;
 		case SpecialKey.Home:
 			cursor = 0;
 			break;

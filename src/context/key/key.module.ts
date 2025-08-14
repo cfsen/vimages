@@ -67,6 +67,10 @@ export function modalKeyboard(
 	};
 }
 
+//
+// Keybindings
+//
+
 export function getDefaultKeybinds(): Keybinds {
 	const keyMap = getDefaultKeyMap();
 	return {
@@ -95,6 +99,17 @@ export function setKeybinds(keyMap: Map<string, Command>): boolean {
 export function parseCommand(cmdStr: string): Command | null {
 	if(cmdStr in Command) return Command[cmdStr as keyof typeof Command];
 	return null;
+}
+
+//
+// Overrides
+//
+
+/**
+ * Overwrites command buffer state.
+ * */
+export function overwriteBufferCommandMode(newValue: resultModeCommand){
+	commandBuffer = newValue;
 }
 
 // TODO: FEAT: FEAT_MODE_VISUAL

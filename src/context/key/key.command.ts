@@ -118,5 +118,8 @@ export enum Command {
 	ImageZoomIn,
 	ImageZoomOut,
 	ImageZoomDefault,
+
+	OptionUp,
+	OptionDown,
 }
 

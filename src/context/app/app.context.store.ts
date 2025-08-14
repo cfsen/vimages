@@ -70,6 +70,11 @@ interface IAppProps {
 	fullscreenZoomStep: number
 
 	//
+	// Command mode 
+	// key_cmd
+	modeCmdHistory: string[]
+
+	//
 	// Navigation contexts
 	// key_navctx
 	navigationHandlers: Map<string, NavigationHandle>
@@ -142,6 +147,11 @@ export interface IAppState extends IAppProps {
 	setFullscreenMoveStep: (step: number) => void
 	setFullscreenRotateStep: (step: number) => void
 	setFullscreenZoomStep: (step: number) => void
+
+	//
+	// Command mode
+	// key_cmd
+	modeCmdAddHistory: (cmd: string) => void
 
 	//
 	// Navigation contexts
@@ -290,6 +300,17 @@ export const useAppState = create<IAppState>((set) => ({
 	setFullscreenRotateStep: (step) => set({ fullscreenRotateStep: step }),
 	fullscreenZoomStep: 0.25,
 	setFullscreenZoomStep: (step) => set({ fullscreenZoomStep: step }),
+
+	//
+	// Command mode
+	// key_cmd
+	modeCmdHistory: [],
+	modeCmdAddHistory: (cmd) => set((state) => {
+		const modeCmdHistoryLimit = 100;
+		return {
+			modeCmdHistory: [...state.modeCmdHistory, cmd].slice(-modeCmdHistoryLimit)
+		}
+	}),
 
 	//
 	// Navigation contexts
