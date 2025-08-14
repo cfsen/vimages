@@ -85,7 +85,16 @@ export function getCurrentKeybinds(): Keybinds {
 
 // consumer should getDefaultKeybinds if this fails
 export function setKeybinds(keyMap: Map<string, Command>): boolean {
-	// TODO: verify keyMap
+	// check for duplicate keybindings
+	let seenKeys = new Set();
+	for(let [key, _] of keyMap) {
+		switch(seenKeys.has(key)){
+			case true:
+				return false;
+			default:
+				seenKeys.add(key);
+		}
+	}
 
 	const commandMap = convertKeyToCommandMap(keyMap);
 	KEYBINDS = {
