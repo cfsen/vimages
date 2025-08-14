@@ -4,6 +4,7 @@ import { addInfoMessage, getDirectory, nextNavProvider, nextWorkspace, raiseErro
 import { Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
 import { resultModeNormal } from "@/context/key/key.module.handler.normal";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 
 export function NormalModeHandler(resultNormal: resultModeNormal){
 	const {
@@ -143,6 +144,12 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 		case Command.Tab:
 			console.log("ctx:handleCmd:tab"); 
 			if(!nextNavProvider(useAppState)) console.error("ctx: no active navigation context available!");
+			break;
+
+		case Command.TauriFullscreen:
+			getCurrentWindow().isFullscreen().then((fs) => {
+				getCurrentWindow().setFullscreen(!fs);
+			});
 			break;
 	}
 

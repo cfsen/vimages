@@ -73,7 +73,7 @@ function handleModeNormalSpecialCtrl(key: SpecialKey): resultModeNormal{
 	let cmd = Command.None;
 	switch(key){
 		case SpecialKey.Enter:
-			// TODO: toggle fullscreen
+			cmd = Command.TauriFullscreen;
 			break;
 	};
 	return { ...defaultResultModeNormal(), cmd, cmdSequence: { cmd } };

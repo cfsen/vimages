@@ -121,5 +121,6 @@ export enum Command {
 
 	OptionUp,
 	OptionDown,
-}
 
+	TauriFullscreen,
+}
