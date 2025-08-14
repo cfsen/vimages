@@ -78,6 +78,7 @@ const VimageGrid: React.FC = () => {
 							fontSize: '1rem',
 							border: `${border}px solid rgba(0,0,0,0.2)`,
 						}}
+						key={"imgGrid" + idx + "_" + img.img_hash}
 					>
 
 						{img.has_thumbnail ? 
