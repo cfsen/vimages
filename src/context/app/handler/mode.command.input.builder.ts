@@ -102,7 +102,8 @@ export function parseInput(input: string, command: ParamCommand): resultCommandA
 					console.log("payload:" + payload);
 				}
 				else {
-					console.error(`Missing argument for ${param.keyword}`);
+					payload = undefined;
+					console.info(`Missing argument for ${param.keyword}`);
 				}
 				break;
 
