@@ -168,10 +168,10 @@ function canNavProviderBecomeInteractable(store: StoreApi<IAppState>, comp: UICo
 function setCursorToNavProvider(store: StoreApi<IAppState>, comp: UIComponent): boolean {
 	let id = store.getState().navigationHandlersByComp.get(comp)?.id;
 
-	if(id === undefined)
-		return false;
+	if(id === undefined) return false;
 
-	// TODO: return success indicator
+	if(!canNavProviderBecomeInteractable(store, comp)) return false;
+
 	store.getState().setActiveNavigationContext(id);
 
 	return true;
