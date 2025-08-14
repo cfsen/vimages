@@ -75,13 +75,16 @@ function handleModeCommandSpecial(key: SpecialKey, sequenceState: resultModeComm
 				sequence = cutOut(sequence, cursor-1, cursor);
 				cursor -= 1;
 				cmd = Command.None;
+				break;
 			}
+
 			// remove last character from the buffer
-			else {
+			if(sequence.length > 0) { 
 				sequence = sequence.substring(0, sequence.length-1);
 				cursor -= 1;
-				cmd = Command.None;
 			}
+
+			cmd = Command.None;
 			break;
 		case SpecialKey.Delete:
 			// mid sequence delete
