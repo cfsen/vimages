@@ -21,8 +21,7 @@ const cmdParam: ParamCommand[] = [
 	b(":sc").param(ParamType.None, ConsoleCmd.WriteConfig).build(),
 
 	b(":help")
-	.param(ParamType.None, ConsoleCmd.Help)
-	.param(ParamType.Keyword, ConsoleCmd.KeywordHelp)
+	.param(ParamType.Action, ConsoleCmd.Help)
 	.build(),
 
 	b(":set")
@@ -123,8 +122,10 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 				break;
 
 			case ConsoleCmd.Help:
-				// TODO: handle additional keyword for specific lookup
-				setShowHelp(true);
+				// show top level help menu
+				if(res.payload === undefined) {
+					setShowHelp(true);
+				}
 				break;
 
 			case ConsoleCmd.WriteConfig:
@@ -133,6 +134,11 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 				break;
 
 			case ConsoleCmd.ChangeDir:
+				if(res.payload === undefined) {
+					raiseError(useAppState, "Enter a path to change directories to.");
+					break;
+				}
+
 				// TODO: FEAT: FEAT_PATH_HINTS
 				setFullscreenImage(false);
 				setWorkspace(useAppState, Workspace.DirectoryBrowser);
