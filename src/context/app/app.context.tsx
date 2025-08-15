@@ -5,7 +5,7 @@ import { getVersion } from "@tauri-apps/api/app";
 import { createContext, useEffect, useContext } from "react";
 
 import { useAppState } from "./app.context.store";
-import { getDirectory, getDirectorySkipLock, nextNavProvider, setWorkspace } from "./app.context.actions";
+import { addInfoMessage, getDirectorySkipLock, raiseError, setWorkspace } from "./app.context.actions";
 
 import { NormalModeHandler } from "@app/handler/mode.normal";
 import { CommandModeHandler } from "@app/handler/mode.command";
@@ -57,24 +57,40 @@ type AppContextType = {
 export const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
-	const setAxumPort = useAppState(state => state.setAxumPort);
-	const setVersion = useAppState(state => state.setVimagesVersion);
-
 	useEffect(() => {
+		// Get vimages version
+		getVersion().then(ver => useAppState.getState().setVimagesVersion(ver));
 
-		getVersion().then(setVersion);
-
+		// Get port for binaries pipeline
 		invoke(RustApiAction.GetAxumPort)
-			.then(res => { setAxumPort(res as string) });
+			.then(res => { 
+				useAppState.getState().setAxumPort(res as string) 
+			})
+			.catch(error => {
+				raiseCriticalAppError("APP_INIT", "Failed to get axum port.", error);
+			});
 
-		// TODO: proper result parsing, version check, etc.
+		// Get config or default
 		invoke(RustApiAction.GetConfig)
 			.then(response => {
 				const res = response as VimagesConfig;
+
+				if(res.vimages_version !== useAppState.getState().vimages_version) {
+					let expVer = useAppState.getState().vimages_version;
+					let confVer = res.vimages_version;
+
+					console.warn("Mismatching vimages config version.");
+					console.warn(` -> Found config for '${confVer}'`);
+					console.warn(` -> Expected '${expVer}'`);
+
+					addInfoMessage(useAppState, `Found config for ${confVer}, expected ${expVer}.`);
+				}
+
 				// NOTE: lock doesn't clean up properly in react strict mode
 				// the callback is cleared before it can remove the path from the lock
 				getDirectorySkipLock(useAppState, res.last_path);
 
+				// setup keybindings
 				let keyMap = new Map<string, Command>();
 				let defaultKeybinds = getDefaultKeyMap();
 				let expectedKeybinds = defaultKeybinds.size;
@@ -84,11 +100,11 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 					let cmd = parseCommand(k.command);
 					if(cmd !== null) {
 						keyMap.set(k.keybind, cmd);
-						// console.log("Mapping: " + k.keybind + " -> " + Command[cmd]);
 						mappedKeys += 1;
 					}
 					else {
 						console.log("Failed to map: " + k.keybind);
+						addInfoMessage(useAppState, `Failed to map: '${k.keybind}'.`);
 					}
 				}
 
@@ -98,13 +114,34 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 				// this will regenerate eagerly, which is good enough for now.
 				if(mappedKeys != expectedKeybinds) {
 					console.error(`Mapped ${mappedKeys} keys, expected ${expectedKeybinds}`);
-					console.error("Failed to map keys, restoring defaults.");
+					console.error(" -> Failed to map keys, restoring defaults.");
+
+					addInfoMessage(useAppState, `Mapped ${mappedKeys} keys, expected ${expectedKeybinds}.`);
+					addInfoMessage(useAppState, "Restoring default keybindings.");
+
 					keyMap = defaultKeybinds;
 				}
 
-				if(!setKeybinds(keyMap))
-					console.error("Failed to set keybinds"); // TODO: fallback
+				if(setKeybinds(keyMap)) return;
+
+				// attempt falling back to default keybinds
+				console.error("Failed to set keybinds, trying again with defaults.");
+				addInfoMessage(useAppState, "Failed to set keybinds, trying again with defaults.");
+
+				if(!setKeybinds(defaultKeybinds)) {
+					addInfoMessage(useAppState, "Critical: Failed to set default keybinds.");
+					raiseCriticalAppError("INIT", "Failed to set default keybinds");
+				}
+			})
+		.catch(error => {
+				raiseCriticalAppError("INIT", "Failed to load config", error);
 			});
+
+		if(APP_ERROR_LOCK) {
+			addInfoMessage(useAppState, "Critical error occurred during initialization.");
+			raiseError(useAppState, "Critical error occurred during initialization.");
+			return;
+		}
 
 		setWorkspace(useAppState, Workspace.DirectoryBrowser);
 	}, []);
