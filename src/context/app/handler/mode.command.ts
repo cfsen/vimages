@@ -27,7 +27,6 @@ const cmdParam: ParamCommand[] = [
 	b(":set")
 	.param(ParamType.Number, ConsoleCmd.SetImgScale, "imgscale")
 	.param(ParamType.Number, ConsoleCmd.SetErrorDisplayLv, "errorlv")
-	.param(ParamType.Keyword, ConsoleCmd.SetDirBrowserParentPane, "parentpane")
 	.param(ParamType.Keyword, ConsoleCmd.SetTitlebarRender, "titlebar")
 	.param(ParamType.Keyword, ConsoleCmd.SetInfoMsgWindowPersists, "infowindow")
 	.build(),
@@ -162,11 +161,6 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 				useAppState.getState().setKeepOpenInfo(!infoWindowPersists);
 				addInfoMessage(useAppState,
 					"App: " + (infoWindowPersists? "hiding this window on next input." : "keeping this window open"));
-				break;
-			case ConsoleCmd.SetDirBrowserParentPane:
-				let val = !useAppState.getState().dirBrowserRenderParentDir;
-				useAppState.getState().setDirBrowserRenderParentDir(val);
-				addInfoMessage(useAppState, "Browser: " + (val ? "enabling" : "disabling") + " parent pane.");
 				break;
 
 			case ConsoleCmd.GetVerison:

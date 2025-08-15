@@ -66,10 +66,6 @@
 	padding: 1.5em;
 }
 
-.fsParentColumn {
-	max-width: 24em;
-	min-width: 24em;
-}
 .fsActiveColumn {
 	max-width: 24em;
 	min-width: 24em;
@@ -85,13 +81,6 @@
 	.fsPreview {
 		grid-template-columns: repeat(3, 400px);
 	}
-	/* .fsBrowser { */
-	/* 	width: calc(980px + 32em); */
-	/* } */
-	.fsParentColumn {
-		max-width: 20em;
-		min-width: 20em;
-	}
 	.fsActiveColumn {
 		max-width: 20em;
 		min-width: 20em;
@@ -101,14 +90,6 @@
 	.fsPreview {
 		grid-template-columns: repeat(2, 400px);
 	}
-	.fsParentColumn {
-		display: none;
-		width: 0;
-	}
-	.fsParentColumn {
-		max-width: 18em;
-		min-width: 18em;
-	}
 	.fsActiveColumn {
 		max-width: 18em;
 		min-width: 18em;
@@ -117,10 +98,6 @@
 @media (max-width: 1200px) {
 	.fsPreview {
 		grid-template-columns: repeat(2, 300px);
-	}
-	.fsParentColumn {
-		display: none;
-		width: 0;
 	}
 	.fsImgPreview {
 		max-width: 300px;

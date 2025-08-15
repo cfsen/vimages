@@ -40,7 +40,6 @@ interface IAppProps {
 	inputBufferCursor: number
 
 	titlebarRender: boolean
-	dirBrowserRenderParentDir: boolean
 
 	uiWindowInnerWidth: number
 
@@ -121,7 +120,6 @@ export interface IAppState extends IAppProps {
 	setInputBufferCursor: (_: number) => void
 
 	setTitlebarRender: (render: boolean) => void
-	setDirBrowserRenderParentDir: (render: boolean) => void
 	
 	//
 	// Image grid UI
@@ -255,8 +253,6 @@ export const useAppState = create<IAppState>((set) => ({
 
 	titlebarRender: true, // TODO persistent config
 	setTitlebarRender: (render) => set({ titlebarRender: render }),
-	dirBrowserRenderParentDir: false,
-	setDirBrowserRenderParentDir: (render) => set({ dirBrowserRenderParentDir: render }),
 
 	uiWindowInnerWidth: window.innerWidth,
 	setUiWindowInnerWidth: (pixels: number) => set({ uiWindowInnerWidth: pixels }),

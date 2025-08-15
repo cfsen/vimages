@@ -46,7 +46,6 @@ export function getDirectorySkipLock(store: StoreApi<IAppState>, relPath: string
 		relPath 
 	})
 		.then(response => {
-			// TODO: obsolete, was used in parent pane
 			if(relPath !== "..")
 				store.getState().setDirHistory(relPath);
 

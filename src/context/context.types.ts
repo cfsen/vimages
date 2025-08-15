@@ -57,10 +57,8 @@ export type NavigationHandle = {
 }
 
 export enum UIComponent {
-	fsParentView,
 	fsBrowser,
 	imgGrid,
-	dirBrowserParent,
 	dirBrowserMain,
 	dirBrowserPreview,
 }

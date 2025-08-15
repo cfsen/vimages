@@ -5,7 +5,6 @@ export enum ConsoleCmd {
 
 	SetImgScale,
 	SetErrorDisplayLv,
-	SetDirBrowserParentPane,
 	SetTitlebarRender,
 	SetInfoMsgWindowPersists,
 
