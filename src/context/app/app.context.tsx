@@ -21,6 +21,27 @@ import { resultModeCommand } from "@key/key.module.handler.cmd";
 import { resultModeNormal } from "@key/key.module.handler.normal";
 import { parseCommand, setKeybinds } from "@key/key.module";
 
+//
+// Critical error handling
+//
+
+let APP_ERROR_LOCK = false;
+
+export function checkAppErrorLock(): boolean { return APP_ERROR_LOCK };
+
+export function raiseCriticalAppError(callpoint: string, reason: string, rawError = undefined){
+	APP_ERROR_LOCK = true;
+	console.error("raiseCriticalAppError was called.");
+	console.error(" -> callpoint: " + callpoint);
+	console.error(" -> reason: " + reason);
+	console.error("error dump:");
+	console.error(rawError);
+}
+
+//
+// Global context
+//
+
 type AppContextType = {
 	// Navigation container management
 	registerNavigationContainer: (id: string, handler: NavigationHandle) => void;
@@ -118,10 +139,14 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 	//
 
 	const registerNavigationContainer = (id: string, handler: NavigationHandle) => {
+		if(APP_ERROR_LOCK) return;
+
 		useAppState.getState().registerNavigationHandler(id, handler);
 	};
 
 	const unregisterNavigationContainer = (id: string) => {
+		if(APP_ERROR_LOCK) return;
+
 		useAppState.getState().unregisterNavigationHandler(id);
 	};	
 
@@ -130,17 +155,25 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 	//
 
 	const handleModeVisual = (selection: string[], sequence: CommandSequence) => {
+		if(APP_ERROR_LOCK) return;
+
 		VisualModeHandler(selection, sequence);
 	}
 	const handleModeInsert = (input: string, sequence: CommandSequence) => {
+		if(APP_ERROR_LOCK) return;
+
 		InsertModeHandler(input, sequence);
 	}
 
 	const handleModeCommand = (resultCmd: resultModeCommand) => {
+		if(APP_ERROR_LOCK) return;
+
 		CommandModeHandler(resultCmd);
 	}
 
 	const handleModeNormal = (resultNormal: resultModeNormal) => {
+		if(APP_ERROR_LOCK) return;
+
 		NormalModeHandler(resultNormal);
 	}
 
