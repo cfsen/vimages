@@ -1,16 +1,14 @@
 import { useAppState } from "@app/app.context.store";
 import { EntityImage } from "@context/context.types";
-import { raiseError } from "../app/app.context.actions";
+import { raiseError } from "@app/app.context.actions";
+import { raiseCriticalAppError } from "@app/app.context";
 
 export function getImgFromCache(img: EntityImage, path_hash: string | null) {
 	let axum_port = useAppState.getState().axum_port;
 
 	if(axum_port === null) {
-		console.error("axum port unavailable");
-		// TODO: FEAT: FEAT_APP_LOCK_ON_CRITICAL_FAILURE
-		// critical errors should lock the UI
-		// this should be handled on launch in app.context
-		raiseError(useAppState, "axum port unavailable");
+		raiseError(useAppState, "Critical error: Axum port unavailable.");
+		raiseCriticalAppError("getImgFromCache", "Axum port was null.");
 	}
 
 	if(!img.has_thumbnail || path_hash === null) {
