@@ -82,14 +82,7 @@ function App() {
 					</div>
 				</div>
 			</div>
-			<div 
-				className="bottom-overlay"
-				style={{
-					zIndex: keyboardMode === Modal.Command ? 1005 : 'auto',
-				}}
-			>
-				<Navbar />
-			</div>
+			<Navbar />
 		</main>
 	);
 }

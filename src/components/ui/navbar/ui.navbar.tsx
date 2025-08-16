@@ -17,17 +17,17 @@ function Navbar() {
 			case Modal.Command:
 				return(
 					<>
-					{inputBfrCmd.slice(0, inputBfrCur)}
+						{inputBfrCmd.slice(0, inputBfrCur)}
 						<div className={styles.navbar_cursor}>
 							&nbsp;
 						</div>
-					{inputBfrCmd.slice(inputBfrCur)}
+						{inputBfrCmd.slice(inputBfrCur)}
 					</>
 				);
 			default:
 				return(
 					<>
-					{windowsUncStrip(currentDir)}
+						{windowsUncStrip(currentDir)}
 					</>
 				);
 		};
@@ -49,16 +49,22 @@ function Navbar() {
 	}
 
 	return(
-		<div className={styles.navbar_container}>
-			<div className={mode !== Modal.Normal ? styles.navbar_mode_active : styles.navbar_mode}>
-				<span>
-					{ outputMode() }
-				</span>
-			</div>
-			<div className={mode === Modal.Command ? styles.navbar_text_command : styles.navbar_text}>
-				<span>
-					{ outputText() }
-				</span>
+		<div className={styles.navbar_overlay}
+			style={{
+				zIndex: mode === Modal.Command ? 1005 : 'auto',
+			}}
+		>
+			<div className={styles.navbar_container}>
+				<div className={mode !== Modal.Normal ? styles.navbar_mode_active : styles.navbar_mode}>
+					<span>
+						{ outputMode() }
+					</span>
+				</div>
+				<div className={mode === Modal.Command ? styles.navbar_text_command : styles.navbar_text}>
+					<span>
+						{ outputText() }
+					</span>
+				</div>
 			</div>
 		</div>
 	);
