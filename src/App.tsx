@@ -3,22 +3,20 @@ import { useEffect } from "react";
 
 import { useGlobalCtx } from "@app/app.context";
 import { useAppState } from "@app/app.context.store";
-import { modalKeyboard } from '@key/key.module';
-import { NavigationProvider } from "@nav/nav.provider";
 
-import { UIComponent } from "@context/context.types";
+import { modalKeyboard } from '@key/key.module';
 
 import VimageFullscreen from "@img/img.fullscreen";
-import VimageGrid from "@img/img.grid";
+import VimageBrowser from "@img/img.browser";
+
 import Navbar from "@ui/navbar/ui.navbar";
 import HelpOverlay from "@ui/help/ui.help.overlay";
 import TitleBar from "@ui/titlebar/ui.titlebar";
-import DirBrowser from "@fs/dir.browser";
 import Leader from "@ui/leader/ui.leader";
 import ErrorPopup from "@ui/error/ui.error";
 import InfoPopup from "@ui/info/ui.info";
 
-import { Modal } from "@key/key.types";
+import DirBrowser from "@fs/dir.browser";
 
 function App() {
 	const { handleModeVisual, handleModeNormal, handleModeInsert, handleModeCommand } = useGlobalCtx();
@@ -68,20 +66,7 @@ function App() {
 			<InfoPopup />
 			<VimageFullscreen />
 			<DirBrowser />
-			<div className="colContainer">
-				<div className="col">
-					<div className="row">
-						<NavigationProvider 
-							key="np_imgGrid" 
-							component={UIComponent.imgGrid} 
-							initActive={false} 
-							tabOrder={1}
-						>
-							<VimageGrid />
-						</NavigationProvider>
-					</div>
-				</div>
-			</div>
+			<VimageBrowser />
 			<Navbar />
 		</main>
 	);

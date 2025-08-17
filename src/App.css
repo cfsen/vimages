@@ -81,27 +81,8 @@ body {
 	text-align: center;
 }
 
-.row {
-	display: flex;
-	justify-content: center;
-}
-
 .navigation-overlay {
 	margin: 0;
 	border-right: 0.5em solid rgba(0,0,0,0.3);
 	min-height: calc(100vh - 2.5em);
-}
-
-.colContainer {
-	display: flex;
-	flex-direction: row;
-	align-items: flex-start;
-}
-.fsCol {
-	width: 250px;
-	flex-shrink: 0;
-}
-.col {
-	text-align: left;
-	flex: 1;
 }

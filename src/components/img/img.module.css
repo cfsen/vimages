@@ -48,3 +48,23 @@
 	width: 100%;
 	text-align: center;
 }
+
+
+.colContainer {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+}
+.fsCol {
+	width: 250px;
+	flex-shrink: 0;
+}
+.col {
+	text-align: left;
+	flex: 1;
+}
+
+.row {
+	display: flex;
+	justify-content: center;
+}
