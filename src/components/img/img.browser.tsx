@@ -8,7 +8,7 @@ function VimageBrowser() {
 	return (
 			<div className={styles.colContainer}>
 				<div className={styles.col}>
-					<div className="row">
+					<div className={styles.row}>
 						<NavigationProvider 
 							key="np_imgGrid" 
 							component={UIComponent.imgGrid} 
