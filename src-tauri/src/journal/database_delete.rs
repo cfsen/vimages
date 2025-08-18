@@ -1,7 +1,3 @@
-use sqlite::State;
-
-use crate::journal::types::{FullRecord, HashRecord, JournalInfo};
-
 use super::database::Database;
 
 impl Database {
