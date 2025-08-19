@@ -203,7 +203,6 @@ export function nextWorkspace(store: StoreApi<IAppState>){
 export function setWorkspace(store: StoreApi<IAppState>, workspace: Workspace) {
 	let compsDirBrowser = [
 		UIComponent.dirBrowserMain,
-		UIComponent.dirBrowserParent,
 		UIComponent.dirBrowserPreview
 	];
 
