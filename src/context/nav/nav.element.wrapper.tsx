@@ -49,6 +49,8 @@ function getBgColor (provider: StoreApi<INavigationState>, activeProvider: boole
 			return styles.navElementWrapperActive;
 		case NavWrapperUIState.InactiveProvider:
 			return styles.navElementWrapperInactiveProvider;
+		case NavWrapperUIState.TrailingSelection:
+			return styles.navElementWrapperSelectionTrail;
 		default:
 			return styles.navElementWrapperInactive;
 	};

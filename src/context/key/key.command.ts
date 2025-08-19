@@ -88,6 +88,7 @@ export enum Command {
 
 	ModeVisual,
 	ModeVisualLine,
+	ModeVisualExit,
 
 	Input,
 	PartialInput,

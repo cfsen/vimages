@@ -13,7 +13,7 @@ export interface modeNormal {
 	callback: (resultNormal: resultModeNormal) => void;
 }
 export interface modeVisual {
-	callback: (selection: string[], sequence: CommandSequence) => void;
+	callback: (resultVisual: resultModeNormal) => void;
 }
 export interface modeInsert {
 	callback: (input: string, sequence: CommandSequence) => void;

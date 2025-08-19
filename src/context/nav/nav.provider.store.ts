@@ -7,6 +7,10 @@ interface INavigationStateProps {
 	navItemsPerRow: number,
 	navItemActive: string | null,
 	active: boolean,
+
+	selectionStart: number | null,
+	selectionEnd: number | null,
+	selectionBuffer: Set<string> | null,
 }
 
 export interface INavigationState extends INavigationStateProps {
@@ -20,6 +24,10 @@ export interface INavigationState extends INavigationStateProps {
 
 	setItemsPerRow: (perRow: number) => void,
 	setActive: (state: boolean) => boolean,
+
+	setSelectionStart: (itemIdx: number | null) => void,
+	setSelectionEnd: (itemIdx: number | null) => void,
+	setSelectionBuffer: (items: Set<string> | null) => void,
 }
 
 export type NavigationState = ReturnType<typeof createNavigationState>
@@ -31,6 +39,9 @@ export const createNavigationState = (initProps?: Partial<INavigationState>) => 
 		navItemsPerRow: 1,
 		navItemActive: null,
 		active: true,
+		selectionStart: null,
+		selectionEnd: null,
+		selectionBuffer: null,
 	}
 	return createStore<INavigationState>()((set) => ({
 		...DEFAULT_PROPS,
@@ -57,7 +68,11 @@ export const createNavigationState = (initProps?: Partial<INavigationState>) => 
 		setActive: (state: boolean) => { 
 			set({active: state});
 			return state;
-		}
+		},
+
+		setSelectionStart: (itemIdx) => set({ selectionStart: itemIdx }),
+		setSelectionEnd: (itemIdx) => set({ selectionEnd: itemIdx }),
+		setSelectionBuffer: (items) => set({ selectionBuffer: items }),
 	}));
 }
 

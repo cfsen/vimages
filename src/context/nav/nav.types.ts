@@ -34,5 +34,6 @@ export enum NavWrapperItemType {
 export enum NavWrapperUIState {
 	Active,
 	InactiveProvider,
-	Inactive
+	Inactive,
+	TrailingSelection,
 }

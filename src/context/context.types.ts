@@ -53,6 +53,7 @@ export type NavigationHandle = {
 	tabOrder: number;
 	setActive: (state: boolean) => boolean;
 	handleNavCmd: (resultNormal: resultModeNormal) => boolean;
+	handleSelectionCmd: (resultNormal: resultModeNormal) => boolean;
 	getRegisteredElements: () => number;
 }
 

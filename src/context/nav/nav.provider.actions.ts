@@ -3,8 +3,54 @@ import { INavigationState } from "@nav/nav.provider.store";
 import { NavigationItem, NavWrapperItemType, NavWrapperUIState } from "@nav/nav.types";
 import { IAppState } from "../app/app.context.store";
 
+//
+// visual mode/selection
+//
+
+export function getSelectionItemIds(navStore: StoreApi<INavigationState>): Set<string> | null {
+	let { selectionStart, selectionEnd, navItems } = navStore.getState();
+
+	if(selectionStart === null || selectionEnd === null) 
+		return null;
+
+	let itemIds: Set<string> = new Set();
+	if(selectionStart === selectionEnd) {
+		itemIds.add(navItems[selectionStart].id);
+		return itemIds;
+	}
+
+	let [firstItem, lastItem] = selectionStart < selectionEnd 
+		? [selectionStart, selectionEnd]
+		: [selectionEnd, selectionStart];
+
+	for(let i = firstItem; i <= lastItem; i++){
+		itemIds.add(navItems[i].id);
+	}
+
+	return itemIds;
+}
+
+export function updateSelectionBuffer(navStore: StoreApi<INavigationState>){
+	let selection = getSelectionItemIds(navStore);
+	navStore.getState().setSelectionBuffer(selection);
+}
+
+//
+// UI hiding
+//
+
+/**
+ * Used to determine if the wrapped elements parent is the active navigation provider.
+ * Enables using different styling for: active element & provider, active element & inactive provider,
+ * */
 export function activeNavWrapper(navProviderStore: StoreApi<INavigationState>, activeProvider: boolean, id: string): NavWrapperUIState {
 	let navItemActive = navProviderStore.getState().navItemActive;
+	let selectionBuffer = navProviderStore.getState().selectionBuffer;
+	
+	if((selectionBuffer?.has(id) ?? false) && navItemActive !== id) {
+		return NavWrapperUIState.TrailingSelection;
+	}
+
 	if(navItemActive !== id) 
 		return NavWrapperUIState.Inactive;
 
@@ -13,6 +59,10 @@ export function activeNavWrapper(navProviderStore: StoreApi<INavigationState>, a
 
 	return NavWrapperUIState.Active;
 }
+
+//
+// UI scrolling
+//
 
 export function scrollToActive(navProvider: StoreApi<INavigationState>){
 	const cursorElement = navProvider.getState().navItems

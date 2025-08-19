@@ -6,7 +6,7 @@ import { useAppState } from "@app/app.context.store";
 import { getDirectory, getDirectoryHistory } from "@app/app.context.actions";
 
 import { createNavigationState } from "./nav.provider.store";
-import { scrollToActive, scrollToActive_Delayed } from "@nav/nav.provider.actions";
+import { scrollToActive, scrollToActive_Delayed, updateSelectionBuffer } from "@nav/nav.provider.actions";
 import { NavigationContextType, NavWrapperItemType, NavigationItem } from "@nav/nav.types";
 
 import { UIComponent } from "@context/context.types";
@@ -50,6 +50,10 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 	const unregisterNavItem = useStore(navigationState, s => s.unregisterNavItem);
 	const navItemActive = useStore(navigationState, s => s.navItemActive);
 	const setNavItemActive = useStore(navigationState, s => s.setNavItemActive);
+
+	// selection
+	const setSelectionStart = useStore(navigationState, s => s.setSelectionStart);
+	const setSelectionEnd = useStore(navigationState, s => s.setSelectionEnd);
 
 	// Generate unique ID for this navigation container
 	const navigationId = useRef(Math.random().toString(36).substring(7));
@@ -153,6 +157,57 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 	};
 
 	//
+	// Selection handling
+	//
+
+	const handleSelectionCmd = (resultNormal: resultModeNormal): boolean => {
+		switch(resultNormal.cmd) {
+			case Command.ModeVisualExit:
+				console.info("Visual->ModeVisualExit called");
+
+				if(navigationState.getState().selectionStart !== null) {
+					console.info("Visual->ModeVisualExit: Selection cleanup.");
+					setSelectionStart(null);
+					setSelectionEnd(null);
+
+				}
+
+				// TODO: store selection state for 'gv'
+
+				updateSelectionBuffer(navigationState);
+				return true;
+			case Command.Return:
+				console.log("Visual->Command.Return");
+
+				// TODO: handle return
+
+				return true;
+		};
+
+		let selectionStart = navigationState.getState().selectionStart;
+
+		if(selectionStart === null){
+			let activeItemID = navigationState.getState().navItemActive;
+			let curpos = navigationState.getState().navItems.findIndex((i) => i.id === activeItemID);
+			setSelectionStart(curpos);
+
+			console.log(`handleSelectionCmd->selection start: ${curpos}`);
+		}
+
+
+		let cursorHandler = handleNavigationCmd(resultNormal);
+
+		let postActiveItemID = navigationState.getState().navItemActive;
+		let postpos = navigationState.getState().navItems.findIndex((i) => i.id === postActiveItemID);
+		setSelectionEnd(postpos);
+
+		console.log(`handleSelectionCmd->selection end: ${postpos}`);
+		
+		updateSelectionBuffer(navigationState);
+		return cursorHandler;
+	}
+
+	//
 	// Parent context registration
 	//
 
@@ -164,6 +219,7 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 			id: navigationId.current,
 			component,
 			handleNavCmd: handleNavigationCmd,
+			handleSelectionCmd: handleSelectionCmd,
 			active: isActive,
 			setActive,
 			tabOrder,

@@ -10,3 +10,7 @@
 	background-color: var(--neutral-900);
 	margin: 'auto';
 }
+.navElementWrapperSelectionTrail {
+	background-color: var(--primary-800);
+	margin: 'auto';
+}

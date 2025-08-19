@@ -10,7 +10,8 @@ let KEYBINDS = getDefaultKeybinds();
 
 let commandBuffer: resultModeCommand = defaultResultModeCommand();
 let normalBuffer: resultModeNormal = defaultResultModeNormal();
-let visualSequence = "";
+
+let visualBuffer: resultModeNormal = defaultResultModeNormal();
 let insertSequence = "";
 
 export function modalKeyboard(
@@ -27,20 +28,38 @@ export function modalKeyboard(
 		setModeState(Modal.Normal);	
 
 		// clear buffers
-		visualSequence = "";
+		visualBuffer = defaultResultModeNormal();
 		insertSequence = "";
 		normalBuffer = defaultResultModeNormal();
 		commandBuffer = defaultResultModeCommand();
 
 		// reset external stores
 		cmdHandler.callback?.(commandBuffer);
+		visualBuffer.cmd = Command.ModeVisualExit;
+		visualHandler.callback?.(visualBuffer);
 		return;
 	}
 
 	// TODO: FEAT: FEAT_MODE_INSERT FEAT_MODE_VISUAL
 	switch(mode){
 		case Modal.Visual:
-			handleModeVisual(visualHandler, event, visualSequence);
+			visualBuffer = handleModeNormal(event, visualBuffer, KEYBINDS.keyMap);
+
+			// TODO: temporary intercept and override other modes
+			if(visualBuffer.mode === Modal.Leader){
+				console.log("Visual->Leader");
+			}
+			if(visualBuffer.mode === Modal.Command){
+				console.log("Visual->Command");
+			}
+
+			visualBuffer.mode = Modal.Visual;
+			
+			if(visualBuffer.cmd !== Command.PartialInput) {
+				visualHandler.callback?.(visualBuffer);
+				visualBuffer = defaultResultModeNormal();
+			}
+
 			break;
 		case Modal.Insert:
 			handleModeInsert(insertHandler, event, insertSequence);
@@ -121,14 +140,6 @@ export function overwriteBufferCommandMode(newValue: resultModeCommand){
 	commandBuffer = newValue;
 }
 
-// TODO: FEAT: FEAT_MODE_VISUAL
-function handleModeVisual(
-	handler: modeVisual,
-	event: KeyboardEvent,
-	sequence: string,
-) {
-	console.log("handleModeVisual", handler, event, sequence);
-}
 
 // TODO: FEAT: FEAT_MODE_INSERT
 function handleModeInsert(
