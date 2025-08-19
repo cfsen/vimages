@@ -17,6 +17,7 @@ import ErrorPopup from "@ui/error/ui.error";
 import InfoPopup from "@ui/info/ui.info";
 
 import DirBrowser from "@fs/dir.browser";
+import SelectionOverview from "./components/ui/selection/ui.selection.overview";
 
 function App() {
 	const { handleModeVisual, handleModeNormal, handleModeInsert, handleModeCommand } = useGlobalCtx();
@@ -67,6 +68,7 @@ function App() {
 			<VimageFullscreen />
 			<DirBrowser />
 			<VimageBrowser />
+			<SelectionOverview />
 			<Navbar />
 		</main>
 	);
