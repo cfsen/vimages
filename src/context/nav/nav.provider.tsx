@@ -169,12 +169,11 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 					console.info("Visual->ModeVisualExit: Selection cleanup.");
 					setSelectionStart(null);
 					setSelectionEnd(null);
-
 				}
 
 				// TODO: store selection state for 'gv'
 
-				updateSelectionBuffer(navigationState);
+				updateSelectionBuffer(useAppState, navigationState);
 				return true;
 			case Command.Return:
 				console.log("Visual->Command.Return");
@@ -203,7 +202,7 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 
 		console.log(`handleSelectionCmd->selection end: ${postpos}`);
 		
-		updateSelectionBuffer(navigationState);
+		updateSelectionBuffer(useAppState, navigationState);
 		return cursorHandler;
 	}
 

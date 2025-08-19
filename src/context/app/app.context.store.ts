@@ -19,6 +19,7 @@ interface IAppProps {
 	siblingDirs: EntityDirectory[]
 	images: EntityImage[]
 	dirHistory: Map<string, string>
+	activeSelection: Set<string> | null
 
 	//
 	// UI state
@@ -98,6 +99,7 @@ export interface IAppState extends IAppProps {
 	setSiblingDirs: (dirs: EntityDirectory[]) => void
 	setImages: (images: EntityImage[]) => void
 	setDirHistory: (dir: string) => void
+	setActiveSelection: (items: Set<string> | null) => void
 
 	//
 	// UI state
@@ -193,6 +195,10 @@ export const useAppState = create<IAppState>((set) => ({
 			dirHistory: hist
 		};
 		return updates;
+	}),
+	activeSelection: null,
+	setActiveSelection: (items: Set<string> | null) => set({
+		activeSelection: items
 	}),
 
 	//

@@ -7,16 +7,20 @@ import { IAppState } from "../app/app.context.store";
 // visual mode/selection
 //
 
-export function getSelectionItemIds(navStore: StoreApi<INavigationState>): Set<string> | null {
+type selectionItems = {cssId: Set<string>, fsPath: Set<string>};
+
+function getSelectionItemIds(navStore: StoreApi<INavigationState>): selectionItems | null {
 	let { selectionStart, selectionEnd, navItems } = navStore.getState();
 
 	if(selectionStart === null || selectionEnd === null) 
 		return null;
 
 	let itemIds: Set<string> = new Set();
+	let itemPaths: Set<string> = new Set();
 	if(selectionStart === selectionEnd) {
 		itemIds.add(navItems[selectionStart].id);
-		return itemIds;
+		itemPaths.add(navItems[selectionStart].data);
+		return {cssId: itemIds, fsPath: itemPaths};
 	}
 
 	let [firstItem, lastItem] = selectionStart < selectionEnd 
@@ -25,14 +29,32 @@ export function getSelectionItemIds(navStore: StoreApi<INavigationState>): Set<s
 
 	for(let i = firstItem; i <= lastItem; i++){
 		itemIds.add(navItems[i].id);
+		itemPaths.add(navItems[i].data);
 	}
 
-	return itemIds;
+	return {cssId:itemIds, fsPath: itemPaths};
 }
 
-export function updateSelectionBuffer(navStore: StoreApi<INavigationState>){
+/**
+ * Pushes selection from nav provider buffer to parent context, 
+ * */
+export function updateSelectionBuffer(appStore: StoreApi<IAppState>, navStore: StoreApi<INavigationState>){
 	let selection = getSelectionItemIds(navStore);
-	navStore.getState().setSelectionBuffer(selection);
+	if(selection === null){
+		appStore.getState().setActiveSelection(null);
+		navStore.getState().setSelectionBuffer(null);
+		return;
+	}
+
+	navStore.getState().setSelectionBuffer(selection.cssId);
+
+	console.log("updateSelectionBuffer->selection [paths]:");
+	console.log(selection.fsPath);
+
+	appStore.getState().setActiveSelection(selection.fsPath);
+
+	console.log("appStore.getState().activeSelection:");
+	console.log(appStore.getState().activeSelection);
 }
 
 //
