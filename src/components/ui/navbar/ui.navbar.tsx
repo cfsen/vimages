@@ -11,6 +11,7 @@ function Navbar() {
 	const mode = useAppState(state => state.mode);
 	const inputBfrCmd = useAppState(state => state.inputBufferCommand);
 	const inputBfrCur = useAppState(state => state.inputBufferCursor);
+	const activeSelection = useAppState(state => state.activeSelection);
 
 	const outputText = (): JSX.Element => {
 		switch(mode){
@@ -24,10 +25,17 @@ function Navbar() {
 						{inputBfrCmd.slice(inputBfrCur)}
 					</>
 				);
-			default:
+			case Modal.Visual:
 				return(
 					<>
 						{windowsUncStrip(currentDir)}
+						: {activeSelection?.size ?? 1} items selected.
+					</>
+				);
+			default:
+				return(
+					<>
+						{windowsUncStrip(currentDir)} 					
 					</>
 				);
 		};
