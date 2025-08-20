@@ -29,6 +29,7 @@ const cmdParam: ParamCommand[] = [
 	.param(ParamType.Number, ConsoleCmd.SetErrorDisplayLv, "errorlv")
 	.param(ParamType.Keyword, ConsoleCmd.SetTitlebarRender, "titlebar")
 	.param(ParamType.Keyword, ConsoleCmd.SetInfoMsgWindowPersists, "infowindow")
+	.param(ParamType.Number, ConsoleCmd.SetScrollTimeout, "scrollDelay")
 	.build(),
 
 	b(":get")
@@ -161,6 +162,10 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 				useAppState.getState().setKeepOpenInfo(!infoWindowPersists);
 				addInfoMessage(useAppState,
 					"App: " + (infoWindowPersists? "hiding this window on next input." : "keeping this window open"));
+				break;
+			case ConsoleCmd.SetScrollTimeout:
+				useAppState.getState().setWorkaroundScrollToDelay(res.payload as number);
+				addInfoMessage(useAppState, `Setting scroll delay to: ${res.payload}ms`)
 				break;
 
 			case ConsoleCmd.GetVerison:
