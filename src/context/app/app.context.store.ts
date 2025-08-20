@@ -264,7 +264,7 @@ export const useAppState = create<IAppState>((set) => ({
 	setUiWindowInnerWidth: (pixels: number) => set({ uiWindowInnerWidth: pixels }),
 
 	workaroundScrollToDelay: 100,
-	setWorkaroundScrollToDelay: (ms: number) => ({ workaroundScrollToDelay: ms }),
+	setWorkaroundScrollToDelay: (ms: number) => set({ workaroundScrollToDelay: ms }),
 
 	//
 	// Image grid UI
