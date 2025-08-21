@@ -59,7 +59,7 @@ function Navbar() {
 	return(
 		<div className={styles.navbar_overlay}
 			style={{
-				zIndex: mode === Modal.Command ? 1005 : 'auto',
+				zIndex: displayOnTop(mode) ? 1005 : 'auto',
 			}}
 		>
 			<div className={styles.navbar_container}>
@@ -76,6 +76,17 @@ function Navbar() {
 			</div>
 		</div>
 	);
+}
+
+function displayOnTop(mode: Modal): boolean{
+	switch(mode){
+		case Modal.Command:
+			return true;
+		case Modal.Visual:
+			return true;
+		default:
+			return false;
+	}
 }
 
 export default Navbar;
