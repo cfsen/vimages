@@ -1,3 +1,27 @@
+# 0.1.8
+
+## User facing:
+- feature: visual mode for selecting images or directories. 
+- feature: command mode history now available with arrow key up and down.
+- feature: set delay before scrolling when changing workspaces with `:set scrollDelay [number]`
+- feature: application full screen toggle with `ctrl+enter`.
+- feature: app lockdown on critical errors.
+- ui: file names exceeding 50 characters are now trimmed in image grid.
+- ui: cursor now only highlights file name in image grid, allowing the image to be bordered by a neutral background.
+- ui: improvements to scroll targeting precision based on context.
+- ui: removed dir browser parent pane layout.
+- ui: scroll targeting changes when switching workspaces, should be more accurate.
+- fix: command mode backspace bug: 392be40
+
+
+### Under the hood:
+- improve app robustness on initialization.
+- reduced debug output from ipc emitters.
+- work commenced on cleaning up html/css for older parts of vimages.
+- misc. minor fixes and chores.
+
+---
+
 # 0.1.7
 
 ## User facing:
