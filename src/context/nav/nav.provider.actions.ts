@@ -36,7 +36,7 @@ function getSelectionItemIds(navStore: StoreApi<INavigationState>): selectionIte
 }
 
 /**
- * Pushes selection from nav provider buffer to parent context, 
+ * Pushes selection from nav provider buffer to parent context, clearing buffers if no selection is active.
  * */
 export function updateSelectionBuffer(appStore: StoreApi<IAppState>, navStore: StoreApi<INavigationState>){
 	let selection = getSelectionItemIds(navStore);
