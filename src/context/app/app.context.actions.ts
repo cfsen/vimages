@@ -1,7 +1,7 @@
 import { invoke } from '@tauri-apps/api/core';
 import { StoreApi } from 'zustand';
 
-import { EntityDirectory, Keybind, RustApiAction, UIComponent, VimagesConfig, Workspace } from "@context/context.types";
+import { EntityDirectory, Keybind, NavigationHandle, RustApiAction, UIComponent, VimagesConfig, Workspace } from "@context/context.types";
 import { IAppState } from "./app.context.store";
 
 import { getCurrentKeybinds } from '@key/key.module';
@@ -134,6 +134,22 @@ export function setNavProvidersInteractable(store: StoreApi<IAppState>, componen
 	components.forEach((comp) => {
 		store.getState().navigationHandlersByComp.get(comp)?.setActive(state);
 	});
+}
+
+/**
+ * Get current active navigation provider.
+ * */
+export function getActiveNavigationProvider(store: StoreApi<IAppState>): NavigationHandle | null {
+	let active = store.getState().activeNavigationContext;
+
+	if(active === null)
+		return null;
+	
+	let navProvider = store.getState().navigationHandlers.get(active);
+	if(navProvider === undefined)
+		return null;
+
+	return navProvider;
 }
 
 // Cycle registered navigation contexts sequentially
