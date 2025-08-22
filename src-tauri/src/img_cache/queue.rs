@@ -21,20 +21,28 @@ pub struct QueueItem {
     pub file_hash: String,
 }
 
+#[derive(Debug, Clone)]
+pub enum QueueMsg {
+    ImageAdded,
+    WorkerComplete,
+}
+
 #[derive(Debug)]
 pub struct Queue {
     sender: mpsc::UnboundedSender<QueueItem>,
     size: Arc<AtomicUsize>,
+    event_sender: mpsc::UnboundedSender<QueueMsg>,
 }
 
 impl Queue {
-    pub fn new() -> (Self, mpsc::UnboundedReceiver<QueueItem>) {
+    pub fn new() -> (Self, mpsc::UnboundedReceiver<QueueItem>, mpsc::UnboundedReceiver<QueueMsg>) {
         let (sender, receiver) = mpsc::unbounded_channel();
+        let (event_sender, event_receiver) = mpsc::unbounded_channel();
         let size = Arc::new(AtomicUsize::new(0));
 
-        let queue = Queue { sender, size };
+        let queue = Queue { sender, size, event_sender };
 
-        (queue, receiver)
+        (queue, receiver, event_receiver)
     }
 
     // TODO: FUTURE: enqueue allows duplicates to be added to queue,
@@ -45,6 +53,7 @@ impl Queue {
         match self.sender.send(item) {
             Ok(_) => {
                 self.size.fetch_add(1, Ordering::SeqCst);
+                let _ = self.event_sender.send(QueueMsg::ImageAdded);
                 Ok(())
             }
             Err(_) => Err("Failed to enqueue item".to_string()),
@@ -101,9 +110,9 @@ impl QueueWorker {
             .await; // awaits JoinHandle from spawn_blocking
 
             match result {
-                // TODO: clean up return from create_thumbnail() TODO_RS_CTHUMB
-                Ok(Ok(true)) => {
+                Ok(Ok(())) => {
                     debug!("Thumbnail generated successfully for {}", item.full_path.to_string_lossy());
+
                     if let Err(e) = get_db().insert_hash(
                         &item.path_hash,
                         &item.file_hash,
@@ -112,19 +121,29 @@ impl QueueWorker {
                         error!("Failed to insert hash for {}, {}", item.full_path.to_string_lossy(), e);
                     }
                 }
-                Ok(Ok(false)) => {
-                    // create_thumbnail returned Ok(false)
-                    error!("Thumbnail generation returned false for {}", item.full_path.to_string_lossy());
-                }
                 Ok(Err(e)) => {
-                    // error from img::create_thumbnail (e.g., ImageError)
-                    error!("Error generating thumbnail for {}: {:?}", item.full_path.to_string_lossy(), e);
+                    let failed_img_path = item.full_path.to_string_lossy();
+                    match e {
+                        image::ImageError::Unsupported(unsupported_error) => {
+                            error!("image failed to generate thumbnail for file: {failed_img_path}");
+                            error!("image error: {unsupported_error}");
+                            send::info_window_msg(&format!("Failed to create thumbnail for: {failed_img_path}"));
+                            send::info_window_msg(&format!("Reason: {unsupported_error}"));
+                        }
+                        _ => {
+                            error!("Error generating thumbnail for {failed_img_path}: {e}");
+                        }
+                    }
                 }
-                Err(e) => {
-                    // JoinError from spawn_blocking (e.g., the spawned task panicked or was cancelled)
-                    error!("Spawn blocking task for {} failed: {:?}", item.full_path.to_string_lossy(), e);
-                    // If e.is_panic() is true, this indicates a panic in create_thumbnail or its deps.
-                    // If e.is_cancelled() is true, the task was cancelled.
+                Err(join_error) => {
+                    error!("Spawn blocking task for {} failed: {:?}", item.full_path.to_string_lossy(), join_error);
+
+                    if join_error.is_panic() {
+                        error!("try_into_panic(): true");
+                    }
+                    if join_error.is_cancelled() {
+                        error!("is_cancelled(): true");
+                    }
                 }
             }
 
@@ -151,7 +170,7 @@ impl QueueWorker {
 
 // Constructor
 pub async fn setup_queue() -> Queue {
-    let (queue, mut main_receiver) = Queue::new();
+    let (queue, mut main_receiver, mut main_event_receive) = Queue::new();
     let size_ref = queue.size.clone();
 
     let core_count = std::thread::available_parallelism()
@@ -163,12 +182,10 @@ pub async fn setup_queue() -> Queue {
     //let worker_count = core_count * 4;
     let worker_count = 24;
 
-    info!(
-        "Detected {core_count} CPU cores, spawning {worker_count} thumbnail workers"
-    );
+    info!("Detected {core_count} CPU cores, spawning {worker_count} thumbnail workers");
 
     let mut worker_senders: Vec<mpsc::UnboundedSender<QueueItem>> =
-        Vec::with_capacity(worker_count);
+    Vec::with_capacity(worker_count);
     for i in 0..worker_count {
         let (worker_sender, worker_receiver) = mpsc::unbounded_channel();
         worker_senders.push(worker_sender);
@@ -182,15 +199,19 @@ pub async fn setup_queue() -> Queue {
 
     tokio::spawn(async move {
         info!("Starting queue dispatcher.");
+
         let mut next_worker_idx = 0;
-        while let Some(item) = main_receiver.recv().await {
-            let worker_sender = &worker_senders[next_worker_idx];
-            if let Err(e) = worker_sender.send(item) {
-                error!("Failed to dispatch item to worker {next_worker_idx}: {e}");
-                // TODO: re-enqueue or handle this specific item.
-                // for now, it's dropped if the worker died.
+        while let Some(item) = main_event_receive.recv().await {
+
+            if let QueueMsg::ImageAdded = item {
+                if let Some(img) = main_receiver.recv().await {
+                    let worker_sender = &worker_senders[next_worker_idx];
+                    worker_sender.send(img)
+                        .unwrap_or_else(|e| error!("Failed to dispatch item to worker: {e}"));
+                    next_worker_idx = (next_worker_idx + 1) % worker_senders.len();
+                }
             }
-            next_worker_idx = (next_worker_idx + 1) % worker_senders.len();
+
         }
         info!("Queue dispatcher shutting down. Main receiver closed.");
     });
