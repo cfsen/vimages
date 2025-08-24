@@ -1,11 +1,5 @@
 use log::{debug, error, info};
-use std::{
-    io::ErrorKind,
-    sync::{
-        atomic::{AtomicUsize, Ordering},
-        Arc,
-    }
-};
+use std::io::ErrorKind;
 use tokio::{
     fs,
     sync::mpsc,
@@ -13,8 +7,22 @@ use tokio::{
 };
 
 use crate::img_cache::{cache, img, queue::{QueueItem, QueueMsg}};
-use crate::ipc::send;
-use crate::get_db;
+
+#[derive(Debug)]
+pub struct ThumbnailResult {
+    pub status: ThumbnailResultStatus,
+    pub ui_message: Option<String>,
+}
+
+#[derive(Debug)]
+pub enum ThumbnailResultStatus {
+    Started,
+    Success,
+    FailedImgUnspecified,
+    FailedImgUnsupportedFormat,
+    FailedJoinErrorPanic,
+    FailedJoinErrorCancelled,
+}
 
 pub struct QueueWorker;
 
@@ -22,7 +30,6 @@ impl QueueWorker {
     pub async fn start(
         mut receiver: mpsc::UnboundedReceiver<QueueItem>,
         event_sender: mpsc::UnboundedSender<QueueMsg>,
-        size: Arc<AtomicUsize>,
     ) {
         // check base cache directory
         let cache_path = match cache::get_cache_path_async().await {
@@ -44,9 +51,16 @@ impl QueueWorker {
                 Ok(_) => {},
                 Err(e) if e.kind() == ErrorKind::AlreadyExists => {},
                 Err(e) => {
-                    // TODO: granular error handling
+                    let error = format!("Failed to create item-specific directory {thumb_path:?}: {e}");
+
                     error!("Failed to create item-specific directory {thumb_path:?}: {e}");
-                    size.fetch_sub(1, Ordering::SeqCst);
+
+                    let _ = event_sender.send(QueueMsg::ImageFailed { 
+                        file_hash: item.file_hash,
+                        path: item.full_path.to_string_lossy().to_string(),
+                        error,
+                        queue_id: item.queue_id,
+                    });
                     continue;
                 }
             }
@@ -58,64 +72,93 @@ impl QueueWorker {
             let result = task::spawn_blocking(move || {
                 img::create_thumbnail(org_path.as_path(), &thumb_path)
             })
-            .await; // awaits JoinHandle from spawn_blocking
+            .await;
 
+            let handled = handle_create_thumbnail_result(&item, &result);
 
-            match result {
-                Ok(Ok(())) => {
-                    debug!("Thumbnail generated successfully for {}", item.full_path.to_string_lossy());
-
-                    if let Err(e) = get_db().insert_hash(
-                        &item.path_hash,
-                        &item.file_hash,
-                        &item.full_path.to_string_lossy()
-                    ) {
-                        error!("Failed to insert hash for {}, {}", item.full_path.to_string_lossy(), e);
-                    }
+            match handled.status {
+                ThumbnailResultStatus::Success => {
+                    let _ = event_sender.send(QueueMsg::ImageCompleted { 
+                        path_hash: item.path_hash, 
+                        filename_hash: item.file_hash,
+                        path: item.full_path.to_string_lossy().to_string(),
+                        queue_id: item.queue_id, 
+                    });
                 }
-                Ok(Err(e)) => {
-                    let failed_img_path = item.full_path.to_string_lossy();
-                    match e {
-                        image::ImageError::Unsupported(unsupported_error) => {
-                            error!("image failed to generate thumbnail for file: {failed_img_path}");
-                            error!("image error: {unsupported_error}");
-                            send::info_window_msg(&format!("Failed to create thumbnail for: {failed_img_path}"));
-                            send::info_window_msg(&format!("Reason: {unsupported_error}"));
-                        }
-                        _ => {
-                            error!("Error generating thumbnail for {failed_img_path}: {e}");
-                        }
-                    }
+                ThumbnailResultStatus::FailedJoinErrorPanic => {
+                    let _ = event_sender.send(QueueMsg::WorkerErrorJoin {
+                        path: item.full_path.to_string_lossy().to_string(),
+                        queue_id: item.queue_id,
+                    });
                 }
-                Err(join_error) => {
-                    error!("Spawn blocking task for {} failed: {:?}", item.full_path.to_string_lossy(), join_error);
-
-                    if join_error.is_panic() {
-                        error!("try_into_panic(): true");
-                    }
-                    if join_error.is_cancelled() {
-                        error!("is_cancelled(): true");
-                    }
+                ThumbnailResultStatus::FailedJoinErrorCancelled => {
+                    let _ = event_sender.send(QueueMsg::WorkerErrorCancelled {
+                        path: item.full_path.to_string_lossy().to_string(),
+                        queue_id: item.queue_id,
+                    });
                 }
-            }
-
-            let remaining = size.fetch_sub(1, Ordering::SeqCst).saturating_sub(1);
-            if remaining % 10 == 0 || remaining < 10 {
-                if remaining > 0 {
-                    send::info_window_msg(&format!("{remaining:?} thumbnails in queue."));
+                _ => {
+                    let error = handled.ui_message.unwrap_or_else(|| format!("error = null"));
+                    let _ = event_sender.send(QueueMsg::ImageFailed { 
+                        file_hash: item.file_hash,
+                        path: item.full_path.to_string_lossy().to_string(),
+                        error,
+                        queue_id: item.queue_id,
+                    });
                 }
-                else {
-                    if let Some(parent) = item.full_path.parent() {
-                        // TODO: readability TODO_QUEUE_STATUS_PARAMS
-                        // update to use enum/type params
-                        // sending: redraw=true, queue_empty=true
-                        send::queue_status(parent, &true, &true);
-                    }
-                    send::info_window_msg("Thumbnails generated.");
-                }
-                info!("{remaining:?} images remaining in queue.");
             }
         }
         info!("Worker shutting down");
     }
+}
+
+pub fn handle_create_thumbnail_result(
+    item: &QueueItem,
+    res: &Result<Result<(), image::ImageError>, JoinError>
+) -> ThumbnailResult {
+    let mut status = ThumbnailResultStatus::Started;
+    let mut ui_message = None;
+
+    match res {
+        Ok(Ok(())) => {
+            debug!("Thumbnail generated successfully for {}", item.full_path.to_string_lossy());
+
+            status = ThumbnailResultStatus::Success;
+        }
+        Ok(Err(e)) => {
+            let failed_img_path = item.full_path.to_string_lossy();
+            match e {
+                image::ImageError::Unsupported(unsupported_error) => {
+                    error!("image failed to generate thumbnail for file: {failed_img_path}");
+                    error!("image error: {unsupported_error}");
+
+                    status = ThumbnailResultStatus::FailedImgUnsupportedFormat;
+                    ui_message = Some(format!("Failed to create thumbnail for: {failed_img_path}. Error: {unsupported_error}"));
+                }
+                _ => {
+                    status = ThumbnailResultStatus::FailedImgUnspecified;
+                    ui_message = Some(format!("Error generating thumbnail for {failed_img_path}: {e}"));
+                }
+            }
+            error!("{:?}", ui_message);
+        }
+        Err(join_error) => {
+            error!("Spawn blocking task for {} failed: {:?}", item.full_path.to_string_lossy(), join_error);
+
+            if join_error.is_panic() {
+                error!("try_into_panic(): true");
+
+                ui_message = Some(format!("Critical error: thumbnail worker thread panicked."));
+                status = ThumbnailResultStatus::FailedJoinErrorPanic;
+            }
+            if join_error.is_cancelled() {
+                error!("is_cancelled(): true");
+
+                ui_message = Some(format!("Critical error: thumbnail worker thread was cancelled."));
+                status = ThumbnailResultStatus::FailedJoinErrorCancelled;
+            }
+        }
+    }
+
+    ThumbnailResult { status, ui_message }
 }
