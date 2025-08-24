@@ -124,7 +124,6 @@ impl QueueSize {
 // initializer
 pub async fn setup_queue() -> Queue {
     let (queue, mut main_receiver, mut main_event_receiver) = Queue::new();
-    let size_ref = queue.size.clone();
     let queue_size = QueueSize {
         size: queue.size.clone(),
     };
@@ -164,18 +163,20 @@ pub async fn setup_queue() -> Queue {
 
             match msg {
 
-                QueueMsg::ImageAdded { queue_id } => {
+                QueueMsg::ImageAdded { queue_id: _ } => {
                     if let Some(img) = main_receiver.recv().await {
-                        if blacklist.contains(&queue_id) {
+                        if blacklist.contains(&img.queue_id) {
                             send::info_window_msg(
                                 &format!(
                                     "Found and skipped thumbnail for previously failed image: {}",
                                     &img.full_path.to_string_lossy()
                                 ));
+
+                            queue_size.dec();
                             continue;
                         }
 
-                        if processing.contains(&queue_id) {
+                        if processing.contains(&img.queue_id) {
                             warn!(
                                 "Ignoring enqueue, already in queue: {}",
                                 &img.full_path.to_string_lossy()
@@ -185,7 +186,7 @@ pub async fn setup_queue() -> Queue {
                             continue;
                         }
 
-                        processing.insert(queue_id);
+                        processing.insert(img.queue_id.clone());
 
                         let worker_sender = &worker_senders[next_worker_idx];
                         worker_sender.send(img)
