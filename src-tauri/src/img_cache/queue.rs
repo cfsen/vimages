@@ -9,7 +9,7 @@ use std::{
 };
 use tokio::sync::mpsc;
 
-use crate::{get_db, img_cache::queue_worker::QueueWorker, ipc::send};
+use crate::{get_db, img_cache::queue_worker::QueueWorker, ipc::{send, types::IpcQueueOpCode}};
 
 #[derive(Debug, Clone)]
 pub struct QueueItem {
@@ -219,8 +219,11 @@ pub async fn setup_queue() -> Queue {
                             blacklist.insert(queue_id);
                         }
                         else {
-                            // TODO: notify frontend to fetch image
-                            debug!("Notify frontend.");
+                            send::queue_status(
+                                &IpcQueueOpCode::ImageComplete,
+                                Some(&filename_hash),
+                                Some(&path_hash)
+                            );
                         }
 
                         frontend_queue_progress(queue_size.get());
@@ -271,4 +274,8 @@ fn frontend_queue_progress(queue_size: usize) {
     else if queue_size % 10 == 0 || queue_size < 10 {
         send::info_window_msg(&format!("{queue_size:?} thumbnails in queue."));
     }
+}
+
+fn frontend_can_fetch(id: String){
+    // TODO: sends a message that the frontend can now fetch this image.
 }
