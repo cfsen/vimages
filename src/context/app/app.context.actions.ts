@@ -14,33 +14,7 @@ import { timestamp } from '@context/helpers';
 // State
 //
 
-export const IPC_PendingRemoves = new Set<string>();
-
 export function getDirectory(store: StoreApi<IAppState>, relPath: string){
-	console.log("getDirectory: " + relPath);
-	invoke(RustApiAction.ResolveRelPath, {
-		path: store.getState().currentDir,
-		relPath
-	})
-		.then(responseRelPath => {
-			const abspath = responseRelPath as string;
-			if(IPC_PendingRemoves.has(abspath)){
-				raiseError(store, "Directory is being processed, please wait for thumbnail generation queue to complete.");
-				return;
-			}
-
-			IPC_PendingRemoves.add(abspath);
-
-			getDirectorySkipLock(store, relPath);
-		});
-}
-
-/**
- * Bypasses lock for React strict mode compatibility.
- * Do not use outside of app init or IPC callbacks where duplication is less of a concern.
- * Use `getDirectory()` instead.
- * */
-export function getDirectorySkipLock(store: StoreApi<IAppState>, relPath: string){
 	invoke(RustApiAction.GetDir, { 
 		path: store.getState().currentDir, 
 		relPath 
