@@ -62,6 +62,16 @@ export function getDirectorySkipLock(store: StoreApi<IAppState>, relPath: string
 		});
 }
 
+export function updateImageThumbnailState(store: StoreApi<IAppState>, imgHash: string, hasThumbnail: boolean) {
+	let images = store.getState().images;
+	let idx = images.findIndex((a) => a.img_hash === imgHash);
+	if(idx >= 0 && idx < images.length) {
+		let update = [... images];
+		update[idx].has_thumbnail = hasThumbnail;
+		store.getState().setImages(update);
+	}
+}
+
 export function getDirectoryHistory(store: StoreApi<IAppState>): string | undefined {
 	const dir = store.getState().currentDir;
 	return store.getState().dirHistory.get(dir);
