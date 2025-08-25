@@ -157,12 +157,6 @@ fn fsx_get_images(path: &Path, path_hash: &str) -> Result<Vec<EntityImage>, Stri
         let msg_path = path.to_string_lossy();
         send::info_window_msg(&format!("Generating {queue_count} thumbnails for: {msg_path}"));
     }
-    if queue_count == 0 {
-        // TODO: readability TODO_QUEUE_STATUS_PARAMS
-        // update to use enum/type params.
-        // sending: redraw=true, queue_empty=false
-        send::queue_status(path, &true, &false);
-    }
 
     images.sort_by(|a, b| a.filename.cmp(&b.filename));
 
