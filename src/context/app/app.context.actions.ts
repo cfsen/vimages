@@ -46,6 +46,29 @@ export function updateImageThumbnailState(store: StoreApi<IAppState>, imgHash: s
 	}
 }
 
+export function updateImageThumbnailStateBatch(store: StoreApi<IAppState>, buffer: Set<string> | null) {
+	if(buffer === null) return;
+
+	let images = store.getState().images;
+	let hits = 0;
+	let size = buffer.size;
+	let idxs = new Set<number>();
+
+	for(let i = 0; i < images.length; i++){
+		if(buffer.has(images[i].img_hash)){
+			idxs.add(i);
+			hits += 1;
+			if(hits === size) break;
+		}
+	}
+
+	if(hits > 0) {
+		let update = [... images];
+		idxs.forEach(x => update[x].has_thumbnail = true);
+		store.getState().setImages(update);
+	}
+}
+
 export function getDirectoryHistory(store: StoreApi<IAppState>): string | undefined {
 	const dir = store.getState().currentDir;
 	return store.getState().dirHistory.get(dir);
