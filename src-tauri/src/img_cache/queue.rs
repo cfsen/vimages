@@ -244,14 +244,18 @@ pub async fn setup_queue() -> Queue {
                     if !blacklist.insert(queue_id) {
                         error!("Failed to add to blacklist: {}", &file_hash);
                     }
+
+                    send::queue_status(&IpcQueueOpCode::ImageFailed, Some(&file_hash), None);
                 }
 
                 QueueMsg::WorkerErrorJoin { path, queue_id } => {
                     error!("Worker join error: {path}: {queue_id}");
+                    send::queue_status(&IpcQueueOpCode::InternalError, None, None);
                 }
 
                 QueueMsg::WorkerErrorCancelled { path, queue_id } => {
                     error!("Worker cancelled: {path}: {queue_id}");
+                    send::queue_status(&IpcQueueOpCode::InternalError, None, None);
                 }
 
             }
