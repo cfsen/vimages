@@ -275,7 +275,3 @@ fn frontend_queue_progress(queue_size: usize) {
         send::info_window_msg(&format!("{queue_size:?} thumbnails in queue."));
     }
 }
-
-fn frontend_can_fetch(id: String){
-    // TODO: sends a message that the frontend can now fetch this image.
-}
