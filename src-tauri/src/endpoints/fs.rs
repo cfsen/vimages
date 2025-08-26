@@ -125,11 +125,11 @@ fn fsx_get_images(path: &Path, path_hash: &str) -> Result<Vec<EntityImage>, Stri
             if cache.is_none() {
                 queue_count += 1;
 
-                let queue_item = img_cache::queue::QueueItem {
-                    full_path: full_path.to_path_buf(),
-                    path_hash: path_hash.to_string().clone(),
-                    file_hash: file_hash.clone(),
-                };
+                let queue_item = img_cache::queue::QueueItem::new(
+                    full_path.to_path_buf(),
+                    path_hash.to_string(),
+                    file_hash.clone(),
+                );
                 tauri::async_runtime::spawn(async move {
                     if let Err(e) = get_queue().enqueue(queue_item).await {
                         error!("Failed to enqueue thumbnail job: {e}");
@@ -156,12 +156,6 @@ fn fsx_get_images(path: &Path, path_hash: &str) -> Result<Vec<EntityImage>, Stri
     if queue_count > 0 {
         let msg_path = path.to_string_lossy();
         send::info_window_msg(&format!("Generating {queue_count} thumbnails for: {msg_path}"));
-    }
-    if queue_count == 0 {
-        // TODO: readability TODO_QUEUE_STATUS_PARAMS
-        // update to use enum/type params.
-        // sending: redraw=true, queue_empty=false
-        send::queue_status(path, &true, &false);
     }
 
     images.sort_by(|a, b| a.filename.cmp(&b.filename));

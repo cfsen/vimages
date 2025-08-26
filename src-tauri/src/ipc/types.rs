@@ -9,7 +9,15 @@ pub struct IpcMsgInfoWindow<'a> {
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct IpcQueueState<'a> {
-    pub path: &'a str,
-    pub redraw: &'a bool,
-    pub queue_empty: &'a bool,
+    pub opcode: &'a IpcQueueOpCode,
+    pub img_hash: Option<&'a str>,
+    pub path_hash: Option<&'a str>,
+}
+
+#[derive(Clone, Serialize)]
+pub enum IpcQueueOpCode {
+    ImageComplete,
+    ImageFailed,
+    InternalError,
+    ImageQueueEmpty
 }

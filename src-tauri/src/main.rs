@@ -8,6 +8,7 @@ fn main() {
         .filter_module("vimages_lib::endpoints::fs", log::LevelFilter::Info)
         .filter_module("vimages_lib::img_cache::cache", log::LevelFilter::Info)
         .filter_module("vimages_lib::img_cache::queue", log::LevelFilter::Info)
+        .filter_module("vimages_lib::ipc::send", log::LevelFilter::Info)
         .init();
     vimages_lib::run()
 }

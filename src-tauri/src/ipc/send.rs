@@ -1,8 +1,6 @@
-use std::path::Path;
-
 use log::debug;
 use tauri::Emitter;
-use crate::{get_app_handle, ipc::types::{IpcMsgInfoWindow, IpcQueueState}};
+use crate::{get_app_handle, ipc::types::{IpcMsgInfoWindow, IpcQueueOpCode, IpcQueueState}};
 
 pub fn info_window_msg(message: &str) -> bool {
     let res = get_app_handle().emit_to("global-handler", "msg-info-window", IpcMsgInfoWindow { message });
@@ -18,10 +16,14 @@ pub fn info_window_msg(message: &str) -> bool {
         }
     }
 }
-pub fn queue_status(path: &Path, redraw: &bool, queue_empty: &bool) -> bool {
-    let path = path.to_str().unwrap();
-
-    let res = get_app_handle().emit_to("global-handler", "msg-queue-status", IpcQueueState { path, redraw, queue_empty });
+pub fn queue_status(opcode: &IpcQueueOpCode, img_hash: Option<&str>, path_hash: Option<&str>) -> bool {
+    let res = get_app_handle()
+        .emit_to("global-handler", "msg-queue-status", 
+            IpcQueueState {
+                opcode,
+                img_hash,
+                path_hash,
+            });
 
     match res {
         Ok(_) => {

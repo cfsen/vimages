@@ -2,7 +2,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import { invoke } from '@tauri-apps/api/core';
 
 import { useAppState } from "@app/app.context.store";
-import { addInfoMessage, addInfoMessageArray, getDirectory, IPC_PendingRemoves, raiseError, saveConfig, setWorkspace } from "@app/app.context.actions"
+import { addInfoMessage, addInfoMessageArray, getDirectory, raiseError, saveConfig, setWorkspace } from "@app/app.context.actions"
 
 import { Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
@@ -198,8 +198,9 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 					});
 				break;
 			case ConsoleCmd.GetQueueDirs:
-				addInfoMessage(useAppState, "Locked directories:");
-				addInfoMessageArray(useAppState, Array.from(IPC_PendingRemoves));
+				addInfoMessage(useAppState, "Locked directories: feature disabled.");
+				// TODO: update for new pipeline
+				// addInfoMessageArray(useAppState, Array.from(IPC_PendingRemoves));
 				break;
 
 			//

@@ -5,7 +5,7 @@ import { getVersion } from "@tauri-apps/api/app";
 import { createContext, useEffect, useContext } from "react";
 
 import { useAppState } from "./app.context.store";
-import { addInfoMessage, getDirectorySkipLock, raiseError, setWorkspace } from "./app.context.actions";
+import { addInfoMessage, getDirectory, raiseError, setWorkspace } from "./app.context.actions";
 
 import { NormalModeHandler } from "@app/handler/mode.normal";
 import { CommandModeHandler } from "@app/handler/mode.command";
@@ -86,9 +86,8 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 					addInfoMessage(useAppState, `Found config for ${confVer}, expected ${expVer}.`);
 				}
 
-				// NOTE: lock doesn't clean up properly in react strict mode
-				// the callback is cleared before it can remove the path from the lock
-				getDirectorySkipLock(useAppState, res.last_path);
+				// load last directory
+				getDirectory(useAppState, res.last_path);
 
 				// setup keybindings
 				let keyMap = new Map<string, Command>();
