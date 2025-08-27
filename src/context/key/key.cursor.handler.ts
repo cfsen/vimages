@@ -59,7 +59,12 @@ export function KeyboardCursorHandle(
 			cur = 0;
 			break;
 		case Command.JumpLast:
-			cur = len-1;
+			if(n === 0){
+				cur = len-1;
+			}
+			else {
+				cur = Math.min(Math.max(n-1, 0), len-1);
+			}
 			break;
 		case Command.PageUp:
 			cur -= moveCursorUpByRows(cur, halfPageRows, itemsPerRow);
