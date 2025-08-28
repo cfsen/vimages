@@ -13,6 +13,7 @@ import {
 } from "@app/handler/mode.command.input.builder";
 
 import { JournalInfo, RustApiAction, Workspace } from '@context/context.types';
+import SearchOpenDirectoryHandler from './mode.search';
 
 function b(call: string) { return new ParamCommandBuilder(call) };
 const cmdParam: ParamCommand[] = [
@@ -91,6 +92,12 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 	// update buffer
 	setInputBufferCommand(resultCommand.sequence);
 	setInputBufferCursor(resultCommand.cursor);
+
+	// bypass if searching
+	if(resultCommand.sequence.slice(0, 1) === "/"){
+		SearchOpenDirectoryHandler(resultCommand);
+		return;
+	}
 
 	if(resultCommand.cmd !== Command.Return) return;
 
