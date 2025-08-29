@@ -5,6 +5,7 @@ import { Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
 import { resultModeNormal } from "@/context/key/key.module.handler.normal";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { overwriteBufferCommandMode } from "@/context/key/key.module";
 
 export function NormalModeHandler(resultNormal: resultModeNormal){
 	const {
@@ -27,10 +28,8 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 		setFullscreenOffsetY,
 		fullscreenRotate,
 		setFullscreenRotate,
-		fullscreenInvertCursor,
-		fullscreenMoveStep,
-		fullscreenRotateStep,
-		fullscreenZoomStep,
+		fullscreenInvertCursor, fullscreenMoveStep, fullscreenRotateStep, fullscreenZoomStep,
+		setInputBufferCommand,
 	} = useAppState.getState();
 
 	if(fullscreenImage) {
@@ -102,6 +101,16 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 		case Command.Console:
 			console.log("MODE SWAP -> Commmand");
 			setMode(Modal.Command);
+			break;
+
+		case Command.Search:
+			setMode(Modal.Command);
+			setInputBufferCommand("/");
+			overwriteBufferCommandMode({
+				sequence: "/",
+				cursor: 1,
+				cmd: Command.Ignore,
+			});
 			break;
 
 		case Command.Refresh:

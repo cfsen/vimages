@@ -34,6 +34,7 @@ export function getDefaultKeyMap(): Map<string, Command> {
 	keyMap.set(' W', Command.WorkspaceNext);
 
 	keyMap.set(':', Command.Console);
+	keyMap.set('/', Command.Search);
 
 	keyMap.set('q', Command.Debug);
 
@@ -77,6 +78,7 @@ export enum Command {
 	Tab,
 
 	Console,
+	Search,
 	Leader,
 	Error,
 
