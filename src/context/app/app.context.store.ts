@@ -46,6 +46,10 @@ interface IAppProps {
 
 	workaroundScrollToDelay: number
 
+	searchHitIndexes: number[]
+	searchHitIds: string[]
+	searchHitLastJump: number | null
+
 	//
 	// Image grid UI
 	// key_imgrid
@@ -122,6 +126,10 @@ export interface IAppState extends IAppProps {
 	setInputBufferCursor: (_: number) => void
 
 	setTitlebarRender: (render: boolean) => void
+
+	setSearchHitIndexes: (hits: number[]) => void
+	setSearchHitIds: (ids: string[]) => void
+	setSearchHitLastJump: (jump: number) => void
 	
 	//
 	// Image grid UI
@@ -265,6 +273,13 @@ export const useAppState = create<IAppState>((set) => ({
 
 	workaroundScrollToDelay: 100,
 	setWorkaroundScrollToDelay: (ms: number) => set({ workaroundScrollToDelay: ms }),
+
+	searchHitIndexes: [],
+	setSearchHitIndexes: (hits: number[]) => set({ searchHitIndexes: hits }),
+	searchHitIds: [],
+	setSearchHitIds: (ids: string[]) => set({ searchHitIds: ids }),
+	searchHitLastJump: null,
+	setSearchHitLastJump: (jump: number) => set({ searchHitLastJump: jump }),
 
 	//
 	// Image grid UI
