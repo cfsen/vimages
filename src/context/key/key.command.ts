@@ -35,6 +35,8 @@ export function getDefaultKeyMap(): Map<string, Command> {
 
 	keyMap.set(':', Command.Console);
 	keyMap.set('/', Command.Search);
+	keyMap.set('n', Command.SearchJumpNext);
+	keyMap.set('N', Command.SearchJumpPrev);
 
 	keyMap.set('q', Command.Debug);
 
@@ -79,6 +81,8 @@ export enum Command {
 
 	Console,
 	Search,
+	SearchJumpNext,
+	SearchJumpPrev,
 	Leader,
 	Error,
 

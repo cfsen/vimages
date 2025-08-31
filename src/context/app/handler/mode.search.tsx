@@ -19,7 +19,8 @@ type SearchResult = {
 
 // TODO: add search results to store and highlight matching elements at component level
 export function SearchOpenDirectoryHandler(resultCommand: resultModeCommand){
-	const { modeCmdAddHistory, setMode, setInputBufferCommand } = useAppState.getState();
+	const { setSearchHitIndexes, setSearchHitIds, setSearchHitLastJump,
+		modeCmdAddHistory, setMode, setInputBufferCommand } = useAppState.getState();
 
 	let term = resultCommand.sequence.slice(1, resultCommand.sequence.length);
 	if(term.length === 0) return;
@@ -57,10 +58,24 @@ export function SearchOpenDirectoryHandler(resultCommand: resultModeCommand){
 	}
 
 	if(resultCommand.cmd === Command.Return) {
+		setSearchHitIndexes(decomposeSearchResultHits(matches));
+		setSearchHitIds(decomposeSearchResultIDs(matches));
+		setSearchHitLastJump(matches[0].cursorJumpID);
 		modeCmdAddHistory(resultCommand.sequence);
 		setMode(Modal.Normal);
 		setInputBufferCommand(":");
 	}
+}
+
+function decomposeSearchResultHits(res: SearchResult[]): number[] {
+	let hits: number[] = [];
+	res.forEach(x => hits.push(x.cursorJumpID));
+	return hits;
+}
+function decomposeSearchResultIDs(res: SearchResult[]): string[] {
+	let ids: string[] = [];
+	res.forEach(x => ids.push(x.itemName));
+	return ids;
 }
 
 function searchTypeArray<T extends EntityImage | EntityDirectory>(
