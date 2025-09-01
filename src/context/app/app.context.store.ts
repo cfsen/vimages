@@ -47,7 +47,7 @@ interface IAppProps {
 	workaroundScrollToDelay: number
 
 	searchHitIndexes: number[]
-	searchHitIds: string[]
+	searchHitIds: Set<string>
 	searchHitLastJump: number | null
 
 	//
@@ -128,7 +128,7 @@ export interface IAppState extends IAppProps {
 	setTitlebarRender: (render: boolean) => void
 
 	setSearchHitIndexes: (hits: number[]) => void
-	setSearchHitIds: (ids: string[]) => void
+	setSearchHitIds: (ids: Set<string>) => void
 	setSearchHitLastJump: (jump: number) => void
 	
 	//
@@ -276,8 +276,8 @@ export const useAppState = create<IAppState>((set) => ({
 
 	searchHitIndexes: [],
 	setSearchHitIndexes: (hits: number[]) => set({ searchHitIndexes: hits }),
-	searchHitIds: [],
-	setSearchHitIds: (ids: string[]) => set({ searchHitIds: ids }),
+	searchHitIds: new Set<string>,
+	setSearchHitIds: (ids: Set<string>) => set({ searchHitIds: ids }),
 	searchHitLastJump: null,
 	setSearchHitLastJump: (jump: number) => set({ searchHitLastJump: jump }),
 

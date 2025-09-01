@@ -72,9 +72,9 @@ function decomposeSearchResultHits(res: SearchResult[]): number[] {
 	res.forEach(x => hits.push(x.cursorJumpID));
 	return hits;
 }
-function decomposeSearchResultIDs(res: SearchResult[]): string[] {
-	let ids: string[] = [];
-	res.forEach(x => ids.push(x.itemName));
+function decomposeSearchResultIDs(res: SearchResult[]): Set<string> {
+	let ids: Set<string> = new Set<string>();
+	res.forEach(x => ids.add(x.itemName));
 	return ids;
 }
 
