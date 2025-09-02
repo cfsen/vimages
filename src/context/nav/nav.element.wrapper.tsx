@@ -26,6 +26,7 @@ export const NavWrapper: React.FC<NavWrapperProps> = ({
 	const ref = useRef<HTMLDivElement>(null);
 	const { navUnregister, navRegister, navCtxId, navigationState } = useCommand();
 	const activeProvider = useAppState(s => s.activeNavigationContext === navCtxId);
+	const searchHits = useAppState(s => s.searchHitIds);
 
 	useEffect(() => {
 		navRegister({ id, ref, itemType, data });
@@ -35,15 +36,20 @@ export const NavWrapper: React.FC<NavWrapperProps> = ({
 	return (
 		<div
 			ref={ref}
-			className={getBgColor(navigationState, activeProvider, id)}
+			className={getBgColor(navigationState, activeProvider, id, data, searchHits)}
 		>
 			{children}
 		</div>
 	);
 };
 
-function getBgColor (provider: StoreApi<INavigationState>, activeProvider: boolean, id: string): string  { 
+function getBgColor (provider: StoreApi<INavigationState>, activeProvider: boolean, id: string, data: string, searcHits: Set<string>): string  { 
 	let uiState = activeNavWrapper(provider, activeProvider, id);
+
+	if(searcHits.has(data) && uiState !== NavWrapperUIState.Active) {
+		return styles.navElementWrapperSearchHit;
+	}
+
 	switch(uiState){
 		case NavWrapperUIState.Active:
 			return styles.navElementWrapperActive;
