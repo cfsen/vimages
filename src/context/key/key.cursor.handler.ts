@@ -59,9 +59,11 @@ export function KeyboardCursorHandle(
 			cur = 0;
 			break;
 		case Command.JumpLast:
+			// jump to last element
 			if(n === 0){
 				cur = len-1;
 			}
+			// jump to n'th element
 			else {
 				cur = Math.min(Math.max(n-1, 0), len-1);
 			}
