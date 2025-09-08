@@ -1,3 +1,21 @@
+# 0.1.9
+
+## User facing:
+- feature: enhanced thumbnail generation and loading.
+- feature: errors from thumbnail generation are piped to UI.
+- feature: search open workspace with `/` and jump between hits with `n` and  `N`.
+- feature: `[count]G` added for jumping to the n'th item.
+- removed: `:get queue` command.
+- removed: directory locking.
+
+
+### Under the hood:
+- queue pipeline refactored.
+- robust handling of errors during thumbnail generation.
+- React update batching for thumbnail ipc events.
+
+---
+
 # 0.1.8
 
 ## User facing:
