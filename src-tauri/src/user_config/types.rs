@@ -7,6 +7,7 @@ pub struct ConfigFile {
     pub window_width: i32,
     pub window_height: i32,
     pub titlebar: bool,
+    pub scroll_delay: i32,
     pub keybinds: Vec<Keybind>,
 }
 

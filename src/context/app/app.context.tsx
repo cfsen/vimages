@@ -92,6 +92,9 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 				// set ui options
 				useAppState.getState().setTitlebarRender(res.titlebar);
 
+				// set workarounds
+				useAppState.getState().setWorkaroundScrollToDelay(res.scroll_delay);
+
 				// setup keybindings
 				let keyMap = new Map<string, Command>();
 				let defaultKeybinds = getDefaultKeyMap();

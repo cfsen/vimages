@@ -82,6 +82,7 @@ export function saveConfig(store: StoreApi<IAppState>){
 		window_width: 1280,
 		window_height: 720,
 		titlebar: store.getState().titlebarRender,
+		scroll_delay: store.getState().workaroundScrollToDelay,
 		keybinds: packageKeybinds(keybinds),
 	};
 
