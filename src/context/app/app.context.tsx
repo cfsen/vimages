@@ -89,6 +89,9 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 				// load last directory
 				getDirectory(useAppState, res.last_path);
 
+				// set ui options
+				useAppState.getState().setTitlebarRender(res.titlebar);
+
 				// setup keybindings
 				let keyMap = new Map<string, Command>();
 				let defaultKeybinds = getDefaultKeyMap();

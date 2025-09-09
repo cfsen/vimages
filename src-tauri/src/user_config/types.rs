@@ -6,6 +6,7 @@ pub struct ConfigFile {
     pub last_path: String,
     pub window_width: i32,
     pub window_height: i32,
+    pub titlebar: bool,
     pub keybinds: Vec<Keybind>,
 }
 

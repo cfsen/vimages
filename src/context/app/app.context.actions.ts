@@ -81,6 +81,7 @@ export function saveConfig(store: StoreApi<IAppState>){
 		last_path: store.getState().currentDir,
 		window_width: 1280,
 		window_height: 720,
+		titlebar: store.getState().titlebarRender,
 		keybinds: packageKeybinds(keybinds),
 	};
 
