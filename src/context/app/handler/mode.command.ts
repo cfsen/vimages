@@ -52,6 +52,12 @@ const cmdParam: ParamCommand[] = [
 	.build(),
 
 	b(":cd").param(ParamType.Action, ConsoleCmd.ChangeDir).build(),
+
+	b(":queue")
+	.param(ParamType.Keyword, ConsoleCmd.QueueBlacklist, "blacklist")
+	.param(ParamType.Keyword, ConsoleCmd.QueueBlacklist, "bl")
+	.param(ParamType.Keyword, ConsoleCmd.QueueStatus, "status")
+	.build(),
 ];
 
 const registeredCommands = new Map<string,ParamCommand>();
@@ -208,6 +214,15 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 				addInfoMessage(useAppState, "Locked directories: feature disabled.");
 				// TODO: update for new pipeline
 				// addInfoMessageArray(useAppState, Array.from(IPC_PendingRemoves));
+
+			//
+			// Queue
+			//
+			case ConsoleCmd.QueueStatus:
+				invoke(RustApiAction.QueueStatus);
+				break;
+			case ConsoleCmd.QueueBlacklist:
+				invoke(RustApiAction.QueueBlacklist);
 				break;
 
 			//

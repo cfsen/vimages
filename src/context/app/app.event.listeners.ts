@@ -2,9 +2,9 @@ import { StoreApi } from "zustand";
 import { Event as TauriEvent} from "@tauri-apps/api/event";
 
 import { IAppState } from "@app/app.context.store";
-import { addInfoMessage, updateImageThumbnailState, updateImageThumbnailStateBatch } from "@app/app.context.actions";
+import { addInfoMessage, addInfoMessageArray, updateImageThumbnailState, updateImageThumbnailStateBatch } from "@app/app.context.actions";
 
-import { IPC_MsgInfoWindow, IPC_QueueOpCode, IPC_QueueStatus } from "./app.event.types";
+import { IPC_DataStringArray, IPC_MsgInfoWindow, IPC_QueueOpCode, IPC_QueueStatus } from "./app.event.types";
 
 export const eventHandleMsgInfoWindow = (event: TauriEvent<IPC_MsgInfoWindow>, useAppState: StoreApi<IAppState>) => {
 	addInfoMessage(useAppState, event.payload.message);
@@ -90,4 +90,15 @@ export const eventHandleQueueState = (event: TauriEvent<IPC_QueueStatus>, store:
 	}
 
 	return;
+}
+export const eventHandleQueueStringArray = (event: TauriEvent<IPC_DataStringArray>, store: StoreApi<IAppState>) => {
+	switch(event.payload.opcode){
+		case IPC_QueueOpCode.StatusQueue:
+			addInfoMessage(store, "Enqueued:");
+			break;
+		case IPC_QueueOpCode.StatusBlacklist:
+			addInfoMessage(store, "Blacklist:");
+			break;
+	}
+	addInfoMessageArray(store, event.payload.data);
 }

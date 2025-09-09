@@ -27,6 +27,8 @@ export enum ConsoleCmd {
 	FullscreenSetRotateStep,
 	FullscreenSetZoomStep,
 	
+	QueueBlacklist,
+	QueueStatus,
 };
 
 export enum ParamType {

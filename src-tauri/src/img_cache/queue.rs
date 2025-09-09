@@ -58,6 +58,8 @@ pub enum QueueMsg {
         path: String,
         queue_id: String,
     },
+    StatusQueue,
+    StatusBlacklist,
 }
 
 #[derive(Debug)]
@@ -99,6 +101,16 @@ impl Queue {
             }
             Err(_) => Err("Failed to enqueue item".to_string()),
         }
+    }
+
+    pub async fn status(&self, query: QueueMsg) -> Result<bool, bool> {
+        match query {
+            QueueMsg::StatusQueue => {},
+            QueueMsg::StatusBlacklist => {},
+            _ => return Err(false),
+        }
+        let _ = self.event_sender.send(query);
+        Ok(true)
     }
 
     pub async fn size(&self) -> usize {
@@ -256,6 +268,12 @@ pub async fn setup_queue() -> Queue {
                 QueueMsg::WorkerErrorCancelled { path, queue_id } => {
                     error!("Worker cancelled: {path}: {queue_id}");
                     send::queue_status(&IpcQueueOpCode::InternalError, None, None);
+                }
+                QueueMsg::StatusBlacklist => {
+                    send::queue_blacklist_status(blacklist.clone());
+                }
+                QueueMsg::StatusQueue => {
+                    send::queue_processing_status(processing.clone());
                 }
 
             }

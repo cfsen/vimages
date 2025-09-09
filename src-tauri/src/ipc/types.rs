@@ -15,9 +15,18 @@ pub struct IpcQueueState<'a> {
 }
 
 #[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct IpcDataStringArray<'a> {
+    pub opcode: &'a IpcQueueOpCode,
+    pub data: Vec<String>
+}
+
+#[derive(Clone, Serialize)]
 pub enum IpcQueueOpCode {
     ImageComplete,
     ImageFailed,
     InternalError,
+    StatusBlacklist,
+    StatusQueue,
     ImageQueueEmpty
 }

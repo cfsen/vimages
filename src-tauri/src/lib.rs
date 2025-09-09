@@ -86,6 +86,8 @@ pub fn run() {
             endpoints::fs::fsx_resolve_rel_path,
             endpoints::runtime::rt_get_axum_port,
             endpoints::runtime::rt_get_queue_size,
+            endpoints::runtime::rt_get_queue_processing,
+            endpoints::runtime::rt_get_queue_blacklist,
             endpoints::cache::cache_get_info,
             endpoints::cache::cache_cleanup,
             vimages_config::save_config,

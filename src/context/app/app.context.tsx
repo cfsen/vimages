@@ -11,8 +11,8 @@ import { NormalModeHandler } from "@app/handler/mode.normal";
 import { CommandModeHandler } from "@app/handler/mode.command";
 import { VisualModeHandler } from "@app/handler/mode.visual";
 import { InsertModeHandler } from "@app/handler/mode.insert";
-import { eventHandleMsgInfoWindow, eventHandleQueueState } from "@app/app.event.listeners";
-import { IPC_MsgInfoWindow, IPC_QueueStatus } from "@app/app.event.types";
+import { eventHandleMsgInfoWindow, eventHandleQueueState, eventHandleQueueStringArray } from "@app/app.event.listeners";
+import { IPC_DataStringArray, IPC_MsgInfoWindow, IPC_QueueStatus } from "@app/app.event.types";
 
 import { NavigationHandle, RustApiAction, VimagesConfig, Workspace } from "@context/context.types";
 
@@ -160,13 +160,21 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 				(event) => { eventHandleQueueState(event, useAppState) }, 
 				{ target: 'global-handler' });
 		};
+		const setupListenerQueueData = async () => {
+			return await listen<IPC_DataStringArray>(
+				'msg-queue-string-array', 
+				(event) => { eventHandleQueueStringArray(event, useAppState) }, 
+				{ target: 'global-handler' });
+		};
 
 		const cleanupMsgInfoWindow = setupListenerMsgInfoWindow();
 		const cleanupQueueState = setupListenerQueueState();
+		const cleanupQueueData = setupListenerQueueData();
 
 		return () => {
 			cleanupMsgInfoWindow.then(unlisten => unlisten?.());
 			cleanupQueueState.then(unlisten => unlisten?.());
+			cleanupQueueData.then(unlisten => unlisten?.());
 		};
 	}, []);
 
