@@ -1,5 +1,5 @@
 import { IAppState, useAppState } from "@app/app.context.store";
-import { addInfoMessage, getActiveNavigationProvider, getDirectory, nextNavProvider, nextWorkspace, raiseError, resetFullscreen } from "@app/app.context.actions";
+import { addInfoMessage, ClearSearch, getActiveNavigationProvider, getDirectory, nextNavProvider, nextWorkspace, raiseError, resetFullscreen } from "@app/app.context.actions";
 
 import { Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
@@ -33,6 +33,7 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 		fullscreenInvertCursor, fullscreenMoveStep, fullscreenRotateStep, fullscreenZoomStep,
 		setInputBufferCommand,
 		setSearchHitLastJump,
+		searchHitIndexes,
 	} = useAppState.getState();
 
 	if(fullscreenImage) {
@@ -154,6 +155,9 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 			break;
 
 		case Command.Escape:
+			if(searchHitIndexes.length > 0){
+				ClearSearch(useAppState);
+			}
 			if(showHelp) {
 				setShowHelp(false);
 				return;

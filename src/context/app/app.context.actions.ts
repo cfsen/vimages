@@ -268,6 +268,16 @@ export function setWorkspace(store: StoreApi<IAppState>, workspace: Workspace) {
 }
 
 //
+// Search helpers
+//
+
+export function ClearSearch(store: StoreApi<IAppState>){
+	store.getState().setSearchHitIds(new Set<string>);
+	store.getState().setSearchHitIndexes([]);
+	store.getState().setSearchHitLastJump(null);
+}
+
+//
 // Fullscreen helpers
 //
 

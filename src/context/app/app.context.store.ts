@@ -129,7 +129,7 @@ export interface IAppState extends IAppProps {
 
 	setSearchHitIndexes: (hits: number[]) => void
 	setSearchHitIds: (ids: Set<string>) => void
-	setSearchHitLastJump: (jump: number) => void
+	setSearchHitLastJump: (jump: number | null) => void
 	
 	//
 	// Image grid UI
@@ -279,7 +279,7 @@ export const useAppState = create<IAppState>((set) => ({
 	searchHitIds: new Set<string>,
 	setSearchHitIds: (ids: Set<string>) => set({ searchHitIds: ids }),
 	searchHitLastJump: null,
-	setSearchHitLastJump: (jump: number) => set({ searchHitLastJump: jump }),
+	setSearchHitLastJump: (jump: number | null) => set({ searchHitLastJump: jump }),
 
 	//
 	// Image grid UI
