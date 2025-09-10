@@ -48,7 +48,6 @@ const cmdParam: ParamCommand[] = [
 	b(":cache")
 	.param(ParamType.Keyword, ConsoleCmd.GetCacheInfo, "info")
 	.param(ParamType.Keyword, ConsoleCmd.RunCacheCleanup, "clean")
-	.param(ParamType.Keyword, ConsoleCmd.GetQueueDirs, "qlocks")
 	.build(),
 
 	b(":cd").param(ParamType.Action, ConsoleCmd.ChangeDir).build(),
@@ -210,10 +209,6 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 						addInfoMessage(useAppState, processStarted ? "Cache cleanup started." : "Failed to start cache cleanup.");
 					});
 				break;
-			case ConsoleCmd.GetQueueDirs:
-				addInfoMessage(useAppState, "Locked directories: feature disabled.");
-				// TODO: update for new pipeline
-				// addInfoMessageArray(useAppState, Array.from(IPC_PendingRemoves));
 
 			//
 			// Queue
