@@ -73,6 +73,8 @@ interface IAppProps {
 	fullscreenRotateStep: number
 	fullscreenZoomStep: number
 
+	fullscreenRemapCursor: boolean,
+
 	//
 	// Command mode 
 	// key_cmd
@@ -155,6 +157,8 @@ export interface IAppState extends IAppProps {
 	setFullscreenMoveStep: (step: number) => void
 	setFullscreenRotateStep: (step: number) => void
 	setFullscreenZoomStep: (step: number) => void
+
+	setFullscreenRemapCursor: (remap: boolean) => void
 
 	//
 	// Command mode
@@ -317,6 +321,9 @@ export const useAppState = create<IAppState>((set) => ({
 	setFullscreenRotateStep: (step) => set({ fullscreenRotateStep: step }),
 	fullscreenZoomStep: 0.25,
 	setFullscreenZoomStep: (step) => set({ fullscreenZoomStep: step }),
+
+	fullscreenRemapCursor: true,
+	setFullscreenRemapCursor: (remap) => set({ fullscreenRemapCursor: remap }),
 
 	//
 	// Command mode

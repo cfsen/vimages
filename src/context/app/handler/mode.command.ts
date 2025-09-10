@@ -43,6 +43,7 @@ const cmdParam: ParamCommand[] = [
 	.param(ParamType.Number, ConsoleCmd.FullscreenSetMoveStep, "moveStep")
 	.param(ParamType.Number, ConsoleCmd.FullscreenSetRotateStep, "rotateStep")
 	.param(ParamType.Number, ConsoleCmd.FullscreenSetZoomStep, "zoomStep")
+	.param(ParamType.Keyword, ConsoleCmd.FullscreenSetRemapCursor, "remapCursor")
 	.build(),
 
 	b(":cache")
@@ -238,6 +239,11 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 			case ConsoleCmd.FullscreenSetZoomStep:
 				setFullscreenZoomStep(res.payload as number);
 				addInfoMessage(useAppState, `Setting full screen zoom step to: ${res.payload}`);
+				break;
+			case ConsoleCmd.FullscreenSetRemapCursor:
+				let fsRemapCursor = useAppState.getState().fullscreenRemapCursor;
+				useAppState.getState().setFullscreenRemapCursor(!fsRemapCursor);
+				addInfoMessage(useAppState, "App: " + (!fsRemapCursor ? "using" : "not using") + " back/next cursor behavior for fullscreen.");
 				break;
 
 			default:

@@ -26,6 +26,7 @@ export enum ConsoleCmd {
 	FullscreenSetMoveStep,
 	FullscreenSetRotateStep,
 	FullscreenSetZoomStep,
+	FullscreenSetRemapCursor,
 	
 	QueueBlacklist,
 	QueueStatus,
