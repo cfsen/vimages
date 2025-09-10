@@ -157,6 +157,7 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 		case Command.Escape:
 			if(searchHitIndexes.length > 0){
 				ClearSearch(useAppState);
+				return;
 			}
 			if(showHelp) {
 				setShowHelp(false);
