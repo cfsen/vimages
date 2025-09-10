@@ -89,6 +89,28 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 			}
 			return;
 		}
+
+		// remap hjkl to next/prev image if not zoomed
+		if(fullscreenZoom === null){
+			switch(resultNormal.cmd){
+				case Command.CursorDown:
+					resultNormal.cmd = Command.CursorBack;
+					resultNormal.cmdSequence.cmd = Command.CursorBack;
+					break;
+				case Command.CursorUp:
+					resultNormal.cmd = Command.CursorNext;
+					resultNormal.cmdSequence.cmd = Command.CursorNext;
+					break;
+				case Command.CursorLeft:
+					resultNormal.cmd = Command.CursorBack;
+					resultNormal.cmdSequence.cmd = Command.CursorBack;
+					break;
+				case Command.CursorRight:
+					resultNormal.cmd = Command.CursorNext;
+					resultNormal.cmdSequence.cmd = Command.CursorNext;
+					break;
+			}
+		}
 	}
 
 	switch(resultNormal.cmd){
