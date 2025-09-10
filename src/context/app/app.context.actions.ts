@@ -15,6 +15,9 @@ import { timestamp } from '@context/helpers';
 //
 
 export function getDirectory(store: StoreApi<IAppState>, relPath: string){
+	if(relPath !== "." && store.getState().searchHitIndexes.length > 0)
+		ClearSearch(store);
+
 	invoke(RustApiAction.GetDir, { 
 		path: store.getState().currentDir, 
 		relPath 
