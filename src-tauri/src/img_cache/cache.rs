@@ -11,6 +11,8 @@ use std::{
 * (filename + last modified + file size)
 *
 * TODO: cleanup routine for cache
+* `:cache clean` (calls `endpoints/cache.rs:cache_cleanup()`) cleans the database by checking if
+* files can be found for the records (sql -> file). Should also check for loose files (file -> sql)
 */
 
 // get the cache path, creating the directory if it does not exist
