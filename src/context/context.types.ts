@@ -25,14 +25,14 @@ export type Keybind = {
 	command: string;
 	keybind: string;
 }
-
+// see: EntityImage (src-tauri/src/endpoints/types.rs)
 export type EntityImage = {
 	full_path: string;
 	filename: string;
 	has_thumbnail: boolean;
 	img_hash: string;
 }
-
+// see: EntityDirectory (src-tauri/src/endpoints/types.rs)
 export type EntityDirectory = {
 	name: string;
 	path: string;

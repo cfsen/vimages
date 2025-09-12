@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+// see: EntityDirectory (src/context/context.types.ts)
 #[derive(Serialize, Deserialize)]
 pub struct EntityDirectory {
     pub name: String,
@@ -11,6 +12,7 @@ pub struct EntityDirectory {
     pub sibling_dirs: Vec<EntityDirectory>,
 }
 
+// see: EntityImage (src/context/context.types.ts)
 #[derive(Serialize, Deserialize)]
 pub struct EntityImage {
     pub full_path: String,
