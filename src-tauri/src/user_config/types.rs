@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+// see: VimagesConfig (src/context/context.types.ts)
 #[derive(Serialize, Deserialize)]
 pub struct ConfigFile {
     pub vimages_version: String,
@@ -11,6 +12,7 @@ pub struct ConfigFile {
     pub keybinds: Vec<Keybind>,
 }
 
+// see: Keybind (src/context/context.types.ts)
 #[derive(Serialize, Deserialize)]
 pub struct Keybind {
     pub command: String,

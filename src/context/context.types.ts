@@ -14,6 +14,7 @@ export enum RustApiAction {
 	QueueStatus = "rt_get_queue_processing",
 }
 
+// see: ConfigFile (src-tauri/src/user_config/types.rs)
 export type VimagesConfig = {
 	vimages_version: string;
 	last_path: string;
@@ -21,6 +22,7 @@ export type VimagesConfig = {
 	window_height: number;
 	keybinds: Keybind[];
 }
+// see: Keybind (src-tauri/src/user_config/types.rs)
 export type Keybind = {
 	command: string;
 	keybind: string;
