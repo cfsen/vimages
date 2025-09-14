@@ -24,6 +24,7 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 		fullscreenOffsetY, setFullscreenOffsetY,
 		fullscreenRotate, setFullscreenRotate,
 		fullscreenInvertCursor, fullscreenMoveStep, fullscreenRotateStep, fullscreenZoomStep,
+		fullscreenRemapCursor,
 		setInputBufferCommand,
 		setSearchHitLastJump,
 		searchHitIndexes,
@@ -84,7 +85,7 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 		}
 
 		// remap hjkl to next/prev image if not zoomed
-		if(fullscreenZoom === null){
+		if(fullscreenZoom === null && fullscreenRemapCursor){
 			switch(resultNormal.cmd){
 				case Command.CursorDown:
 					resultNormal.cmd = Command.CursorBack;
