@@ -1,35 +1,28 @@
 import { IAppState, useAppState } from "@app/app.context.store";
 import { addInfoMessage, ClearSearch, getActiveNavigationProvider, getDirectory, nextNavProvider, nextWorkspace, raiseError, resetFullscreen } from "@app/app.context.actions";
+import { UIComponent } from "@context/context.types";
 
 import { Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
-import { resultModeNormal } from "@/context/key/key.module.handler.normal";
+import { resultModeNormal } from "@key/key.module.handler.normal";
+import { overwriteBufferCommandMode } from "@key/key.module";
+
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { overwriteBufferCommandMode } from "@/context/key/key.module";
-import { UIComponent } from "@/context/context.types";
 import { StoreApi } from "zustand";
 
 export function NormalModeHandler(resultNormal: resultModeNormal){
 	const {
 		setMode,
-		showHelp,
-		setShowHelp,
-		showError,
-		setShowError,
-		showInfo,
-		setShowInfo,
-		fullscreenImage,
-		setFullscreenImage,
+		showHelp, setShowHelp,
+		showError, setShowError,
+		showInfo, setShowInfo,
 		activeNavigationContext,
 		keepOpenInfo,
-		fullscreenZoom,
-		setFullscreenZoom,
-		fullscreenOffsetX,
-		setFullscreenOffsetX,
-		fullscreenOffsetY,
-		setFullscreenOffsetY,
-		fullscreenRotate,
-		setFullscreenRotate,
+		fullscreenImage, setFullscreenImage,
+		fullscreenZoom, setFullscreenZoom,
+		fullscreenOffsetX, setFullscreenOffsetX,
+		fullscreenOffsetY, setFullscreenOffsetY,
+		fullscreenRotate, setFullscreenRotate,
 		fullscreenInvertCursor, fullscreenMoveStep, fullscreenRotateStep, fullscreenZoomStep,
 		setInputBufferCommand,
 		setSearchHitLastJump,
