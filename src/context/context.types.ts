@@ -20,6 +20,8 @@ export type VimagesConfig = {
 	last_path: string;
 	window_width: number;
 	window_height: number;
+	titlebar: boolean;
+	scroll_delay: number;
 	keybinds: Keybind[];
 }
 // see: Keybind (src-tauri/src/user_config/types.rs)
