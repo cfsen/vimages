@@ -89,6 +89,7 @@ pub fn run() {
             endpoints::runtime::rt_get_queue_processing,
             endpoints::runtime::rt_get_queue_blacklist,
             endpoints::cache::cache_get_info,
+            endpoints::cache::cache_get_path,
             endpoints::cache::cache_cleanup,
             vimages_config::save_config,
             vimages_config::get_or_create_config,

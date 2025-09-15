@@ -14,6 +14,14 @@ pub fn cache_get_info() -> Result<JournalInfo, String> {
 }
 
 #[tauri::command]
+pub fn cache_get_path() -> Result<String, String> {
+   match get_cache_path() {
+        Some(path) => Ok(path.to_string_lossy().to_string()),
+        _ => Err("Cache path not found".to_string()),
+    }
+}
+
+#[tauri::command]
 pub fn cache_cleanup() -> Result<bool, String> {
     info!("Cache cleanup called");
     let mut offset = 0;

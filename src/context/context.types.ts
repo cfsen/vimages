@@ -9,6 +9,7 @@ export enum RustApiAction {
 	GetConfig = "get_or_create_config",
 	SaveConfig = "save_config",
 	GetCacheInfo = "cache_get_info",
+	GetCachePath = "cache_get_path",
 	RunCacheCleanup = "cache_cleanup",
 	QueueBlacklist = "rt_get_queue_blacklist",
 	QueueStatus = "rt_get_queue_processing",
