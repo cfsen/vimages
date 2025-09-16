@@ -60,7 +60,7 @@ export function SearchOpenDirectoryHandler(resultCommand: resultModeCommand){
 	if(resultCommand.cmd === Command.Return) {
 		setSearchHitIndexes(decomposeSearchResultHits(matches));
 		setSearchHitIds(decomposeSearchResultIDs(matches));
-		setSearchHitLastJump(matches[0].cursorJumpID);
+		setSearchHitLastJump(0);
 		modeCmdAddHistory(resultCommand.sequence);
 		setMode(Modal.Normal);
 		setInputBufferCommand(":");
