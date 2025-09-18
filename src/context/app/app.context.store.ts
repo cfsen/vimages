@@ -50,6 +50,8 @@ interface IAppProps {
 	searchHitIds: Set<string>
 	searchHitLastJump: number | null
 
+	errorDisplayGeneric: boolean
+
 	//
 	// Image grid UI
 	// key_imgrid
@@ -132,6 +134,8 @@ export interface IAppState extends IAppProps {
 	setSearchHitIndexes: (hits: number[]) => void
 	setSearchHitIds: (ids: Set<string>) => void
 	setSearchHitLastJump: (jump: number | null) => void
+
+	setErrorDisplayGeneric: (display: boolean) => void
 	
 	//
 	// Image grid UI
@@ -284,6 +288,9 @@ export const useAppState = create<IAppState>((set) => ({
 	setSearchHitIds: (ids: Set<string>) => set({ searchHitIds: ids }),
 	searchHitLastJump: null,
 	setSearchHitLastJump: (jump: number | null) => set({ searchHitLastJump: jump }),
+
+	errorDisplayGeneric: true,
+	setErrorDisplayGeneric: (display: boolean) => set({ errorDisplayGeneric: display }),
 
 	//
 	// Image grid UI

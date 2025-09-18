@@ -17,7 +17,7 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 		showError, setShowError,
 		showInfo, setShowInfo,
 		activeNavigationContext,
-		keepOpenInfo,
+		keepOpenInfo, errorDisplayGeneric,
 		fullscreenImage, setFullscreenImage,
 		fullscreenZoom, setFullscreenZoom,
 		fullscreenOffsetX, setFullscreenOffsetX,
@@ -187,7 +187,9 @@ export function NormalModeHandler(resultNormal: resultModeNormal){
 
 		case Command.Error:
 			console.log("ctx:handleCmd:error");
-			raiseError(useAppState, "Unrecognized input. TODO: Make a toggle for this specific error.");
+			if(errorDisplayGeneric) {
+				raiseError(useAppState, "Unrecognized input.");
+			}
 			break;
 
 		case Command.Tab:

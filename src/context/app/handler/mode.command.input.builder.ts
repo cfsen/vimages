@@ -8,6 +8,7 @@ export enum ConsoleCmd {
 	SetTitlebarRender,
 	SetInfoMsgWindowPersists,
 	SetScrollTimeout,
+	SetGenericError,
 
 	WriteConfig,
 	Help,

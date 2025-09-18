@@ -31,6 +31,7 @@ const cmdParam: ParamCommand[] = [
 	.param(ParamType.Keyword, ConsoleCmd.SetTitlebarRender, "titlebar")
 	.param(ParamType.Keyword, ConsoleCmd.SetInfoMsgWindowPersists, "infowindow")
 	.param(ParamType.Number, ConsoleCmd.SetScrollTimeout, "scrollDelay")
+	.param(ParamType.Keyword, ConsoleCmd.SetGenericError, "genericError")
 	.build(),
 
 	b(":get")
@@ -180,6 +181,12 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 			case ConsoleCmd.SetScrollTimeout:
 				useAppState.getState().setWorkaroundScrollToDelay(res.payload as number);
 				addInfoMessage(useAppState, `Setting scroll delay to: ${res.payload}ms`)
+				break;
+			case ConsoleCmd.SetGenericError:
+				let genericErrorState = useAppState.getState().errorDisplayGeneric;
+				useAppState.getState().setErrorDisplayGeneric(!genericErrorState);
+				addInfoMessage(useAppState,
+					"App: " + (genericErrorState ? "Hiding generic errors." : "Displaying generic errors."));
 				break;
 
 			case ConsoleCmd.GetVerison:
