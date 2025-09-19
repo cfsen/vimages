@@ -273,7 +273,7 @@ export const useAppState = create<IAppState>((set) => ({
 	inputBufferCursor: 1,
 	setInputBufferCursor: (_) => set ({ inputBufferCursor: _ }),
 
-	titlebarRender: true, // TODO persistent config
+	titlebarRender: true,
 	setTitlebarRender: (render) => set({ titlebarRender: render }),
 
 	uiWindowInnerWidth: window.innerWidth,
