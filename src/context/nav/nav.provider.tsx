@@ -59,6 +59,14 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 	const navigationId = useRef(Math.random().toString(36).substring(7));
 
 	//
+	// Events
+	//
+	const eventScrollToActive = () => { 
+		console.log("scrolling");
+		scrollToActive(navigationState);
+	}
+
+	//
 	// Active handler
 	//
 	const active = useStore(navigationState, s => s.active);
@@ -219,6 +227,7 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 			component,
 			handleNavCmd: handleNavigationCmd,
 			handleSelectionCmd: handleSelectionCmd,
+			eventScrollToActive,
 			active: isActive,
 			setActive,
 			tabOrder,

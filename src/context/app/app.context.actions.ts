@@ -112,6 +112,17 @@ function packageKeybinds(keybinds: Keybinds): Keybind[] {
 }
 
 //
+// UI: window
+//
+
+export function resizeScrollToActive(store: StoreApi<IAppState>){
+	let provider = getActiveNavigationProvider(store);
+	if(provider === null)
+		return;
+	provider.eventScrollToActive();
+}
+
+//
 // UI: info/error
 //
 

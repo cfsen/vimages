@@ -18,6 +18,7 @@ import InfoPopup from "@ui/info/ui.info";
 
 import DirBrowser from "@fs/dir.browser";
 import SelectionOverview from "./components/ui/selection/ui.selection.overview";
+import { resizeScrollToActive } from "@app/app.context.actions";
 
 function App() {
 	const { handleModeVisual, handleModeNormal, handleModeInsert, handleModeCommand } = useGlobalCtx();
@@ -49,6 +50,7 @@ function App() {
 	useEffect(() => {
 		const handleResize = () => {
 			setWindowWidth(window.innerWidth);
+			resizeScrollToActive(useAppState);
 		};
 		window.addEventListener('resize', handleResize);
 		handleResize();

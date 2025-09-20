@@ -62,6 +62,7 @@ export type NavigationHandle = {
 	handleNavCmd: (resultNormal: resultModeNormal) => boolean;
 	handleSelectionCmd: (resultNormal: resultModeNormal) => boolean;
 	getRegisteredElements: () => number;
+	eventScrollToActive: () => void;
 }
 
 export enum UIComponent {
