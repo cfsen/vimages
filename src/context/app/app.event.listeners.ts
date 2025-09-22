@@ -61,33 +61,40 @@ function bufferFlush(): Set<string> | null {
 }
 
 export const eventHandleQueueState = (event: TauriEvent<IPC_QueueStatus>, store: StoreApi<IAppState>) => {
-	// TODO: handle other messages
-
 	let msg = event.payload as IPC_QueueStatus;
 
-	if(msg.opcode === IPC_QueueOpCode.ImageComplete) {
-		if(msg.imgHash === null) {
-			console.error("Incomplete message from backend. OpCode=ImageComplete, but imgHash was null.");
-			return;
-		}
+	switch(msg.opcode) {
+		case IPC_QueueOpCode.ImageComplete:
+			if(msg.imgHash === null) {
+				console.error("Incomplete message from backend. OpCode=ImageComplete, but imgHash was null.");
+				return;
+			}
 
-		let buffer = bufferThumbnailUpdate(msg.imgHash);
+			let buffer = bufferThumbnailUpdate(msg.imgHash);
 
-		if(buffer !== null) {
-			updateImageThumbnailStateBatch(store, buffer);
-		}
-
-		if (thumbTimerFlush !== null) {
-			clearTimeout(thumbTimerFlush);
-		}
-
-		if(thumbBufLength[0] > 0 || thumbBufLength[1] > 0) {
-			thumbTimerFlush = setTimeout(() => {
-				const buffer = bufferFlush();
+			if(buffer !== null) {
 				updateImageThumbnailStateBatch(store, buffer);
-			}, flushTimeout);
-		}
-	}
+			}
+
+			if (thumbTimerFlush !== null) {
+				clearTimeout(thumbTimerFlush);
+			}
+
+			if(thumbBufLength[0] > 0 || thumbBufLength[1] > 0) {
+				thumbTimerFlush = setTimeout(() => {
+					const buffer = bufferFlush();
+					updateImageThumbnailStateBatch(store, buffer);
+				}, flushTimeout);
+			}
+
+			break;
+		case IPC_QueueOpCode.ImageFailed:
+				addInfoMessage(store, "Failed to generate thumbnail.");
+			break;
+		case IPC_QueueOpCode.InternalError:
+				addInfoMessage(store, "An internal error occurred in thumbnail worker.");
+			break;
+	};
 
 	return;
 }
