@@ -21,14 +21,12 @@ export function VisualModeHandler(resultNormal: resultModeNormal){
 			setMode(Modal.Command);
 			break;
 
-		case Command.Escape:
+		case Command.ModeVisualExit:
 			if(showHelp) {
 				setShowHelp(false);
 				return;
 			}
-			// todo: cancel selection
-			setMode(Modal.Normal);
-			return;
+			break;
 
 		case Command.Error:
 			console.log("ctx:handleCmd:error");
