@@ -40,12 +40,13 @@ export function modalKeyboard(
 		return;
 	}
 
-	// TODO: FEAT: FEAT_MODE_INSERT FEAT_MODE_VISUAL
+	// TODO: FEAT: FEAT_MODE_INSERT
 	switch(mode){
 		case Modal.Visual:
 			visualBuffer = handleModeNormal(event, visualBuffer, KEYBINDS.keyMap);
 
-			// TODO: temporary intercept and override other modes
+			// TODO: hooks for specific behavior on visual->(leader, command) mode change
+			// for triggering behavior when entering leader or command mode from visual mode
 			if(visualBuffer.mode === Modal.Leader){
 				console.log("Visual->Leader");
 			}
