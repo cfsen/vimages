@@ -17,7 +17,6 @@ type SearchResult = {
 	cursorJumpID: number,
 };
 
-// TODO: add search results to store and highlight matching elements at component level
 export function SearchOpenDirectoryHandler(resultCommand: resultModeCommand){
 	const { setSearchHitIndexes, setSearchHitIds, setSearchHitLastJump,
 		modeCmdAddHistory, setMode, setInputBufferCommand } = useAppState.getState();
