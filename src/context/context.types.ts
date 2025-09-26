@@ -23,6 +23,7 @@ export type VimagesConfig = {
 	window_height: number;
 	titlebar: boolean;
 	scroll_delay: number;
+	generic_errors: boolean;
 	keybinds: Keybind[];
 }
 // see: Keybind (src-tauri/src/user_config/types.rs)

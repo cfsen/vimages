@@ -99,6 +99,7 @@ pub fn create_default_config() -> ConfigFile {
         window_height: 720,
         titlebar: true,
         scroll_delay: 100,
+        generic_errors: true,
         // NOTE: source of truth for keybindings is in `key.command.ts`
         keybinds: vec![
             create_keybind("Return", "  "),

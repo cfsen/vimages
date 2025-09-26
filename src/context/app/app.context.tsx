@@ -91,6 +91,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
 				// set ui options
 				useAppState.getState().setTitlebarRender(res.titlebar);
+				useAppState.getState().setErrorDisplayGeneric(res.generic_errors);
 
 				// set workarounds
 				useAppState.getState().setWorkaroundScrollToDelay(res.scroll_delay);
