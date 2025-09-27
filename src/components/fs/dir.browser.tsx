@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { useAppState } from "@app/app.context.store";
 import { NavigationProvider } from "@nav/nav.provider";
-import { UIComponent } from "@/context/context.types";
+import { UIComponent } from "@context/context.types";
 
 import DirBrowserMain from "./dir.browser.main";
 import DirBrowserCurrentPreview from "./dir.browser.preview";

@@ -1,9 +1,11 @@
-import { useAppState } from "@/context/app/app.context.store";
-import styles from "./ui.leader.module.css";
-import { Modal } from "@/context/key/key.types";
 import { useState } from "react";
-import { getCurrentKeybinds } from "@/context/key/key.module";
-import { Command } from "@/context/key/key.command";
+import { useAppState } from "@app/app.context.store";
+
+import { Modal } from "@key/key.types";
+import { getCurrentKeybinds } from "@key/key.module";
+import { Command } from "@key/key.command";
+
+import styles from "./ui.leader.module.css";
 
 function Leader() {
 	const mode = useAppState(s => s.mode);

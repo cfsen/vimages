@@ -3,7 +3,7 @@ import { raiseError } from "@app/app.context.actions";
 
 import { Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
-import { resultModeNormal } from "@/context/key/key.module.handler.normal";
+import { resultModeNormal } from "@key/key.module.handler.normal";
 
 export function VisualModeHandler(resultNormal: resultModeNormal){
 	const {

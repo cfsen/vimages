@@ -1,7 +1,7 @@
 import { StoreApi } from "zustand";
 import { INavigationState } from "@nav/nav.provider.store";
 import { NavigationItem, NavWrapperItemType, NavWrapperUIState } from "@nav/nav.types";
-import { IAppState } from "../app/app.context.store";
+import { IAppState } from "@app/app.context.store";
 
 //
 // visual mode/selection

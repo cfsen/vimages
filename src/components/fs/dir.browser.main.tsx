@@ -4,7 +4,7 @@ import { useAppState } from "@app/app.context.store";
 import { useCommand } from "@nav/nav.provider";
 
 import { NavWrapper } from "@nav/nav.element.wrapper";
-import { NavWrapperItemType } from "@/context/nav/nav.types";
+import { NavWrapperItemType } from "@nav/nav.types";
 
 import styles from "./fs.module.css";
 
