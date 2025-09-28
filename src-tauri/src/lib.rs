@@ -4,6 +4,7 @@ mod server;
 mod user_config;
 mod journal;
 mod ipc;
+mod fs_io;
 
 use queue::Queue;
 use server::{start_server, ServerState};
@@ -16,6 +17,7 @@ use crate::{
     img_cache::queue, 
     journal::database::Database,
     user_config::vimages_config,
+    fs_io::ops,
 };
 
 static GLOBAL_SERVER_STATE: OnceLock<ServerState> = OnceLock::new();
