@@ -59,3 +59,29 @@ fn copy_dir_and_delete_source(source: &Path, dest: &Path) -> Result<(), Filesyst
 fn rename_or_copy(source: &Path, dest: &Path) -> FilesystemSameMountPoint {
     FilesystemSameMountPoint::NotImplemented
 }
+
+#[derive(PartialEq)]
+enum PathCheckType {
+    File,
+    Directory,
+}
+
+fn check_path_exists(target: &Path, check_type: PathCheckType) -> Result<(), String> {
+    if !target.exists() {
+        return Err("Target path does not exist".to_string())
+    }
+    match check_type {
+        PathCheckType::File => {
+            if !target.is_file() {
+                return Err("Target path is not a file".to_string())
+            }
+        }
+        PathCheckType::Directory => {
+            if !target.is_dir() {
+                return Err("Target path is not a directory".to_string())
+            }
+        }
+    }
+
+    Ok(())
+}
