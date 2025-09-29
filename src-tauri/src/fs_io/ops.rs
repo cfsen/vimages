@@ -77,7 +77,16 @@ enum PathCheckType {
     Directory,
 }
 
+fn check_dest_path(target: &Path, check_type: PathCheckType) -> Result<(), String> {
+    // TODO: use enum for more specific errors (file/directory exists)
+    if check_path_exists(&target, check_type).is_ok() {
+        return Err("Destination path exists.".to_string());
+    }
+    Ok(())
+}
+
 fn check_path_exists(target: &Path, check_type: PathCheckType) -> Result<(), String> {
+    // TODO: use enum for more specific errors (file/directory exists)
     if !target.exists() {
         return Err("Target path does not exist".to_string())
     }
