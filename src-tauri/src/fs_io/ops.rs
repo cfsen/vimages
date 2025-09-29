@@ -8,6 +8,17 @@ pub struct FilesystemIOError {
     error_message: String,
 }
 
+impl From<String> for FilesystemIOError {
+    fn from(value: String) -> Self {
+        FilesystemIOError { error_message: value }
+    }
+}
+impl From<&str> for FilesystemIOError {
+    fn from(value: &str) -> Self {
+        FilesystemIOError { error_message: value.to_string() }
+    }
+}
+
 pub enum FilesystemSameMountPoint {
     NotImplemented,
     Error,
@@ -17,42 +28,42 @@ pub enum FilesystemSameMountPoint {
 
 // primary call point for rename and move ops on files
 pub fn rename_or_move_file(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
-    Err(FilesystemIOError { error_message: "Not implemented".to_string() })
+    Err(FilesystemIOError::from("Not implemented"))
 }
 
 // primary call point for rename and move ops on directories 
 pub fn rename_or_move_dir(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
-    Err(FilesystemIOError { error_message: "Not implemented".to_string() })
+    Err(FilesystemIOError::from("Not implemented"))
 }
 
 // delete a directory
 pub fn delete_dir(target: &Path) -> Result<(), FilesystemIOError> {
-    Err(FilesystemIOError { error_message: "Not implemented".to_string() })
+    Err(FilesystemIOError::from("Not implemented"))
 }
 
 // delete a file
 pub fn delete_file(target: &Path) -> Result<(), FilesystemIOError> {
-    Err(FilesystemIOError { error_message: "Not implemented".to_string() })
+    Err(FilesystemIOError::from("Not implemented"))
 }
 
 // copy a file and verify copy
 pub fn copy_file_and_verify(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
-    Err(FilesystemIOError { error_message: "Not implemented".to_string() })
+    Err(FilesystemIOError::from("Not implemented"))
 }
 
 // copy a file and delete original (move between different mount points)
 fn copy_file_and_delete_source(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
-    Err(FilesystemIOError { error_message: "Not implemented".to_string() })
+    Err(FilesystemIOError::from("Not implemented"))
 }
 
 // copy a directory recursively and verify copy
 pub fn copy_dir_and_verify(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
-    Err(FilesystemIOError { error_message: "Not implemented".to_string() })
+    Err(FilesystemIOError::from("Not implemented"))
 }
 
 // copy a directory recursively and delete original (move between different mount points)
 fn copy_dir_and_delete_source(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
-    Err(FilesystemIOError { error_message: "Not implemented".to_string() })
+    Err(FilesystemIOError::from("Not implemented"))
 }
 
 // check mount point for source and dest, determine if copy must be used
