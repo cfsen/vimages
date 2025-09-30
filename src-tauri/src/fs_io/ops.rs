@@ -28,26 +28,39 @@ pub enum FilesystemSameMountPoint {
 
 // primary call point for rename and move ops on files
 pub fn rename_or_move_file(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
+    check_path_exists(&source, PathCheckType::File)?;
+    check_dest_path(&dest, PathCheckType::File)?;
+
     Err(FilesystemIOError::from("Not implemented"))
 }
 
 // primary call point for rename and move ops on directories 
 pub fn rename_or_move_dir(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
+    check_path_exists(&source, PathCheckType::Directory)?;
+    check_dest_path(&dest, PathCheckType::Directory)?;
+
     Err(FilesystemIOError::from("Not implemented"))
 }
 
 // delete a directory
 pub fn delete_dir(target: &Path) -> Result<(), FilesystemIOError> {
+    check_path_exists(&target, PathCheckType::Directory)?;
+
     Err(FilesystemIOError::from("Not implemented"))
 }
 
 // delete a file
 pub fn delete_file(target: &Path) -> Result<(), FilesystemIOError> {
+    check_path_exists(&target, PathCheckType::File)?;
+
     Err(FilesystemIOError::from("Not implemented"))
 }
 
 // copy a file and verify copy
 pub fn copy_file_and_verify(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
+    check_path_exists(&source, PathCheckType::File)?;
+    check_dest_path(&dest, PathCheckType::File)?;
+
     Err(FilesystemIOError::from("Not implemented"))
 }
 
@@ -58,6 +71,9 @@ fn copy_file_and_delete_source(source: &Path, dest: &Path) -> Result<(), Filesys
 
 // copy a directory recursively and verify copy
 pub fn copy_dir_and_verify(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
+    check_path_exists(&source, PathCheckType::Directory)?;
+    check_dest_path(&dest, PathCheckType::Directory)?;
+
     Err(FilesystemIOError::from("Not implemented"))
 }
 
