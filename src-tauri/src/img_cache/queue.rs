@@ -150,6 +150,7 @@ pub async fn setup_queue() -> Queue {
     let worker_count = 24;
 
     info!("Detected {core_count} CPU cores, spawning {worker_count} thumbnail workers");
+    info!("Worker count set manually for dev env.");
 
     let mut worker_senders: Vec<mpsc::UnboundedSender<QueueItem>> =
         Vec::with_capacity(worker_count);
