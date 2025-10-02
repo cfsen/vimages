@@ -1,11 +1,13 @@
 use serde::Serialize;
 
+// see: IPC_MsgInfoWindow (src/context/app/app.event.types.ts)
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct IpcMsgInfoWindow<'a> {
     pub message: &'a str,
 }
 
+// see: IPC_QueueStatus (src/context/app/app.event.types.ts)
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct IpcQueueState<'a> {
@@ -14,6 +16,7 @@ pub struct IpcQueueState<'a> {
     pub path_hash: Option<&'a str>,
 }
 
+// see: IPC_DataStringArray (src/context/app/app.event.types.ts)
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct IpcDataStringArray<'a> {
@@ -21,6 +24,7 @@ pub struct IpcDataStringArray<'a> {
     pub data: Vec<String>
 }
 
+// see: IPC_QueueOpCode (src/context/app/app.event.types.ts)
 #[derive(Clone, Serialize)]
 pub enum IpcQueueOpCode {
     ImageComplete,
