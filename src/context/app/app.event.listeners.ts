@@ -2,7 +2,7 @@ import { StoreApi } from "zustand";
 import { Event as TauriEvent} from "@tauri-apps/api/event";
 
 import { IAppState } from "@app/app.context.store";
-import { addInfoMessage, addInfoMessageArray, updateImageThumbnailState, updateImageThumbnailStateBatch } from "@app/app.context.actions";
+import { addInfoMessage, addInfoMessageArray, updateImageThumbnailStateBatch } from "@app/app.context.actions";
 
 import { IPC_DataStringArray, IPC_MsgInfoWindow, IPC_QueueOpCode, IPC_QueueStatus } from "./app.event.types";
 
