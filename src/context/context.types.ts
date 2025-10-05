@@ -1,5 +1,6 @@
 import { resultModeNormal } from "@key/key.module.handler.normal";
 
+// Functions made available by Rust, see: (src-tauri/src/lib.rs)
 export enum RustApiAction {
 	GetCurrentPath = "fs_get_current_path",
 	GetDir = "fsx_get_dir",
@@ -14,6 +15,10 @@ export enum RustApiAction {
 	QueueBlacklist = "rt_get_queue_blacklist",
 	QueueStatus = "rt_get_queue_processing",
 }
+
+//
+// Typescript pairs for Rust types.
+//
 
 // see: ConfigFile (src-tauri/src/user_config/types.rs)
 export type VimagesConfig = {
@@ -48,12 +53,17 @@ export type EntityDirectory = {
 	sub_dirs: EntityDirectory[];
 	sibling_dirs: EntityDirectory[];
 }
-
+// see: JournalInfo (src-tauri/src/journal/types.rs)
 export type JournalInfo = {
 	entries_hashes: number;
 	entries_metadata: number;
 }
 
+//
+// Frontend exclusive types
+//
+
+// NavigationProvider: used in self-registration for external calls to the provider 
 export type NavigationHandle = {
 	id: string;
 	component: UIComponent;
@@ -66,6 +76,7 @@ export type NavigationHandle = {
 	eventScrollToActive: () => void;
 }
 
+// Used to uniquely identify which UI a NavigationProvider is encapsulating
 export enum UIComponent {
 	fsBrowser,
 	imgGrid,
@@ -73,6 +84,7 @@ export enum UIComponent {
 	dirBrowserPreview,
 }
 
+// Used to determine which UI to draw.
 export type Workspaces = {
 	DirBrowser: boolean;
 	ImgGrid: boolean;
