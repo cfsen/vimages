@@ -1,3 +1,19 @@
+# 0.1.10
+
+## User facing:
+- feature: thumbnail queue can now be queried for pending and blacklisted items with `:queue status` and `:queue blacklist`.
+- feature: remap cursor input when viewing images in fullscreen, remapping hjkl to back/next..
+- feature: output path to local cache with `:cache path` command.
+- feature: generic errors raised when pressing an unmapped key can now be silenced with `:set genericError`.
+- feature: cursor now stays visible when resizing the application window.
+- feature: persistent settings for titlebar, scroll delay, fullscreen hjkl remapping.
+- update: various search ux improvements.
+- removed: command for outputting locked directories (`:cache qlocks`).
+
+### Under the hood:
+- improved handling of IPC error messages emitted from queue.
+- work commenced on documentation.
+
 # 0.1.9
 
 ## User facing:
