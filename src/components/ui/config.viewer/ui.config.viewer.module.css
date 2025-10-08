@@ -1,0 +1,31 @@
+.uiConfigViewerPopup {
+	position: fixed;
+	bottom: 3em;
+	left: 0;
+	display: flex-column;
+	align-items: center;
+	gap: 1rem;
+	background: var(--primary-700);
+	border: 0.5em solid var(--dark-1);
+	padding: 1rem;
+	z-index: 1004;
+	opacity: 0.7;
+	width: 48em;
+}
+
+.uiConfigViewerText {
+	font-size: 1rem;
+	color: var(--neutral-400);
+	font-weight: 500;
+	gap: 0.3rem;
+}
+
+.uiConfigViewerColumns {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5em;
+}
+
+.uiConfigViewerColumns .uiConfigViewerText {
+	flex: 0 0 22em;
+}

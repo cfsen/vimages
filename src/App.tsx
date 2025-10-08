@@ -15,6 +15,7 @@ import TitleBar from "@ui/titlebar/ui.titlebar";
 import Leader from "@ui/leader/ui.leader";
 import ErrorPopup from "@ui/error/ui.error";
 import InfoPopup from "@ui/info/ui.info";
+import ConfigViewerPopup from "@ui/config.viewer/ui.config.viewer";
 
 import DirBrowser from "@fs/dir.browser";
 import SelectionOverview from "./components/ui/selection/ui.selection.overview";
@@ -67,6 +68,7 @@ function App() {
 			<HelpOverlay />
 			<ErrorPopup />
 			<InfoPopup />
+			<ConfigViewerPopup />
 			<VimageFullscreen />
 			<DirBrowser />
 			<VimageBrowser />
