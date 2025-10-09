@@ -1,5 +1,5 @@
 // TODO: implementation of file operations
-use std::fs::{rename, copy, remove_dir, remove_file};
+use std::fs::{self, copy, remove_dir, remove_file, rename};
 use std::path::Path;
 
 
@@ -46,14 +46,30 @@ pub fn rename_or_move_dir(source: &Path, dest: &Path) -> Result<(), FilesystemIO
 pub fn delete_dir(target: &Path) -> Result<(), FilesystemIOError> {
     check_path_exists(&target, PathCheckType::Directory)?;
 
-    Err(FilesystemIOError::from("Not implemented"))
+    fs::remove_dir(&target)
+        .map_err(|e| {
+            FilesystemIOError::from(format!(
+                "Failed to remove directory '{}': {e}",
+                target.display()
+            ))
+        })?;
+
+    Ok(())
 }
 
 // delete a file
 pub fn delete_file(target: &Path) -> Result<(), FilesystemIOError> {
     check_path_exists(&target, PathCheckType::File)?;
 
-    Err(FilesystemIOError::from("Not implemented"))
+    fs::remove_file(&target)
+        .map_err(|e| {
+            FilesystemIOError::from(format!(
+                "Failed to remove file '{}': {e}",
+                target.display()
+            ))
+        })?;
+
+    Ok(())
 }
 
 // copy a file and verify copy
