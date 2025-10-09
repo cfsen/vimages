@@ -2,6 +2,16 @@
 use std::fs::{self, copy, remove_dir, remove_file, rename};
 use std::path::Path;
 
+#[derive(PartialEq)]
+enum PathCheckType {
+    File,
+    Directory,
+}
+
+enum VerifyResult {
+    Success,
+    Failure,
+}
 
 #[derive(Debug, Clone)]
 pub struct FilesystemIOError {
@@ -42,6 +52,10 @@ pub fn rename_or_move_dir(source: &Path, dest: &Path) -> Result<(), FilesystemIO
     Err(FilesystemIOError::from("Not implemented"))
 }
 
+//
+// deletion
+//
+
 // delete a directory
 pub fn delete_dir(target: &Path) -> Result<(), FilesystemIOError> {
     check_path_exists(&target, PathCheckType::Directory)?;
@@ -71,6 +85,10 @@ pub fn delete_file(target: &Path) -> Result<(), FilesystemIOError> {
 
     Ok(())
 }
+
+//
+// copying
+//
 
 // copy a file and verify copy
 pub fn copy_file_and_verify(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
@@ -121,12 +139,17 @@ fn rename_or_copy(source: &Path, dest: &Path) -> FilesystemSameMountPoint {
     FilesystemSameMountPoint::NotImplemented
 }
 
-#[derive(PartialEq)]
-enum PathCheckType {
-    File,
-    Directory,
+//
+// helpers
+//
+
+// verifies a file
+fn verify_file_integrity(source: &Path, dest: &Path) -> VerifyResult {
+    // TODO: implement verification
+    VerifyResult::Failure
 }
 
+// check destination path for copy/rename operations
 fn check_dest_path(target: &Path, check_type: PathCheckType) -> Result<(), String> {
     // TODO: use enum for more specific errors (file/directory exists)
     if check_path_exists(&target, check_type).is_ok() {
@@ -135,6 +158,7 @@ fn check_dest_path(target: &Path, check_type: PathCheckType) -> Result<(), Strin
     Ok(())
 }
 
+// check if destination path (directory or file) exists
 fn check_path_exists(target: &Path, check_type: PathCheckType) -> Result<(), String> {
     // TODO: use enum for more specific errors (file/directory exists)
     if !target.exists() {
