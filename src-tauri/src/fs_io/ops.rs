@@ -77,7 +77,25 @@ pub fn copy_file_and_verify(source: &Path, dest: &Path) -> Result<(), Filesystem
     check_path_exists(&source, PathCheckType::File)?;
     check_dest_path(&dest, PathCheckType::File)?;
 
+    copy_file(&source, &dest)?;
+
     Err(FilesystemIOError::from("Not implemented"))
+}
+
+// copy a file
+pub fn copy_file(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
+    check_path_exists(&source, PathCheckType::File)?;
+    check_dest_path(&dest, PathCheckType::File)?;
+
+    fs::copy(&source, &dest)
+        .map_err(|e| {
+            FilesystemIOError::from(format!(
+                "Failed to copy file: '{}': {e}",
+                source.display()
+            ))
+        })?;
+
+    Ok(())
 }
 
 // copy a file and delete original (move between different mount points)
