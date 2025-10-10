@@ -118,7 +118,13 @@ pub fn copy_file(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
 
 // copy a file and delete original (move between different mount points)
 fn copy_file_and_delete_source(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
-    Err(FilesystemIOError::from("Not implemented"))
+    check_path_exists(&source, PathCheckType::File)?;
+    check_dest_path(&dest, PathCheckType::File)?;
+
+    copy_file(&source, &dest)?;
+    delete_file(&source)?;
+
+    Ok(())
 }
 
 // copy a directory recursively and verify copy
