@@ -1,8 +1,8 @@
 import { StoreApi } from "zustand";
 import { INavigationState } from "./nav.provider.store";
 
+// Navigation state for a registry of NavigationItem
 export type NavigationContextType = {
-	//cmdLog: CommandSequence[];
 	navCtxId: string;
 
 	navRegister: (navItem: NavigationItem) => void;
@@ -19,6 +19,7 @@ export type NavigationContextType = {
 	navigationState: StoreApi<INavigationState>;
 };
 
+// Encapsulates a navigable HTML element
 export type NavigationItem = {
 	id: string;
 	ref: React.RefObject<HTMLElement>;
@@ -26,11 +27,13 @@ export type NavigationItem = {
 	data: string;
 };
 
+// Type key for NavigationItem 
 export enum NavWrapperItemType {
 	Image,
 	FileBrowser,
 }
 
+// UI state key for NavigationContextType
 export enum NavWrapperUIState {
 	Active,
 	InactiveProvider,
