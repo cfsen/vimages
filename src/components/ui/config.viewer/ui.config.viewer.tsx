@@ -5,7 +5,6 @@ import styles from "./ui.config.viewer.module.css";
 
 function ConfigViewerPopup() {
 	let keybinds = getCurrentKeybinds();
-	let config = vimagesConfigFromState();
 
 	// TODO: zustand
 	let renderConfigViewerPopup = false;
@@ -34,9 +33,5 @@ function ConfigViewerPopup() {
 	);
 }
 
-// TODO: move to actions and implement
-function vimagesConfigFromState(){
-
-}
 
 export default ConfigViewerPopup;
