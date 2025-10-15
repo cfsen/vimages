@@ -11,8 +11,7 @@ function ConfigViewerPopup() {
 	let keybinds = getCurrentKeybinds();
 	let config = OutputVimagesConfig();
 
-	// TODO: zustand
-	let renderConfigViewerPopup = false;
+	let renderConfigViewerPopup = useAppState.getState().showConfig;
 
 	if(!renderConfigViewerPopup)
 		return;
