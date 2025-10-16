@@ -7,7 +7,7 @@ import { getDirectory, getDirectoryHistory } from "@app/app.context.actions";
 
 import { createNavigationState } from "./nav.provider.store";
 import { scrollToActive, scrollToActive_Delayed, updateSelectionBuffer } from "@nav/nav.provider.actions";
-import { NavigationContextType, NavWrapperItemType, NavigationItem } from "@nav/nav.types";
+import { NavigationContextType, NavigationItem } from "@nav/nav.types";
 
 import { UIComponent } from "@context/context.types";
 import { Command } from "@key/key.command";
