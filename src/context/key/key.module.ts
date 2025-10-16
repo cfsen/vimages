@@ -49,9 +49,11 @@ export function modalKeyboard(
 			// for triggering behavior when entering leader or command mode from visual mode
 			if(visualBuffer.mode === Modal.Leader){
 				console.log("Visual->Leader");
+				console.warn("Leader not implemented for visual mode");
 			}
 			if(visualBuffer.mode === Modal.Command){
 				console.log("Visual->Command");
+				console.warn("Command mode change not implemented for visual mode");
 			}
 
 			visualBuffer.mode = Modal.Visual;
