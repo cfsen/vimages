@@ -11,6 +11,7 @@ export enum ConsoleCmd {
 	SetGenericError,
 
 	WriteConfig,
+	ConfigViewer,
 	Help,
 	KeywordHelp,
 

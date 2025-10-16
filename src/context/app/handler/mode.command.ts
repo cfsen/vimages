@@ -52,6 +52,10 @@ const cmdParam: ParamCommand[] = [
 	.param(ParamType.Keyword, ConsoleCmd.RunCacheCleanup, "clean")
 	.param(ParamType.Keyword, ConsoleCmd.GetCachePath, "path")
 	.build(),
+	
+	b(":config")
+	.param(ParamType.Action, ConsoleCmd.ConfigViewer)
+	.build(),
 
 	b(":cd").param(ParamType.Action, ConsoleCmd.ChangeDir).build(),
 
@@ -235,6 +239,15 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 				break;
 			case ConsoleCmd.QueueBlacklist:
 				invoke(RustApiAction.QueueBlacklist);
+				break;
+
+
+			//
+			// Config widget
+			//
+			case ConsoleCmd.ConfigViewer:
+				let stateShowConfig = !useAppState.getState().showConfig;
+				useAppState.getState().setShowConfig(stateShowConfig);
 				break;
 
 			//
