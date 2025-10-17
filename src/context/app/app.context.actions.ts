@@ -14,6 +14,7 @@ import { timestamp } from '@context/helpers';
 // State
 //
 
+// fetches the contents of directory `relPath`, updating global context `store` on success
 export function getDirectory(store: StoreApi<IAppState>, relPath: string){
 	if(relPath !== "." && store.getState().searchHitIndexes.length > 0)
 		ClearSearch(store);
@@ -39,6 +40,7 @@ export function getDirectory(store: StoreApi<IAppState>, relPath: string){
 		});
 }
 
+// deprecated
 export function updateImageThumbnailState(store: StoreApi<IAppState>, imgHash: string, hasThumbnail: boolean) {
 	let images = store.getState().images;
 	let idx = images.findIndex((a) => a.img_hash === imgHash);
@@ -49,6 +51,7 @@ export function updateImageThumbnailState(store: StoreApi<IAppState>, imgHash: s
 	}
 }
 
+// updates global context image registry when thumbnails have been generated (see: app.event.listeners.ts:eventHandleQueueState())
 export function updateImageThumbnailStateBatch(store: StoreApi<IAppState>, buffer: Set<string> | null) {
 	if(buffer === null) return;
 
@@ -72,11 +75,13 @@ export function updateImageThumbnailStateBatch(store: StoreApi<IAppState>, buffe
 	}
 }
 
+// retrieves the last sub-directory opened in current directory
 export function getDirectoryHistory(store: StoreApi<IAppState>): string | undefined {
 	const dir = store.getState().currentDir;
 	return store.getState().dirHistory.get(dir);
 }
 
+// saves the current configuration
 export function saveConfig(store: StoreApi<IAppState>){
 	let keybinds = getCurrentKeybinds();
 	const bfr: VimagesConfig = {
@@ -101,6 +106,7 @@ export function saveConfig(store: StoreApi<IAppState>){
 		});
 }
 
+// packages current keybinds for saving the current configuration
 function packageKeybinds(keybinds: Keybinds): Keybind[] {
 	const result: Keybind[] = [];
 	for (const [keybind, cmd] of keybinds.keyMap.entries()) {
@@ -116,6 +122,7 @@ function packageKeybinds(keybinds: Keybinds): Keybind[] {
 // UI: window
 //
 
+// event callback for scrolling to cursor on app window resize
 export function resizeScrollToActive(store: StoreApi<IAppState>){
 	let provider = getActiveNavigationProvider(store);
 	if(provider === null)
@@ -127,16 +134,19 @@ export function resizeScrollToActive(store: StoreApi<IAppState>){
 // UI: info/error
 //
 
+// displays the error widget with the message in `error`
 export function raiseError(store: StoreApi<IAppState>, error: string){
 	store.getState().setShowError(true);
 	store.getState().setErrorMsg(error);
 }
 
+// displays the info widget with the message in `msg`
 export function addInfoMessage(store: StoreApi<IAppState>, msg: string){
 	store.getState().setShowInfo(true);
 	store.getState().addInfoMessage("[" + timestamp() + "] " + msg);
 }
 
+// displays the info widget with the messages in `msg`
 export function addInfoMessageArray(store: StoreApi<IAppState>, msg: string[]){
 	let ts = timestamp();
 	store.getState().setShowInfo(true);
@@ -149,20 +159,19 @@ export function addInfoMessageArray(store: StoreApi<IAppState>, msg: string[]){
 // Navigation provider handling
 //
 
-// enable/disable navigation context
+// deprecated
 export function setNavProviderInteractable(store: StoreApi<IAppState>, component: UIComponent, state: boolean) {
 	store.getState().navigationHandlersByComp.get(component)?.setActive(state);
 }
 
+// enable/disable navigation context
 export function setNavProvidersInteractable(store: StoreApi<IAppState>, components: UIComponent[], state: boolean) {
 	components.forEach((comp) => {
 		store.getState().navigationHandlersByComp.get(comp)?.setActive(state);
 	});
 }
 
-/**
- * Get current active navigation provider.
- * */
+// get current active navigation provider
 export function getActiveNavigationProvider(store: StoreApi<IAppState>): NavigationHandle | null {
 	let active = store.getState().activeNavigationContext;
 
@@ -176,7 +185,7 @@ export function getActiveNavigationProvider(store: StoreApi<IAppState>): Navigat
 	return navProvider;
 }
 
-// Cycle registered navigation contexts sequentially
+// cycle registered navigation providers sequentially
 export function nextNavProvider(store: StoreApi<IAppState>): boolean {
 	const handlerIds = store.getState().navigationHandlersArray
 	.filter((a) => a.active() === true)
@@ -195,6 +204,7 @@ export function nextNavProvider(store: StoreApi<IAppState>): boolean {
 	return false;
 }
 
+// checks if navigation provider has registered elements and can become active
 function canNavProviderBecomeInteractable(store: StoreApi<IAppState>, comp: UIComponent): boolean {
 	const registeredElements = store.getState().navigationHandlersByComp.get(comp)?.getRegisteredElements();
 
@@ -204,6 +214,7 @@ function canNavProviderBecomeInteractable(store: StoreApi<IAppState>, comp: UICo
 	return registeredElements >= 1;
 }
 
+// sets the active navigation provider by registered UIComponent `comp`
 function setCursorToNavProvider(store: StoreApi<IAppState>, comp: UIComponent): boolean {
 	let id = store.getState().navigationHandlersByComp.get(comp)?.id;
 
@@ -220,6 +231,7 @@ function setCursorToNavProvider(store: StoreApi<IAppState>, comp: UIComponent): 
 // Workspace handling
 //
 
+// change active workspace sequentially
 export function nextWorkspace(store: StoreApi<IAppState>){
 	const spaces = store.getState().workspace;
 	
@@ -240,6 +252,8 @@ export function nextWorkspace(store: StoreApi<IAppState>){
 	}
 }
 
+// TODO: workspaces and nav provider cycling refactoring
+// set active workspace by Workspace `workspace`
 export function setWorkspace(store: StoreApi<IAppState>, workspace: Workspace) {
 	let compsDirBrowser = [
 		UIComponent.dirBrowserMain,
@@ -286,6 +300,7 @@ export function setWorkspace(store: StoreApi<IAppState>, workspace: Workspace) {
 // Search helpers
 //
 
+// clear temporary values used when searching
 export function ClearSearch(store: StoreApi<IAppState>){
 	store.getState().setSearchHitIds(new Set<string>);
 	store.getState().setSearchHitIndexes([]);
@@ -296,6 +311,7 @@ export function ClearSearch(store: StoreApi<IAppState>){
 // Fullscreen helpers
 //
 
+// clear temporary values used when viewing an image in full screen
 export function resetFullscreen(store: StoreApi<IAppState>){
 	store.getState().setFullscreenOffsetY(null);
 	store.getState().setFullscreenOffsetX(null);
