@@ -5,6 +5,8 @@ import { Command } from "@key/key.command";
 
 import { VimagesConfigFromZustandState } from "@app/app.config.actions";
 
+import { BooleanToString } from "@context/helpers";
+
 import styles from "./ui.config.viewer.module.css";
 
 function ConfigViewerPopup() {
@@ -64,10 +66,6 @@ function OutputColumns(left: string, right: string){
 			<div>{right}</div>
 		</div>
 	);
-}
-
-function BooleanToString(bool: boolean): string {
-	return bool ? "True" : "False";
 }
 
 export default ConfigViewerPopup;
