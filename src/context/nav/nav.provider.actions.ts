@@ -9,6 +9,7 @@ import { IAppState } from "@app/app.context.store";
 
 type selectionItems = {cssId: Set<string>, fsPath: Set<string>};
 
+// visual mode: collect identifiers and paths from current selection
 function getSelectionItemIds(navStore: StoreApi<INavigationState>): selectionItems | null {
 	let { selectionStart, selectionEnd, navItems } = navStore.getState();
 
@@ -86,6 +87,7 @@ export function activeNavWrapper(navProviderStore: StoreApi<INavigationState>, a
 // UI scrolling
 //
 
+// scrolls main window to current position of cursor
 export function scrollToActive(navProvider: StoreApi<INavigationState>){
 	const cursorElement = navProvider.getState().navItems
 	.find((a) => a.id === navProvider.getState().navItemActive);
@@ -122,6 +124,7 @@ export function scrollToActive(navProvider: StoreApi<INavigationState>){
 	});
 }
 
+// calculate position of a FileBrowser item for scrolling to
 function getScrollPositionFileBrowser(navElement: NavigationItem){
 	const rect = navElement.ref.current?.getBoundingClientRect() ?? null;
 	if(rect === null){
@@ -133,6 +136,7 @@ function getScrollPositionFileBrowser(navElement: NavigationItem){
 	return targetY;
 }
 
+// calculate position of a ImageGrind item for scrolling to
 function getScrollPositionImageGrid(navElement: NavigationItem){
 	const imageElement = navElement.ref.current?.parentElement?.getBoundingClientRect() ?? null;
 	if(imageElement === null) {
@@ -144,6 +148,7 @@ function getScrollPositionImageGrid(navElement: NavigationItem){
 	return targetY;
 }
 
+// delayed call to scrollToActive for slow DOM environments
 export function scrollToActive_Delayed(navProvider: StoreApi<INavigationState>, appStore: StoreApi<IAppState>){
 	// KNOWN_ISSUE_WEBKIT_SCROLLTO
 	// As of July 2025, webkit on Linux fails to calculate the final position of grid elements in time
