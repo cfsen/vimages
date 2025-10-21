@@ -47,6 +47,7 @@ function OutputVimagesConfig(){
 	const config = VimagesConfigFromZustandState(useAppState);
 	const {
 		imageGridScale,
+		fullscreenInvertCursor, fullscreenMoveStep, fullscreenRotateStep, fullscreenZoomStep,
 	} = useAppState.getState();
 	return(
 		<>
@@ -54,7 +55,11 @@ function OutputVimagesConfig(){
 			{OutputColumns("Render titlebar", BooleanToString(config.titlebar))}
 			{OutputColumns("Generic errors:", BooleanToString(config.generic_errors))}
 			<div>---</div>
-			{OutputColumns("Image grid scale", imageGridScale.toString())}
+			{OutputColumns("Image grid scale:", imageGridScale.toString())}
+			{OutputColumns("Fullscreen invert cursor:", fullscreenInvertCursor.toString())}
+			{OutputColumns("Fullscreen move step:", fullscreenMoveStep.toString())}
+			{OutputColumns("Fullscreen rotate step:", fullscreenRotateStep.toString())}
+			{OutputColumns("Fullscreen zoom step:", fullscreenZoomStep.toString())}
 		</>
 	);
 }
