@@ -5,7 +5,7 @@ import { Command } from "@key/key.command";
 
 import { VimagesConfigFromZustandState } from "@app/app.config.actions";
 
-import { BooleanToString } from "@context/helpers";
+import { BooleanToString } from "@components/utility.general";
 
 import styles from "./ui.config.viewer.module.css";
 

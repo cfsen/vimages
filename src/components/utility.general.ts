@@ -14,3 +14,7 @@ export function timestamp(): string {
 		hour12: false
 	});
 }
+
+export function BooleanToString(bool: boolean): string {
+	return bool ? "True" : "False";
+}
