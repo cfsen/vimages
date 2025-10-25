@@ -3,6 +3,7 @@ import { useAppState } from "@app/app.context.store";
 import { Keybinds, Modal } from "@key/key.types";
 import { getCurrentKeybinds } from "@key/key.module";
 import { Command } from "@key/key.command";
+import { GetLeaderCommands } from "@components/utility.general";
 
 import styles from "./ui.leader.module.css";
 
@@ -24,13 +25,6 @@ function Leader() {
 			</div>
 		</div>
 	);
-}
-
-// TODO: move out from component
-function GetLeaderCommands(binds: Keybinds) {
-	return Array.from(binds.keyMap)
-		.filter(([command]) => command.startsWith(binds.commandMap.get(Command.Leader)!))
-		.filter(([command]) => command !== binds.commandMap.get(Command.Leader));
 }
 
 // TODO: move out from component

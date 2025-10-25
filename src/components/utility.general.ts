@@ -1,4 +1,10 @@
 import { platform } from "@tauri-apps/plugin-os";
+import { Command } from "@key/key.command";
+import { Keybinds } from "@key/key.types";
+
+//
+// Output formatters
+//
 
 export function windowsUncStrip (path: string): string  {
 	if(platform() === "windows"){
@@ -17,4 +23,10 @@ export function timestamp(): string {
 
 export function BooleanToString(bool: boolean): string {
 	return bool ? "True" : "False";
+}
+
+export function GetLeaderCommands(binds: Keybinds) {
+	return Array.from(binds.keyMap)
+		.filter(([command]) => command.startsWith(binds.commandMap.get(Command.Leader)!))
+		.filter(([command]) => command !== binds.commandMap.get(Command.Leader));
 }
