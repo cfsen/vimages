@@ -1,9 +1,9 @@
 import { useAppState } from "@app/app.context.store";
 
-import { Keybinds, Modal } from "@key/key.types";
+import { Modal } from "@key/key.types";
 import { getCurrentKeybinds } from "@key/key.module";
 import { Command } from "@key/key.command";
-import { GetLeaderCommands } from "@components/utility.general";
+import { GetLeaderCommands, GetLeaderKeyLabel } from "@components/utility.general";
 
 import styles from "./ui.leader.module.css";
 
@@ -25,13 +25,6 @@ function Leader() {
 			</div>
 		</div>
 	);
-}
-
-// TODO: move out from component
-function GetLeaderKeyLabel(command: string, binds: Keybinds): string{
-	return command
-		.slice(binds.commandMap.get(Command.Leader)!.length)
-		.replace(binds.commandMap.get(Command.Leader)!, "leader")
 }
 
 export default Leader;

@@ -30,3 +30,9 @@ export function GetLeaderCommands(binds: Keybinds) {
 		.filter(([command]) => command.startsWith(binds.commandMap.get(Command.Leader)!))
 		.filter(([command]) => command !== binds.commandMap.get(Command.Leader));
 }
+
+export function GetLeaderKeyLabel(command: string, binds: Keybinds): string{
+	return command
+		.slice(binds.commandMap.get(Command.Leader)!.length)
+		.replace(binds.commandMap.get(Command.Leader)!, "leader")
+}
