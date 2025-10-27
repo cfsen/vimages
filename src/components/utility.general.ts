@@ -36,3 +36,9 @@ export function GetLeaderKeyLabel(command: string, binds: Keybinds): string{
 		.slice(binds.commandMap.get(Command.Leader)!.length)
 		.replace(binds.commandMap.get(Command.Leader)!, "leader")
 }
+
+export function TrimPathStrLength(str: string){
+	if(str.length > 45)
+		return str.substring(0, 31) + " (…)";
+	return str;
+}

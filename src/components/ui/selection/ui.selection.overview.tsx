@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useAppState} from "@app/app.context.store";
+import { TrimPathStrLength } from "@components/utility.general";
 
 import styles from "./ui.selection.module.css"
 
@@ -31,17 +32,11 @@ function SelectionOverview() {
 			<div className={styles.selectionDirectory}>{currentDir}</div>
 			{selection.map((k, i) => (
 				<div key={`selectionOverviewIndex_${i}`}>
-					{trimStrLength(k)}
+					{TrimPathStrLength(k)}
 				</div>
 			))}
 		</div>
 	);
-}
-
-function trimStrLength(str: string){
-	if(str.length > 45)
-		return str.substring(0, 31) + " (…)";
-	return str;
 }
 
 export default SelectionOverview;
