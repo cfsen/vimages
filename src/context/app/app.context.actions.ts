@@ -40,17 +40,6 @@ export function getDirectory(store: StoreApi<IAppState>, relPath: string){
 		});
 }
 
-// deprecated
-export function updateImageThumbnailState(store: StoreApi<IAppState>, imgHash: string, hasThumbnail: boolean) {
-	let images = store.getState().images;
-	let idx = images.findIndex((a) => a.img_hash === imgHash);
-	if(idx >= 0 && idx < images.length) {
-		let update = [... images];
-		update[idx].has_thumbnail = hasThumbnail;
-		store.getState().setImages(update);
-	}
-}
-
 // updates global context image registry when thumbnails have been generated (see: app.event.listeners.ts:eventHandleQueueState())
 export function updateImageThumbnailStateBatch(store: StoreApi<IAppState>, buffer: Set<string> | null) {
 	if(buffer === null) return;
