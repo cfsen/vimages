@@ -25,9 +25,8 @@ import { parseCommand, setKeybinds } from "@key/key.module";
 // Critical error handling
 //
 
+// Prevents any input from propagating from the orchestrator (this file) when true.
 let APP_ERROR_LOCK = false;
-
-export function checkAppErrorLock(): boolean { return APP_ERROR_LOCK };
 
 export function raiseCriticalAppError(callpoint: string, reason: string, rawError = undefined){
 	APP_ERROR_LOCK = true;
@@ -57,6 +56,11 @@ type AppContextType = {
 export const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
+
+	//
+	// Initialization
+	//
+
 	useEffect(() => {
 		// Get vimages version
 		getVersion().then(ver => useAppState.getState().setVimagesVersion(ver));
