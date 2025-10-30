@@ -48,12 +48,15 @@ function OutputVimagesConfig(){
 	const {
 		imageGridScale,
 		fullscreenInvertCursor, fullscreenMoveStep, fullscreenRotateStep, fullscreenZoomStep,
+		workaroundScrollToDelay,
 	} = useAppState.getState();
 	return(
 		<>
 			{OutputColumns("Version", config.vimages_version)}
 			{OutputColumns("Render titlebar", BooleanToString(config.titlebar))}
 			{OutputColumns("Generic errors:", BooleanToString(config.generic_errors))}
+			<div>---</div>
+			{OutputColumns("Workspace scroll delay [ms]:", workaroundScrollToDelay.toString())}
 			<div>---</div>
 			{OutputColumns("Image grid scale:", imageGridScale.toString())}
 			{OutputColumns("Fullscreen invert cursor:", fullscreenInvertCursor.toString())}
