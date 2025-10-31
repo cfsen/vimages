@@ -1,5 +1,6 @@
 import { Command } from "./key.command";
 
+// Labels or short descriptions for Command.
 const commandLabels: Record<Command, string> = {
 	[Command.Debug]: "Debug",
 
@@ -63,6 +64,7 @@ const commandLabels: Record<Command, string> = {
 	[Command.TauriFullscreen]: "Toggle app fullscreen",
 };
 
+// Retrieves a human-readable label or short description of a Command.
 export function GetCommandLabel(cmd: Command): string {
 	return commandLabels[cmd];
 }
