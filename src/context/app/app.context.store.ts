@@ -185,7 +185,7 @@ export const useAppState = create<IAppState>((set) => ({
 	// key_backend
 	axum_port: null,
 	setAxumPort: (port) => set({ axum_port: port }),
-	vimages_version: "",
+	vimages_version: "0.1.10",
 	setVimagesVersion: (version) => set({ vimages_version: version }),
 
 	//
