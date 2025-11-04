@@ -13,9 +13,71 @@ function HelpOverlay() {
 		<div className={styles.fullscreenHelpOverlay}>
 			<h2>vimages</h2>
 			<p>
-				<b>esc</b> to close this overlay.
+				<i>Assumes standard keybinds.</i>
 			</p>
-			{HelpCommandMode()}
+			<div className={styles.uiHelpNode}>
+				<div className={styles.uiHelpKeyBox}>esc</div>
+				<div className={styles.uiHelpCommandDescription}>Exit modes, clear selection, close overlays.</div>
+			</div>
+			<div className={styles.flexRow}>
+				{HelpQuickstart()}
+				{HelpCommandMode()}
+			</div>
+		</div>
+	);
+}
+
+function HelpQuickstart(){
+	return(
+		<div className={styles.uiHelpNodeContainer}>
+			<h3>Quickstart</h3>
+
+			<div className={styles.uiHelpNode}>
+				<div className={styles.uiHelpKeyBox}>h, j, k, l</div>
+				<div className={styles.uiHelpCommandSub}>cursor left, down, up, right</div>
+				<div className={styles.uiHelpCommandDescriptionBelow}>Move the cursor. Lead with a number (4j, 3l) to move n elements down or any other direction.</div>
+			</div>
+
+			<div className={styles.uiHelpNode}>
+				<div className={styles.uiHelpKeyBox}>w, b</div>
+				<div className={styles.uiHelpCommandSub}>cursor next, previous</div>
+				<div className={styles.uiHelpCommandDescriptionBelow}>Move the cursor to the next or previous element. Lead with a number (3w, 5b) to move n elements forward or backwards.</div>
+			</div>
+
+			<div className={styles.uiHelpNode}>
+				<div className={styles.uiHelpKeyBox}>gg, G</div>
+				<div className={styles.uiHelpCommandSub}>first element, last element</div>
+				<div className={styles.uiHelpCommandDescriptionBelow}>Move the cursor to the first (gg) or last (G) element.</div>
+			</div>
+
+			<div className={styles.uiHelpNode}>
+				<div className={styles.uiHelpKeyBox}>c^d, c^u</div>
+				<div className={styles.uiHelpCommandSub}>cursor half page down, up</div>
+				<div className={styles.uiHelpCommandDescriptionBelow}>Move the cursor a half page down or up. <i>Note: not true half page movement.</i></div>
+			</div>
+
+			<div className={styles.uiHelpNode}>
+				<div className={styles.uiHelpKeyBox}>return</div>
+				<div className={styles.uiHelpCommandSub}>open directory, view image in fullscreen</div>
+				<div className={styles.uiHelpCommandDescriptionBelow}>Open directory or view image under cursor.</div>
+			</div>
+
+			<div className={styles.uiHelpNode}>
+				<div className={styles.uiHelpKeyBox}>s</div>
+				<div className={styles.uiHelpCommandSub}>switch workspace</div>
+				<div className={styles.uiHelpCommandDescriptionBelow}>Switch between the directory browser anbd image grid.</div>
+			</div>
+
+			<div className={styles.uiHelpNode}>
+				<div className={styles.uiHelpKeyBox}>v</div>
+				<div className={styles.uiHelpCommandSub}>visual selection mode</div>
+				<div className={styles.uiHelpCommandDescriptionBelow}>Switch to visual selection mode.</div>
+			</div>
+
+			<div className={styles.uiHelpNode}>
+				<div className={styles.uiHelpKeyBox}>:config</div>
+				<div className={styles.uiHelpCommandDescription}>Show current keybinds.</div>
+			</div>
 		</div>
 	);
 }
@@ -23,7 +85,7 @@ function HelpOverlay() {
 function HelpCommandMode(){
 	return(
 		<div className={styles.uiHelpNodeContainer}>
-			<h3>Commands </h3>
+			<h3>Commands</h3>
 
 			<div className={styles.uiHelpNode}>
 				<div className={styles.uiHelpKeyBox}>:</div>

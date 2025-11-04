@@ -12,11 +12,19 @@
 	z-index: 1004;
 }
 
+.flexRow {
+	display: flex;
+	flex-direction: row;
+	align-items: left;
+	justify-content: left;
+}
+
 .uiHelpNodeContainer {
 	display: flex;
 	flex-direction: column;
 	align-items: left;
 	justify-content: left;
+	width: 40em;
 }
 
 .uiHelpKeyBox {
