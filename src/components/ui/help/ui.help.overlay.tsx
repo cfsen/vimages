@@ -51,6 +51,12 @@ function HelpQuickstart(){
 			</div>
 
 			<div className={styles.uiHelpNode}>
+				<div className={styles.uiHelpKeyBox}>[n]G</div>
+				<div className={styles.uiHelpCommandSub}>n'th element</div>
+				<div className={styles.uiHelpCommandDescriptionBelow}>Move the cursor to the n'th element (7G).</div>
+			</div>
+
+			<div className={styles.uiHelpNode}>
 				<div className={styles.uiHelpKeyBox}>c^d, c^u</div>
 				<div className={styles.uiHelpCommandSub}>cursor half page down, up</div>
 				<div className={styles.uiHelpCommandDescriptionBelow}>Move the cursor a half page down or up. <i>Note: not true half page movement.</i></div>
@@ -66,6 +72,12 @@ function HelpQuickstart(){
 				<div className={styles.uiHelpKeyBox}>s</div>
 				<div className={styles.uiHelpCommandSub}>switch workspace</div>
 				<div className={styles.uiHelpCommandDescriptionBelow}>Switch between the directory browser anbd image grid.</div>
+			</div>
+
+			<div className={styles.uiHelpNode}>
+				<div className={styles.uiHelpKeyBox}>R</div>
+				<div className={styles.uiHelpCommandSub}>reload</div>
+				<div className={styles.uiHelpCommandDescriptionBelow}>Reload current directory.</div>
 			</div>
 
 			<div className={styles.uiHelpNode}>
