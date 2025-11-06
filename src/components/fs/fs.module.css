@@ -2,19 +2,6 @@
 	text-align: left;
 	padding: 0.1em 0.5em;
 }
-.fsElementOpen {
-	text-align: left;
-	padding: 0.1em 0.5em;
-}
-.fsElementOpen::after {
-    content: "";
-    float: right;
-    width: 0.8em;
-    height: 0.8em;
-    background-color: var(--neutral-500);
-    margin-left: auto;
-	margin-top: 0.38em;
-}
 
 .fsBgBorder {
 	border: 0.5em solid rgba(0,0,0,0.3);
@@ -37,7 +24,6 @@
 
 .fsBrowser {
 	padding: 0em 1.5em 1.5em 1.5em;
-	/* min-width: calc(400px + 24em); */
 	max-width: calc(1200px + 32em);
 	flex-direction: row;
 	align-items: center;

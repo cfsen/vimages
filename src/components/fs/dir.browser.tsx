@@ -11,7 +11,6 @@ import { windowsUncStrip } from "@components/utility.general";
 
 import styles from "./fs.module.css";
 
-// TODO: clean up CSS for fs/dir.browser
 function DirBrowser(){
 	const active = useAppState(s => s.workspace);
 	const path = useAppState(s => s.currentDir);
