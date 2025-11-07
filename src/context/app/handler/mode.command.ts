@@ -84,7 +84,7 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 	} = useAppState.getState();
 
 	if(isHistoryRequest(resultCommand)){
-		let sequence = handleHistoryRequest(resultCommand, modeCmdHistory);
+		let sequence = handleHistoryRequest(modeCmdHistory);
 		if(sequence !== null) {
 			let buffer: resultModeCommand = {
 				sequence,
@@ -292,7 +292,7 @@ function isHistoryRequest(result: resultModeCommand): boolean {
 }
 
 let historyIndex: number | null = null;
-function handleHistoryRequest(result: resultModeCommand, history: string[]): string | null {
+function handleHistoryRequest(history: string[]): string | null {
 	if(history.length <= 0)
 		return null;
 	
