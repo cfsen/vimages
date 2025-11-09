@@ -16,19 +16,73 @@ enum VerifyResult {
 #[derive(Debug, Clone)]
 pub struct FilesystemIOError {
     error_message: String,
+    error_details: String,
+    error_code: FilesystemIOErrorCode,
 }
-
 impl From<String> for FilesystemIOError {
     fn from(value: String) -> Self {
-        FilesystemIOError { error_message: value }
+        FilesystemIOError {
+            error_message: value,
+            error_details: "".to_string(),
+            error_code: FilesystemIOErrorCode::NoErrorCode,
+        }
     }
 }
 impl From<&str> for FilesystemIOError {
     fn from(value: &str) -> Self {
-        FilesystemIOError { error_message: value.to_string() }
+        FilesystemIOError {
+            error_message: value.to_string(),
+            error_details: "".to_string(),
+            error_code: FilesystemIOErrorCode::NoErrorCode,
+        }
     }
 }
+impl From<FilesystemIOErrorCode> for FilesystemIOError {
+    fn from(code: FilesystemIOErrorCode) -> Self {
+        let error_message = get_io_error_description(&code);
+        FilesystemIOError::from(error_message)
+    }
+}
+impl FilesystemIOError {
+    pub fn with_details(error_code: FilesystemIOErrorCode, error_details: impl Into<String>) -> Self {
+        FilesystemIOError {
+            error_message: get_io_error_description(&error_code).into(),
+            error_details: error_details.into(),
+            error_code,
+        }
+    }
+}
+pub fn get_io_error_description(code: &FilesystemIOErrorCode) -> &str {
+    match code {
+        FilesystemIOErrorCode::NotImplemented => "Not implemented",
+        FilesystemIOErrorCode::NoErrorCode => "No error code provided",
 
+        FilesystemIOErrorCode::FailedToRemoveFile => "Failed to remove file",
+        FilesystemIOErrorCode::FailedToRemoveDirectory => "Failed to remove directory",
+
+        FilesystemIOErrorCode::FailedToCopyFile => "Failed to copy file",
+
+        FilesystemIOErrorCode::TargetDoesNotExist => "Target does not exist",
+        FilesystemIOErrorCode::TargetIsNotFile => "Target is not a file",
+        FilesystemIOErrorCode::TargetIsNotDirectory => "Target is not a directory",
+    }
+}
+#[derive(Debug, Clone)]
+pub enum FilesystemIOErrorCode {
+    NotImplemented,
+    NoErrorCode,
+
+    FailedToRemoveFile,
+    FailedToRemoveDirectory,
+
+    FailedToCopyFile,
+
+    TargetDoesNotExist,
+    TargetIsNotFile,
+    TargetIsNotDirectory,
+}
+
+// TODO: for mount point check results
 pub enum FilesystemSameMountPoint {
     NotImplemented,
     Error,
@@ -41,7 +95,7 @@ pub fn rename_or_move_file(source: &Path, dest: &Path) -> Result<(), FilesystemI
     check_path_exists(&source, PathCheckType::File)?;
     check_dest_path(&dest, PathCheckType::File)?;
 
-    Err(FilesystemIOError::from("Not implemented"))
+    Err(FilesystemIOError::from(FilesystemIOErrorCode::NotImplemented))
 }
 
 // primary call point for rename and move ops on directories 
@@ -49,7 +103,7 @@ pub fn rename_or_move_dir(source: &Path, dest: &Path) -> Result<(), FilesystemIO
     check_path_exists(&source, PathCheckType::Directory)?;
     check_dest_path(&dest, PathCheckType::Directory)?;
 
-    Err(FilesystemIOError::from("Not implemented"))
+    Err(FilesystemIOError::from(FilesystemIOErrorCode::NotImplemented))
 }
 
 //
@@ -62,13 +116,11 @@ pub fn delete_dir(target: &Path) -> Result<(), FilesystemIOError> {
 
     fs::remove_dir(&target)
         .map_err(|e| {
-            FilesystemIOError::from(format!(
-                "Failed to remove directory '{}': {e}",
-                target.display()
-            ))
-        })?;
-
-    Ok(())
+            FilesystemIOError::with_details(
+                FilesystemIOErrorCode::FailedToRemoveDirectory,
+                format!("{}: {e}", target.display())
+            )
+        })
 }
 
 // delete a file
@@ -77,13 +129,11 @@ pub fn delete_file(target: &Path) -> Result<(), FilesystemIOError> {
 
     fs::remove_file(&target)
         .map_err(|e| {
-            FilesystemIOError::from(format!(
-                "Failed to remove file '{}': {e}",
-                target.display()
-            ))
-        })?;
-
-    Ok(())
+            FilesystemIOError::with_details(
+                FilesystemIOErrorCode::FailedToRemoveFile,
+                format!("{}: {e}", target.display())
+            )
+        })
 }
 
 //
@@ -97,7 +147,7 @@ pub fn copy_file_and_verify(source: &Path, dest: &Path) -> Result<(), Filesystem
 
     copy_file(&source, &dest)?;
 
-    Err(FilesystemIOError::from("Not implemented"))
+    Err(FilesystemIOError::from(FilesystemIOErrorCode::NotImplemented))
 }
 
 // copy a file
@@ -132,12 +182,12 @@ pub fn copy_dir_and_verify(source: &Path, dest: &Path) -> Result<(), FilesystemI
     check_path_exists(&source, PathCheckType::Directory)?;
     check_dest_path(&dest, PathCheckType::Directory)?;
 
-    Err(FilesystemIOError::from("Not implemented"))
+    Err(FilesystemIOError::from(FilesystemIOErrorCode::NotImplemented))
 }
 
 // copy a directory recursively and delete original (move between different mount points)
 fn copy_dir_and_delete_source(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
-    Err(FilesystemIOError::from("Not implemented"))
+    Err(FilesystemIOError::from(FilesystemIOErrorCode::NotImplemented))
 }
 
 // check mount point for source and dest, determine if copy must be used
