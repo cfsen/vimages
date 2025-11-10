@@ -1,3 +1,5 @@
+use tauri::ipc::InvokeError;
+
 #[derive(Debug, Clone)]
 pub struct FilesystemIOError {
     error_message: String,
@@ -35,6 +37,11 @@ impl FilesystemIOError {
             error_details: error_details.into(),
             error_code,
         }
+    }
+}
+impl From<FilesystemIOError> for tauri::ipc::InvokeError {
+    fn from(err: FilesystemIOError) -> Self {
+        tauri::ipc::InvokeError::from(err.error_message)
     }
 }
 pub fn get_io_error_description(code: &FilesystemIOErrorCode) -> &str {
