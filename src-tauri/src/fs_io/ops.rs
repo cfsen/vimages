@@ -15,9 +15,7 @@ enum VerifyResult {
     Failure,
 }
 
-// TODO: for mount point check results
 pub enum FilesystemSameMountPoint {
-    NotImplemented,
     Error,
     CanRename,
     MustCopy,
@@ -125,12 +123,72 @@ fn copy_dir_and_delete_source(source: &Path, dest: &Path) -> Result<(), Filesyst
 
 // check mount point for source and dest, determine if copy must be used
 fn rename_or_copy(source: &Path, dest: &Path) -> FilesystemSameMountPoint {
-    FilesystemSameMountPoint::NotImplemented
+    let source_canonical = match source.canonicalize() {
+        Ok(p) => p,
+        Err(_) => return FilesystemSameMountPoint::Error,
+    };
+
+    let dest_parent = match dest.parent() {
+        Some(p) => p,
+        None => return FilesystemSameMountPoint::Error,
+    };
+
+    let dest_canonical = match dest_parent.canonicalize() {
+        Ok(p) => p,
+        Err(_) => return FilesystemSameMountPoint::Error,
+    };
+
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::MetadataExt;
+
+        let source_dev = match source_canonical.metadata() {
+            Ok(m) => m.dev(),
+            Err(_) => return FilesystemSameMountPoint::Error,
+        };
+
+        let dest_dev = match dest_canonical.metadata() {
+            Ok(m) => m.dev(),
+            Err(_) => return FilesystemSameMountPoint::Error,
+        };
+
+        if source_dev == dest_dev {
+            FilesystemSameMountPoint::CanRename
+        } else {
+            FilesystemSameMountPoint::MustCopy
+        }
+    }
+
+    #[cfg(windows)]
+    {
+        // On Windows, compare the volume/drive letter
+        let source_root = get_path_root(&source_canonical);
+        let dest_root = get_path_root(&dest_canonical);
+
+        if source_root == dest_root {
+            FilesystemSameMountPoint::CanRename
+        } else {
+            FilesystemSameMountPoint::MustCopy
+        }
+    }
 }
 
 //
 // helpers
 //
+
+#[cfg(windows)]
+fn get_path_root(path: &Path) -> Option<String> {
+    path.components()
+        .next()
+        .and_then(|c| {
+            if let std::path::Component::Prefix(prefix) = c {
+                Some(prefix.as_os_str().to_string_lossy().to_string())
+            } else {
+                None
+            }
+        })
+}
 
 // verifies a file
 fn verify_file_integrity(source: &Path, dest: &Path) -> VerifyResult {
