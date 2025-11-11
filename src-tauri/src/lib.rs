@@ -17,7 +17,6 @@ use crate::{
     img_cache::queue, 
     journal::database::Database,
     user_config::vimages_config,
-    fs_io::ops,
 };
 
 static GLOBAL_SERVER_STATE: OnceLock<ServerState> = OnceLock::new();
@@ -95,6 +94,12 @@ pub fn run() {
             endpoints::cache::cache_cleanup,
             vimages_config::save_config,
             vimages_config::get_or_create_config,
+            fs_io::ops::rename_or_move_file,
+            fs_io::ops::rename_or_move_dir,
+            fs_io::ops::delete_dir,
+            fs_io::ops::delete_file,
+            fs_io::ops::copy_file_and_verify,
+            fs_io::ops::copy_file,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

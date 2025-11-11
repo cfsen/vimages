@@ -22,6 +22,7 @@ pub enum FilesystemSameMountPoint {
 }
 
 // primary call point for rename and move ops on files
+#[tauri::command]
 pub fn rename_or_move_file(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
     check_path_exists(&source, PathCheckType::File)?;
     check_dest_path(&dest, PathCheckType::File)?;
@@ -30,6 +31,7 @@ pub fn rename_or_move_file(source: &Path, dest: &Path) -> Result<(), FilesystemI
 }
 
 // primary call point for rename and move ops on directories 
+#[tauri::command]
 pub fn rename_or_move_dir(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
     check_path_exists(&source, PathCheckType::Directory)?;
     check_dest_path(&dest, PathCheckType::Directory)?;
@@ -42,6 +44,7 @@ pub fn rename_or_move_dir(source: &Path, dest: &Path) -> Result<(), FilesystemIO
 //
 
 // delete a directory
+#[tauri::command]
 pub fn delete_dir(target: &Path) -> Result<(), FilesystemIOError> {
     check_path_exists(&target, PathCheckType::Directory)?;
 
@@ -55,6 +58,7 @@ pub fn delete_dir(target: &Path) -> Result<(), FilesystemIOError> {
 }
 
 // delete a file
+#[tauri::command]
 pub fn delete_file(target: &Path) -> Result<(), FilesystemIOError> {
     check_path_exists(&target, PathCheckType::File)?;
 
@@ -72,6 +76,7 @@ pub fn delete_file(target: &Path) -> Result<(), FilesystemIOError> {
 //
 
 // copy a file and verify copy
+#[tauri::command]
 pub fn copy_file_and_verify(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
     check_path_exists(&source, PathCheckType::File)?;
     check_dest_path(&dest, PathCheckType::File)?;
@@ -82,6 +87,7 @@ pub fn copy_file_and_verify(source: &Path, dest: &Path) -> Result<(), Filesystem
 }
 
 // copy a file
+#[tauri::command]
 pub fn copy_file(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
     check_path_exists(&source, PathCheckType::File)?;
     check_dest_path(&dest, PathCheckType::File)?;
@@ -172,6 +178,7 @@ fn rename_or_copy(source: &Path, dest: &Path) -> FilesystemSameMountPoint {
         }
     }
 }
+
 
 //
 // helpers
