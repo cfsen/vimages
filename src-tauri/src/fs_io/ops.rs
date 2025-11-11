@@ -1,5 +1,5 @@
 // TODO: implementation of file operations
-use std::fs::{self, copy, remove_dir, remove_file, rename};
+use std::fs;
 use std::path::Path;
 
 use crate::fs_io::error::{FilesystemIOError, FilesystemIOErrorCode};
