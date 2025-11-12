@@ -1,3 +1,3 @@
 pub mod ops;
-pub mod ops_structs;
+pub mod ops_types;
 pub mod error;

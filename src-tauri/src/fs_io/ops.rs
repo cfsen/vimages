@@ -3,7 +3,7 @@ use std::fs;
 use std::path::Path;
 
 use crate::fs_io::error::{FilesystemIOError, FilesystemIOErrorCode};
-use crate::fs_io::ops_structs::{
+use crate::fs_io::ops_types::{
     PathCheckType,
     VerifyResult,
     FilesystemSameMountPoint,
