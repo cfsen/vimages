@@ -3,23 +3,11 @@ use std::fs;
 use std::path::Path;
 
 use crate::fs_io::error::{FilesystemIOError, FilesystemIOErrorCode};
-
-#[derive(PartialEq)]
-enum PathCheckType {
-    File,
-    Directory,
-}
-
-enum VerifyResult {
-    Success,
-    Failure,
-}
-
-pub enum FilesystemSameMountPoint {
-    Error,
-    CanRename,
-    MustCopy,
-}
+use crate::fs_io::ops_structs::{
+    PathCheckType,
+    VerifyResult,
+    FilesystemSameMountPoint,
+};
 
 // primary call point for rename and move ops on files
 #[tauri::command]
