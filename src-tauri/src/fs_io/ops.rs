@@ -5,7 +5,6 @@ use std::path::Path;
 use crate::fs_io::error::{FilesystemIOError, FilesystemIOErrorCode};
 use crate::fs_io::ops_types::{
     PathCheckType,
-    VerifyResult,
     FilesystemSameMountPoint,
 };
 
@@ -63,17 +62,6 @@ pub fn delete_file(target: &Path) -> Result<(), FilesystemIOError> {
 // copying
 //
 
-// copy a file and verify copy
-#[tauri::command]
-pub fn copy_file_and_verify(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
-    check_path_exists(&source, PathCheckType::File)?;
-    check_dest_path(&dest, PathCheckType::File)?;
-
-    copy_file(&source, &dest)?;
-
-    Err(FilesystemIOError::from(FilesystemIOErrorCode::NotImplemented))
-}
-
 // copy a file
 #[tauri::command]
 pub fn copy_file(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
@@ -100,14 +88,6 @@ fn copy_file_and_delete_source(source: &Path, dest: &Path) -> Result<(), Filesys
     delete_file(&source)?;
 
     Ok(())
-}
-
-// copy a directory recursively and verify copy
-pub fn copy_dir_and_verify(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
-    check_path_exists(&source, PathCheckType::Directory)?;
-    check_dest_path(&dest, PathCheckType::Directory)?;
-
-    Err(FilesystemIOError::from(FilesystemIOErrorCode::NotImplemented))
 }
 
 // copy a directory recursively and delete original (move between different mount points)
@@ -183,12 +163,6 @@ fn get_path_root(path: &Path) -> Option<String> {
                 None
             }
         })
-}
-
-// verifies a file
-fn verify_file_integrity(source: &Path, dest: &Path) -> VerifyResult {
-    // TODO: implement verification
-    VerifyResult::Failure
 }
 
 // check destination path for copy/rename operations

@@ -98,7 +98,6 @@ pub fn run() {
             fs_io::ops::rename_or_move_dir,
             fs_io::ops::delete_dir,
             fs_io::ops::delete_file,
-            fs_io::ops::copy_file_and_verify,
             fs_io::ops::copy_file,
         ])
         .run(tauri::generate_context!())

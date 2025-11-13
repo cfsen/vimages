@@ -4,11 +4,6 @@ pub enum PathCheckType {
     Directory,
 }
 
-pub enum VerifyResult {
-    Success,
-    Failure,
-}
-
 pub enum FilesystemSameMountPoint {
     Error,
     CanRename,
