@@ -27,6 +27,21 @@ pub fn rename_or_move_dir(source: &Path, dest: &Path) -> Result<(), FilesystemIO
 }
 
 //
+// rename/move
+//
+
+// moves a file within the same mount point
+pub fn move_same_mountpoint(source: &Path, dest: &Path) -> Result<(), FilesystemIOError> {
+    fs::rename(&source, &dest)
+        .map_err(|e| {
+            FilesystemIOError::with_details(
+                FilesystemIOErrorCode::FailedToRenameOrMove, 
+                format!("{} -> {}: {e}", source.display(), dest.display())
+            )
+        })
+}
+
+//
 // deletion
 //
 

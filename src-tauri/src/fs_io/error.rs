@@ -54,6 +54,8 @@ pub fn get_io_error_description(code: &FilesystemIOErrorCode) -> &str {
 
         FilesystemIOErrorCode::FailedToCopyFile => "Failed to copy file",
 
+        FilesystemIOErrorCode::FailedToRenameOrMove => "Failed to perform rename or move operation",
+
         FilesystemIOErrorCode::TargetDoesNotExist => "Target does not exist",
         FilesystemIOErrorCode::TargetIsNotFile => "Target is not a file",
         FilesystemIOErrorCode::TargetIsNotDirectory => "Target is not a directory",
@@ -68,6 +70,8 @@ pub enum FilesystemIOErrorCode {
     FailedToRemoveDirectory,
 
     FailedToCopyFile,
+
+    FailedToRenameOrMove,
 
     TargetDoesNotExist,
     TargetIsNotFile,
