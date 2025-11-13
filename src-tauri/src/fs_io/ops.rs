@@ -14,7 +14,13 @@ pub fn rename_or_move_file(source: &Path, dest: &Path) -> Result<(), FilesystemI
     check_path_exists(&source, PathCheckType::File)?;
     check_dest_path(&dest, PathCheckType::File)?;
 
-    Err(FilesystemIOError::from(FilesystemIOErrorCode::NotImplemented))
+    match rename_or_copy(&source, &dest) {
+        FilesystemSameMountPoint::MustCopy => copy_file_and_delete_source(&source, &dest),
+        FilesystemSameMountPoint::CanRename => move_same_mountpoint(&source, &dest),
+        FilesystemSameMountPoint::Error => {
+            Err(FilesystemIOError::from(FilesystemIOErrorCode::FailedToRenameOrMove))
+        }
+    }
 }
 
 // primary call point for rename and move ops on directories 
