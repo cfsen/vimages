@@ -37,9 +37,10 @@ function DirBrowserMain(){
 					itemType={NavWrapperItemType.FileBrowser}
 					data={entry.name}
 				>
-					<div 
+					<div
 						key={"fbrowseridx" + index + "_" + entry.path_hash} 
-						className={styles.fsElement}>
+						className={styles.fsElement}
+					>
 						{entry.name}
 					</div>
 				</NavWrapper>
