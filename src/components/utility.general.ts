@@ -6,6 +6,7 @@ import { Keybinds } from "@key/key.types";
 // Output formatters
 //
 
+// strips "\\.\" prefix from paths on windows hosts
 export function windowsUncStrip (path: string): string  {
 	if(platform() === "windows"){
 		return path.slice(4, path.length);
