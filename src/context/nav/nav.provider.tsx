@@ -3,15 +3,15 @@ import { useStore } from "zustand";
 
 import { AppContext } from "@app/app.context";
 import { useAppState } from "@app/app.context.store";
-import { getDirectory, getDirectoryHistory } from "@app/app.context.actions";
+import { getDirectoryHistory } from "@app/app.context.actions";
 
 import { createNavigationState } from "./nav.provider.store";
 import { scrollToActive, scrollToActive_Delayed, updateSelectionBuffer } from "@nav/nav.provider.actions";
 import { NavigationContextType, NavigationItem } from "@nav/nav.types";
+import { handleNavigationCommand } from "@nav/handler/mode.normal";
 
 import { UIComponent } from "@context/context.types";
 import { Command } from "@key/key.command";
-import { KeyboardCursorHandle } from "@key/key.cursor.handler";
 import { resultModeNormal } from "@key/key.module.handler.normal";
 
 import { platform } from "@tauri-apps/plugin-os";
@@ -36,8 +36,6 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 
 	// global state
 	const fullscreenImage = useAppState(state => state.fullscreenImage);
-	const setFullscreenImage = useAppState(state => state.setFullscreenImage);
-	const setFullscreenImagePath = useAppState(state => state.setFullscreenImagePath);
 
 	// navigation context instanced state
 	const itemsPerRow = useStore(navigationState, s => s.navItemsPerRow);
@@ -78,91 +76,9 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 	//
 	// Command handler
 	//
-
 	const handleNavigationCmd = (seq: resultModeNormal): boolean => {
-		if(seq.cmd === Command.Debug) {
-			console.log(">>> Active NavigationContext (" + navigationId.current + ")");
-			console.log("> Instanced Zustand store:", navigationState.getState());
-			return true;
-		}
-
-		let length = navigationState.getState().navItems.length;
-
-		// no items to navigate
-		if(length === 0)
-			return false;
-
-		let activeItemID = navigationState.getState().navItemActive;
-
-		// no active item, set first in array as active
-		if(activeItemID === null) {
-			activeItemID = navigationState.getState().navItems[0].id;
-			setNavItemActive(activeItemID);
-		}
-
-		let item = navigationState.getState().navItems.find((i) => i.id === activeItemID);
-
-		// this should never occur
-		if(item === undefined) return false;
-
-		// handle input for directory browser
-		if(component === UIComponent.dirBrowserMain) {
-			switch(seq.cmd){
-				case Command.CursorLeft:
-					getDirectory(useAppState, "..");
-					return true;
-
-				case Command.CursorRight:
-					// ensure CursorRight will not ascend in the directory tree even when ".." is selected
-					if(item.data === "..")
-						return false;
-					
-					getDirectory(useAppState, item.data);
-					return true;
-
-				case Command.Return:
-					getDirectory(useAppState, item.data);
-					return true;
-			};
-		}
-
-		switch(seq.cmd){
-			case Command.Return:
-				setFullscreenImage(true);
-				setFullscreenImagePath(item.data);
-				return true;
-		};
-
-		let curpos = navigationState.getState().navItems.findIndex((i) => i.id === activeItemID);
-		let perRow = navigationState.getState().navItemsPerRow;
-		// TODO: FEAT: FEAT_DYNAMIC_HALFPAGE
-		// should be determined dynamically based on shown elements.
-		// placeholder: directory browser jumps 10 rows, thumbnail grid 3 rows
-		let halfPage = component === UIComponent.dirBrowserMain ? 10 : 3;
-
-		if(curpos === -1 || length === 0 || perRow === 0) {
-			// TODO: FEAT: FEAT_FRONTEND_LOGGING
-			console.error(`nav.provider: invalid cursor state: length=${length}, curpos=${curpos}, perRow=${perRow}`);
-			return false;
-		}
-
-		let cur = KeyboardCursorHandle(seq.cmdSequence, length, curpos, perRow, halfPage);
-
-		if(cur === null)
-			return false;
-
-		// update cursor position
-		navigationState.getState().setNavItemActive(
-			navigationState.getState().navItems[cur].id
-		);
-
-		// Swap images in fullscreen
-		if(useAppState.getState().fullscreenImage) {
-			setFullscreenImagePath(navigationState.getState().navItems[cur].data);
-		}
-
-		return true;
-	};
+		return handleNavigationCommand(useAppState, navigationState, seq, component);
+	}
 
 	//
 	// Selection handling
@@ -209,7 +125,7 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 		setSelectionEnd(postpos);
 
 		console.log(`handleSelectionCmd->selection end: ${postpos}`);
-		
+
 		updateSelectionBuffer(useAppState, navigationState);
 		return cursorHandler;
 	}
