@@ -19,6 +19,15 @@ export function handleNavigationCommand(
 	let provider = navStore.getState();
 	let length = provider.navItems.length;
 
+	if (seq.cmd === Command.Debug) {
+		console.info("=== DEBUG DUMP ===");
+		console.info("context:");
+		console.info(context);
+		console.info("provider:");
+		console.info(provider);
+		console.info("=== END ===");
+	}
+
 	// no items to navigate
 	if(length === 0) return false;
 
