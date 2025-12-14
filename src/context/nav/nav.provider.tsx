@@ -6,15 +6,15 @@ import { useAppState } from "@app/app.context.store";
 import { getDirectoryHistory } from "@app/app.context.actions";
 
 import { createNavigationState } from "./nav.provider.store";
-import { scrollToActive, scrollToActive_Delayed, updateSelectionBuffer } from "@nav/nav.provider.actions";
+import { scrollToActive, scrollToActive_Delayed } from "@nav/nav.provider.actions";
 import { NavigationContextType, NavigationItem } from "@nav/nav.types";
 import { handleNavigationCommand } from "@nav/handler/mode.normal";
 
 import { UIComponent } from "@context/context.types";
-import { Command } from "@key/key.command";
 import { resultModeNormal } from "@key/key.module.handler.normal";
 
 import { platform } from "@tauri-apps/plugin-os";
+import { handleSelectionCommand } from "./handler/mode.visual";
 
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
 
@@ -49,10 +49,6 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 	const navItemActive = useStore(navigationState, s => s.navItemActive);
 	const setNavItemActive = useStore(navigationState, s => s.setNavItemActive);
 
-	// selection
-	const setSelectionStart = useStore(navigationState, s => s.setSelectionStart);
-	const setSelectionEnd = useStore(navigationState, s => s.setSelectionEnd);
-
 	// Generate unique ID for this navigation container
 	const navigationId = useRef(Math.random().toString(36).substring(7));
 
@@ -83,51 +79,8 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 	//
 	// Selection handling
 	//
-
-	const handleSelectionCmd = (resultNormal: resultModeNormal): boolean => {
-		switch(resultNormal.cmd) {
-			case Command.ModeVisualExit:
-				console.info("Visual->ModeVisualExit called");
-
-				if(navigationState.getState().selectionStart !== null) {
-					console.info("Visual->ModeVisualExit: Selection cleanup.");
-					setSelectionStart(null);
-					setSelectionEnd(null);
-				}
-
-				// TODO: store selection state for 'gv'
-
-				updateSelectionBuffer(useAppState, navigationState);
-				return true;
-			case Command.Return:
-				console.log("Visual->Command.Return");
-
-				// TODO: handle return
-
-				return true;
-		};
-
-		let selectionStart = navigationState.getState().selectionStart;
-
-		if(selectionStart === null){
-			let activeItemID = navigationState.getState().navItemActive;
-			let curpos = navigationState.getState().navItems.findIndex((i) => i.id === activeItemID);
-			setSelectionStart(curpos);
-
-			console.log(`handleSelectionCmd->selection start: ${curpos}`);
-		}
-
-
-		let cursorHandler = handleNavigationCmd(resultNormal);
-
-		let postActiveItemID = navigationState.getState().navItemActive;
-		let postpos = navigationState.getState().navItems.findIndex((i) => i.id === postActiveItemID);
-		setSelectionEnd(postpos);
-
-		console.log(`handleSelectionCmd->selection end: ${postpos}`);
-
-		updateSelectionBuffer(useAppState, navigationState);
-		return cursorHandler;
+	const handleSelectionCmd = (seq: resultModeNormal): boolean => {
+		return handleSelectionCommand(useAppState, navigationState, seq, component);
 	}
 
 	//

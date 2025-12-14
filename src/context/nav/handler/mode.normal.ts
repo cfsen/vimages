@@ -96,7 +96,7 @@ function input_interject_img_grid(
 	};
 }
 
-function update_cursor_position(
+export function update_cursor_position(
 	provider: StoreApi<INavigationState>,
 	seq: resultModeNormal,
 	component: UIComponent,
