@@ -67,6 +67,7 @@ export type JournalInfo = {
 export type NavigationHandle = {
 	id: string;
 	component: UIComponent;
+	workspace: Workspace;
 	active: () => boolean;
 	tabOrder: number;
 	setActive: (state: boolean) => boolean;
@@ -76,7 +77,7 @@ export type NavigationHandle = {
 	eventScrollToActive: () => void;
 }
 
-// Used to uniquely identify which UI a NavigationProvider is encapsulating
+// Unique identifiers for NavigationProvider
 export enum UIComponent {
 	fsBrowser,
 	imgGrid,
@@ -84,12 +85,7 @@ export enum UIComponent {
 	dirBrowserPreview,
 }
 
-// Used to determine which UI to draw.
-export type Workspaces = {
-	DirBrowser: boolean;
-	ImgGrid: boolean;
-}
-
+// Logical groups for NavigationProvider
 export enum Workspace {
 	DirectoryBrowser,
 	ImageGrid,

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { EntityDirectory, EntityImage, NavigationHandle, UIComponent, Workspaces } from "@context/context.types";
+import { EntityDirectory, EntityImage, NavigationHandle, UIComponent, Workspace } from "@context/context.types";
 import { Modal } from "@key/key.types";
 
 interface IAppProps {
@@ -25,7 +25,9 @@ interface IAppProps {
 	// UI state
 	// key_uistate
 	mode: Modal
-	workspace: Workspaces
+
+	workspaceActive: Workspace,
+	workspaces: Map<Workspace, UIComponent[]>,
 
 	fullscreenImage: boolean
 	fullscreenImagePath: string
@@ -114,8 +116,10 @@ export interface IAppState extends IAppProps {
 	// UI state
 	// key_uistate
 	setMode: (mode: Modal) => void
-	setWorkspace: (ws: keyof Workspaces, active: boolean) => void
-	toggleWorkspace: (ws: keyof Workspaces) => void
+
+	setWorkspaceActive: (ws: Workspace) => void 
+	addWorkspace: (ws: Workspace, ui_comp: UIComponent) => void
+	removeWorkspace: (ws: Workspace, ui_comp: UIComponent) => void
 
 	setFullscreenImage: (bool: boolean) => void
 	setFullscreenImagePath: (path: string) => void
@@ -138,7 +142,7 @@ export interface IAppState extends IAppProps {
 	setSearchHitLastJump: (jump: number | null) => void
 
 	setErrorDisplayGeneric: (display: boolean) => void
-	
+
 	//
 	// Image grid UI
 	// key_imgrid
@@ -158,7 +162,7 @@ export interface IAppState extends IAppProps {
 	setFullscreenOffsetY: (pixels: number | null) => void
 	setFullscreenOffsetX: (pixels: number | null) => void
 	setFullscreenZoom: (scalar: number | null) => void
-	
+
 	setFullscreenInvertCursor: (invert: number) => void
 	setFullscreenMoveStep: (step: number) => void
 	setFullscreenRotateStep: (step: number) => void
@@ -223,26 +227,43 @@ export const useAppState = create<IAppState>((set) => ({
 	// UI state
 	// key_uistate
 	mode: Modal.Normal,
+
+	workspaceActive: Workspace.DirectoryBrowser,
+	setWorkspaceActive: (ws) => set({ workspaceActive: ws }),
+	workspaces: new Map<Workspace, UIComponent[]>(),
+	addWorkspace: (ws, ui_comp) => {
+		set((state) => {
+			const newWorkspaces = new Map(state.workspaces);
+			const existing = newWorkspaces.get(ws) || [];
+			newWorkspaces.set(ws, [...existing, ui_comp]);
+			const updates: Partial<IAppState> = {
+				workspaces: newWorkspaces,
+			};
+			return updates;
+		})
+	},
+	removeWorkspace: (ws: Workspace, ui_comp: UIComponent) => {
+		set((state) => {
+			const newWorkspaces = new Map(state.workspaces);
+			const existing = newWorkspaces.get(ws);
+
+			if (existing) {
+				const filtered = existing.filter(c => c !== ui_comp);
+				if (filtered.length > 0) {
+					newWorkspaces.set(ws, filtered);
+				} else {
+					newWorkspaces.delete(ws);
+				}
+			}
+
+			return { workspaces: newWorkspaces };
+		})
+	},
+
 	setMode: (mode) => set({ mode: mode }),
 	workspace: {
 		DirBrowser: true,
 		ImgGrid: false,
-	},
-	setWorkspace: (ws, active) => {
-		set((state) => ({
-			workspace: {
-				...state.workspace,
-				[ws]: active
-			},
-		}));
-	},
-	toggleWorkspace: (ws) => {
-		set((state) => ({
-			workspace: {
-				...state.workspace,
-				[ws]: !state.workspace[ws] 
-			},
-		}));
 	},
 
 	fullscreenImage: false,
@@ -266,7 +287,7 @@ export const useAppState = create<IAppState>((set) => ({
 			infoMessages: [...state.infoMessages, msg].slice(-maxMessages)
 		}
 	}),
-	
+
 	showError: false,
 	setShowError: (bool) => set({ showError: bool }),
 	errorMsg: "",
@@ -311,7 +332,7 @@ export const useAppState = create<IAppState>((set) => ({
 	setImageGridWindowPadding: (pixels: number) => set({ imageGridWindowPadding: pixels }),
 	imageGridMaxFilenameLength: 50,
 	setImageGridMaxFilenameLength: (pixels: number) => set({ imageGridMaxFilenameLength: pixels }),
-	
+
 	//
 	// Fullscreen image UI
 	// key_fullscreen
@@ -323,7 +344,7 @@ export const useAppState = create<IAppState>((set) => ({
 	setFullscreenOffsetX: (pixels) => set({ fullscreenOffsetX: pixels }),
 	fullscreenZoom: null,
 	setFullscreenZoom: (scalar) => set({ fullscreenZoom: scalar }),
-	
+
 	fullscreenInvertCursor: -1,
 	setFullscreenInvertCursor: (invert) => set({ fullscreenInvertCursor: invert }),
 	fullscreenMoveStep: 200,

@@ -5,7 +5,7 @@ import { getVersion } from "@tauri-apps/api/app";
 import { createContext, useEffect, useContext } from "react";
 
 import { useAppState } from "./app.context.store";
-import { addInfoMessage, getDirectory, raiseError, setWorkspace } from "./app.context.actions";
+import { addInfoMessage, getDirectory, raiseError, switchToWorkspace } from "./app.context.actions";
 
 import { NormalModeHandler } from "@app/handler/mode.normal";
 import { CommandModeHandler } from "@app/handler/mode.command";
@@ -14,7 +14,7 @@ import { InsertModeHandler } from "@app/handler/mode.insert";
 import { eventHandleMsgInfoWindow, eventHandleQueueState, eventHandleQueueStringArray } from "@app/app.event.listeners";
 import { IPC_DataStringArray, IPC_MsgInfoWindow, IPC_QueueStatus } from "@app/app.event.types";
 
-import { NavigationHandle, RustApiAction, VimagesConfig, Workspace } from "@context/context.types";
+import { NavigationHandle, RustApiAction, UIComponent, VimagesConfig, Workspace } from "@context/context.types";
 
 import { Command, CommandSequence, getDefaultKeyMap } from "@key/key.command";
 import { resultModeCommand } from "@key/key.module.handler.cmd";
@@ -44,7 +44,7 @@ export function raiseCriticalAppError(callpoint: string, reason: string, rawErro
 type AppContextType = {
 	// Navigation container management
 	registerNavigationContainer: (id: string, handler: NavigationHandle) => void;
-	unregisterNavigationContainer: (id: string) => void;
+	unregisterNavigationContainer: (id: string, component: UIComponent, workspace: Workspace) => void;
 
 	// Main command handlers
 	handleModeNormal: (resultNormal: resultModeNormal) => void;
@@ -153,7 +153,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 			return;
 		}
 
-		setWorkspace(useAppState, Workspace.DirectoryBrowser);
+		switchToWorkspace(useAppState, Workspace.DirectoryBrowser);
 	}, []);
 
 	//
@@ -197,12 +197,14 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 		if(APP_ERROR_LOCK) return;
 
 		useAppState.getState().registerNavigationHandler(id, handler);
+		useAppState.getState().addWorkspace(handler.workspace, handler.component);
 	};
 
-	const unregisterNavigationContainer = (id: string) => {
+	const unregisterNavigationContainer = (id: string, component: UIComponent, workspace: Workspace) => {
 		if(APP_ERROR_LOCK) return;
 
 		useAppState.getState().unregisterNavigationHandler(id);
+		useAppState.getState().removeWorkspace(workspace, component);
 	};	
 
 	//

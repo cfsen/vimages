@@ -166,7 +166,7 @@ export function getActiveNavigationProvider(store: StoreApi<IAppState>): Navigat
 
 	if(active === null)
 		return null;
-	
+
 	let navProvider = store.getState().navigationHandlers.get(active);
 	if(navProvider === undefined)
 		return null;
@@ -196,7 +196,6 @@ export function nextNavProvider(store: StoreApi<IAppState>): boolean {
 // checks if navigation provider has registered elements and can become active
 function canNavProviderBecomeInteractable(store: StoreApi<IAppState>, comp: UIComponent): boolean {
 	const registeredElements = store.getState().navigationHandlersByComp.get(comp)?.getRegisteredElements();
-
 	if(registeredElements === undefined)
 		return false;
 
@@ -220,14 +219,14 @@ function setCursorToNavProvider(store: StoreApi<IAppState>, comp: UIComponent): 
 // Workspace handling
 //
 
+
+// TODO: either update for dynamically registered workspaces, or remove
 // change active workspace sequentially
 export function nextWorkspace(store: StoreApi<IAppState>){
-	const spaces = store.getState().workspace;
-	
-	if(spaces.ImgGrid) {
-		setWorkspace(store, Workspace.DirectoryBrowser);
+	const workspace = store.getState().workspaceActive;
 
-		nextNavProvider(store);
+	if(workspace === Workspace.ImageGrid) {
+		switchToWorkspace(store, Workspace.DirectoryBrowser);
 	}
 	else {
 		if(store.getState().images.length === 0) {
@@ -235,35 +234,15 @@ export function nextWorkspace(store: StoreApi<IAppState>){
 			return;
 		}
 
-		setWorkspace(store, Workspace.ImageGrid);
-
-		nextNavProvider(store);
+		switchToWorkspace(store, Workspace.ImageGrid);
 	}
 }
 
-// TODO: workspaces and nav provider cycling refactoring
-// set active workspace by Workspace `workspace`
+// TODO: calls to this toggle fn should be replaced with calls to switchWorkspace
 export function setWorkspace(store: StoreApi<IAppState>, workspace: Workspace) {
-	let compsDirBrowser = [
-		UIComponent.dirBrowserMain,
-		UIComponent.dirBrowserPreview
-	];
-
-	let compsImageGrid = [
-		UIComponent.imgGrid,
-	];
-
 	switch(workspace){
 		case Workspace.DirectoryBrowser:
-			store.getState().setWorkspace("DirBrowser", true);
-			store.getState().setWorkspace("ImgGrid", false);
-
-			setNavProvidersInteractable(store, compsDirBrowser, true);
-			setNavProvidersInteractable(store, compsImageGrid, false);
-
-			if(!setCursorToNavProvider(store, UIComponent.dirBrowserMain))
-				raiseError(store, "Internal error when setting cursor to directory browser");
-
+			switchToWorkspace(store, Workspace.ImageGrid);
 			break;
 
 		case Workspace.ImageGrid:
@@ -271,18 +250,45 @@ export function setWorkspace(store: StoreApi<IAppState>, workspace: Workspace) {
 				raiseError(store, "Unable to open image grid: no images in directory.");
 				return;
 			}
-
-			store.getState().setWorkspace("DirBrowser", false);
-			store.getState().setWorkspace("ImgGrid", true);
-
-			setNavProvidersInteractable(store, compsDirBrowser, false);
-			setNavProvidersInteractable(store, compsImageGrid, true);
-
-			if(!setCursorToNavProvider(store, UIComponent.imgGrid))
-				raiseError(store, "Internal error when setting cursor to image grid.");
-
+			switchToWorkspace(store, Workspace.DirectoryBrowser);
 			break;
 	};
+}
+
+export function switchToWorkspace(
+	appStore: StoreApi<IAppState>,
+	workspace: Workspace,
+): Workspace | null {
+	let context = appStore.getState();
+	const providers = context.workspaces.get(workspace);
+
+	if (!providers || providers.length === 0) {
+		console.error(`No providers registered for workspace ${workspace}`);
+		return null;
+	}
+
+	// set all providers inactive
+	context.workspaces.forEach((components) => {
+		components.forEach(comp => {
+			setNavProviderInteractable(appStore, comp, false);
+		});
+	});
+
+	// set this workspace's providers active
+	providers.forEach(comp => {
+		setNavProviderInteractable(appStore, comp, true);
+	});
+
+	// update active workspace
+	context.setWorkspaceActive(workspace);
+
+	// set cursor to first provider
+	if (!setCursorToNavProvider(appStore, providers[0])) {
+		console.error("Failed to set cursor in workspace");
+		return null;
+	}
+
+	return workspace;
 }
 
 //

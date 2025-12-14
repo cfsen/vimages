@@ -10,7 +10,7 @@ import { scrollToActive, scrollToActive_Delayed } from "@nav/nav.provider.action
 import { NavigationContextType, NavigationItem } from "@nav/nav.types";
 import { handleNavigationCommand } from "@nav/handler/mode.normal";
 
-import { UIComponent } from "@context/context.types";
+import { UIComponent, Workspace } from "@context/context.types";
 import { resultModeNormal } from "@key/key.module.handler.normal";
 
 import { platform } from "@tauri-apps/plugin-os";
@@ -18,7 +18,10 @@ import { handleSelectionCommand } from "./handler/mode.visual";
 
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
 
-export const NavigationProvider = ({ children, component, initActive, tabOrder }: { children: React.ReactNode, component: UIComponent, initActive: boolean, tabOrder: number }) => {
+export const NavigationProvider = (
+	{ children, component, workspace, initActive, tabOrder }:
+	{ children: React.ReactNode, component: UIComponent, workspace: Workspace, initActive: boolean, tabOrder: number }
+) => {
 	// Ensure AppContext is available
 	const parentCtx = useContext(AppContext);
 	if (!parentCtx) throw new Error("NavigationProvider must be inside VimagesCtxProvider");
@@ -94,6 +97,7 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 		parentCtx.registerNavigationContainer(navigationId.current, {
 			id: navigationId.current,
 			component,
+			workspace,
 			handleNavCmd: handleNavigationCmd,
 			handleSelectionCmd: handleSelectionCmd,
 			eventScrollToActive,
@@ -103,7 +107,7 @@ export const NavigationProvider = ({ children, component, initActive, tabOrder }
 			getRegisteredElements,
 		});
 		return () => {
-			parentCtx.unregisterNavigationContainer(navigationId.current);
+			parentCtx.unregisterNavigationContainer(navigationId.current, component, workspace);
 		};
 	}, []);
 

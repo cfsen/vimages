@@ -9,14 +9,17 @@ import { NavWrapperItemType } from "@nav/nav.types";
 import Vimage from "./img";
 
 import styles from "./img.module.css";
+import { Workspace } from "@/context/context.types";
 
 const VimageGrid: React.FC = () => {
+	const workspaceActive = useAppState(state => state.workspaceActive);
+
 	const images = useAppState(state => state.images);
 	const path_hash = useAppState(state => state.currentDirHash);
 	const fullscreen = useAppState(state => state.fullscreenImage);
 
 	const {itemsPerRow, setItemsPerRow} = useCommand();
-	const [displayGrid, setDisplayGrid] = useState(fullscreen);
+	const [displayGrid, setDisplayGrid] = useState<boolean>();
 
 	// layout calculation
 	const containerWidth = useAppState(s => s.uiWindowInnerWidth);
@@ -43,6 +46,11 @@ const VimageGrid: React.FC = () => {
 			clearTimeout(timeoutId);
 		};
 	}, [fullscreen]);
+
+	// hide or show image grid workspace
+	useEffect(() => {
+		setDisplayGrid(workspaceActive === Workspace.ImageGrid);
+	}, [workspaceActive]);
 
 	// elements per row calculation for cursor logic
 	useEffect(() => {

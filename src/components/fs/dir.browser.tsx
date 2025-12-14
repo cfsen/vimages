@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { useAppState } from "@app/app.context.store";
 import { NavigationProvider } from "@nav/nav.provider";
-import { UIComponent } from "@context/context.types";
+import { UIComponent, Workspace } from "@context/context.types";
 
 import DirBrowserMain from "./dir.browser.main";
 import DirBrowserCurrentPreview from "./dir.browser.preview";
@@ -12,14 +12,15 @@ import { windowsUncStrip } from "@components/utility.general";
 import styles from "./fs.module.css";
 
 function DirBrowser(){
-	const active = useAppState(s => s.workspace);
+	const workspaceActive = useAppState(s => s.workspaceActive);
 	const path = useAppState(s => s.currentDir);
 
 	const [render, setRender] = useState<boolean>(false);
 
 	useEffect(() => {
-		setRender(active.DirBrowser);
-	}, [active]);
+		setRender(workspaceActive === Workspace.DirectoryBrowser);
+		console.log("Render dir browser:" + (workspaceActive === Workspace.DirectoryBrowser));
+	}, [workspaceActive]);
 
 	return(
 		<div 
@@ -43,6 +44,7 @@ function DirBrowser(){
 					<NavigationProvider
 						tabOrder={11}
 						component={UIComponent.dirBrowserMain}
+						workspace={Workspace.DirectoryBrowser}
 						initActive={true}
 					>
 						<DirBrowserMain />
