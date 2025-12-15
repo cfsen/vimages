@@ -110,6 +110,9 @@ export function scrollToActive(navProvider: StoreApi<INavigationState>){
 		case NavWrapperItemType.FileBrowser:
 			targetY = getScrollPositionFileBrowser(cursorElement);
 			break;
+		case NavWrapperItemType.Menu:
+			targetY = getScrollPositionFileBrowser(cursorElement);
+			break;
 	};
 
 	if(targetY === null) {

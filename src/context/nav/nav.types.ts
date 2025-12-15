@@ -31,6 +31,7 @@ export type NavigationItem = {
 export enum NavWrapperItemType {
 	Image,
 	FileBrowser,
+	Menu,
 }
 
 // UI state key for NavigationContextType
