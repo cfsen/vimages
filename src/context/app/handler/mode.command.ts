@@ -2,7 +2,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import { invoke } from '@tauri-apps/api/core';
 
 import { useAppState } from "@app/app.context.store";
-import { addInfoMessage, addInfoMessageArray, getDirectory, raiseError, saveConfig, setWorkspace } from "@app/app.context.actions"
+import { addInfoMessage, addInfoMessageArray, getDirectory, raiseError, saveConfig, switchToWorkspace } from "@app/app.context.actions"
 
 import { Command } from "@key/key.command";
 import { Modal } from "@key/key.types";
@@ -160,7 +160,7 @@ export function CommandModeHandler(resultCommand: resultModeCommand){
 
 				// TODO: FEAT: FEAT_PATH_HINTS
 				setFullscreenImage(false);
-				setWorkspace(useAppState, Workspace.DirectoryBrowser);
+				switchToWorkspace(useAppState, Workspace.DirectoryBrowser);
 				getDirectory(useAppState, res.payload as string);
 				break;
 			case ConsoleCmd.SetImgScale:

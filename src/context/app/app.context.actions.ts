@@ -238,23 +238,6 @@ export function nextWorkspace(store: StoreApi<IAppState>){
 	}
 }
 
-// TODO: calls to this toggle fn should be replaced with calls to switchWorkspace
-export function setWorkspace(store: StoreApi<IAppState>, workspace: Workspace) {
-	switch(workspace){
-		case Workspace.DirectoryBrowser:
-			switchToWorkspace(store, Workspace.ImageGrid);
-			break;
-
-		case Workspace.ImageGrid:
-			if(!canNavProviderBecomeInteractable(store, UIComponent.imgGrid)) {
-				raiseError(store, "Unable to open image grid: no images in directory.");
-				return;
-			}
-			switchToWorkspace(store, Workspace.DirectoryBrowser);
-			break;
-	};
-}
-
 export function switchToWorkspace(
 	appStore: StoreApi<IAppState>,
 	workspace: Workspace,
