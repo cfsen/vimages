@@ -219,22 +219,27 @@ function setCursorToNavProvider(store: StoreApi<IAppState>, comp: UIComponent): 
 // Workspace handling
 //
 
-
-// TODO: either update for dynamically registered workspaces, or remove
-// change active workspace sequentially
+/**
+ * Cycle workspaces.
+ * */
 export function nextWorkspace(store: StoreApi<IAppState>){
-	const workspace = store.getState().workspaceActive;
+	let workspace = store.getState().workspaceActive;
+	let images = store.getState().images.length;	
 
-	if(workspace === Workspace.ImageGrid) {
+	// DirectoryBrowser -> ImageGrid
+	if(workspace == Workspace.DirectoryBrowser && images > 0) {
+		switchToWorkspace(store, Workspace.ImageGrid);
+	}
+	// DirectoryBrowser -> ImageGrid: No images
+	if(workspace == Workspace.DirectoryBrowser && images === 0) {
+		raiseError(store, "Unable to open image grid: no images in directory.");
+	}
+	// ImageGrid -> DirectoryBrowser
+	else if(workspace == Workspace.ImageGrid) {
 		switchToWorkspace(store, Workspace.DirectoryBrowser);
 	}
 	else {
-		if(store.getState().images.length === 0) {
-			raiseError(store, "Unable to open image grid: no images in directory.");
-			return;
-		}
-
-		switchToWorkspace(store, Workspace.ImageGrid);
+		console.warn(`Unrecognized workspace: ${Workspace[workspace]}`);
 	}
 }
 
