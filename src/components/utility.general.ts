@@ -43,3 +43,35 @@ export function TrimPathStrLength(str: string){
 		return str.substring(0, 31) + " (…)";
 	return str;
 }
+
+export async function SendToClipboard(buf: string) {
+	try {
+		await navigator.clipboard.writeText(buf);
+	}
+	catch(err) {
+		console.error("Clipboard write failed:" + err);
+	}
+}
+
+export function FilePathsExport(
+	buf: Set<string> | null,
+	prefix: string
+): string | null {
+	if(buf === null) return null;
+
+	// TODO: windows path support
+	let str_buf = [...buf].map(x => `${prefix}/${x}\n`).join('');
+	return str_buf;
+}
+export function FilePathsExportAsPythonList(
+	buf: Set<string> | null,
+	prefix: string
+): string | null {
+	if(buf === null) return null;
+
+	let str_buf = "images = [\n";
+	// TODO: windows path support
+	str_buf += [...buf].map(x => `\t\"${prefix}/${x}\",\n`).join('');
+	str_buf += "]";
+	return str_buf;
+}
