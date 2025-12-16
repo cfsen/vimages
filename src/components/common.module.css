@@ -1,0 +1,39 @@
+.Container {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+}
+
+.FlexRow {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+}
+
+.FlexColumn {
+	display: flex;
+	flex-direction: column;
+}
+
+.AlignStart {
+	align-items: flex-start;
+}
+
+.AlignCenter {
+	align-items: center;
+}
+
+.JustifyCenter {
+	justify-content: center;
+}
+
+.Gap {
+	gap: 16px;
+}
+
+.ContainerMargin {
+	margin: 9px 3px 3px 0px;
+}
