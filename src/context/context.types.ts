@@ -83,10 +83,12 @@ export enum UIComponent {
 	imgGrid,
 	dirBrowserMain,
 	dirBrowserPreview,
+	selectAction,
 }
 
 // Logical groups for NavigationProvider
 export enum Workspace {
 	DirectoryBrowser,
 	ImageGrid,
+	SelectionAction,
 }
