@@ -28,6 +28,7 @@ interface IAppProps {
 
 	workspaceActive: Workspace,
 	workspaces: Map<Workspace, UIComponent[]>,
+	workspaceLast: Workspace,
 
 	fullscreenImage: boolean
 	fullscreenImagePath: string
@@ -118,6 +119,7 @@ export interface IAppState extends IAppProps {
 	setMode: (mode: Modal) => void
 
 	setWorkspaceActive: (ws: Workspace) => void 
+	setWorkspaceLast: (ws: Workspace) => void
 	addWorkspace: (ws: Workspace, ui_comp: UIComponent) => void
 	removeWorkspace: (ws: Workspace, ui_comp: UIComponent) => void
 
@@ -230,6 +232,8 @@ export const useAppState = create<IAppState>((set) => ({
 
 	workspaceActive: Workspace.DirectoryBrowser,
 	setWorkspaceActive: (ws) => set({ workspaceActive: ws }),
+	workspaceLast: Workspace.DirectoryBrowser,
+	setWorkspaceLast: (ws) => set({ workspaceLast: ws }),
 	workspaces: new Map<Workspace, UIComponent[]>(),
 	addWorkspace: (ws, ui_comp) => {
 		set((state) => {
