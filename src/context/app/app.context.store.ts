@@ -20,6 +20,7 @@ interface IAppProps {
 	images: EntityImage[]
 	dirHistory: Map<string, string>
 	activeSelection: Set<string> | null
+	entitySelectionBuffer: Set<string> | null
 
 	//
 	// UI state
@@ -112,6 +113,7 @@ export interface IAppState extends IAppProps {
 	setImages: (images: EntityImage[]) => void
 	setDirHistory: (dir: string) => void
 	setActiveSelection: (items: Set<string> | null) => void
+	setEntitySelectionBuffer: (items: Set<string> | null) => void
 
 	//
 	// UI state
@@ -223,6 +225,10 @@ export const useAppState = create<IAppState>((set) => ({
 	activeSelection: null,
 	setActiveSelection: (items: Set<string> | null) => set({
 		activeSelection: items
+	}),
+	entitySelectionBuffer: null,
+	setEntitySelectionBuffer: (items: Set<string> | null) => set({
+		entitySelectionBuffer: items
 	}),
 
 	//
