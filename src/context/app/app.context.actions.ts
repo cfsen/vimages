@@ -267,6 +267,8 @@ export function switchToWorkspace(
 		setNavProviderInteractable(appStore, comp, true);
 	});
 
+	// update last workspace
+	context.setWorkspaceLast(appStore.getState().workspaceActive);
 	// update active workspace
 	context.setWorkspaceActive(workspace);
 
@@ -277,6 +279,13 @@ export function switchToWorkspace(
 	}
 
 	return workspace;
+}
+
+export function switchToPreviousWorkspace(appStore: StoreApi<IAppState>): Workspace | null {
+	let last = appStore.getState().workspaceLast;
+	if(last === null) return null
+
+	return switchToWorkspace(appStore, last);
 }
 
 //
