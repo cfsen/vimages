@@ -1,5 +1,5 @@
 import { IAppState, useAppState } from "@app/app.context.store";
-import { getDirectory } from "@app/app.context.actions";
+import { getDirectory, switchToPreviousWorkspace } from "@app/app.context.actions";
 
 import { UIComponent } from "@context/context.types";
 import { Command } from "@key/key.command";
@@ -8,6 +8,7 @@ import { resultModeNormal } from "@key/key.module.handler.normal";
 import { INavigationState } from "@nav/nav.provider.store";
 import { StoreApi } from "zustand";
 import { NavigationItem } from "@nav/nav.types";
+import { FilePathsExport, FilePathsExportAsPythonList, SendToClipboard } from "@/components/utility.general";
 
 export function handleNavigationCommand(
 	appStore: StoreApi<IAppState>,
@@ -25,6 +26,8 @@ export function handleNavigationCommand(
 		console.info(context);
 		console.info("provider:");
 		console.info(provider);
+		console.info("selection");
+		console.info(appStore.getState().entitySelectionBuffer);
 		console.info("=== END ===");
 	}
 
@@ -50,6 +53,11 @@ export function handleNavigationCommand(
 		let interject_input_img_grid = input_interject_img_grid(appStore, seq, active_item);
 		if(interject_input_img_grid !== null) return interject_input_img_grid;
 	}
+	// handle input for selection actions
+	if(component == UIComponent.selectAction) {
+		let interject_input_select_actions = input_interject_select_actions(appStore, seq, active_item);
+		if(interject_input_select_actions !== null) return interject_input_select_actions;
+	}
 
 	// update cursor position
 	let cur = update_cursor_position(navStore, seq, component);
@@ -63,6 +71,40 @@ export function handleNavigationCommand(
 	return true;
 };
 
+function input_interject_select_actions(
+	appStore: StoreApi<IAppState>,
+	seq: resultModeNormal,
+	active_item: NavigationItem
+): boolean | null {
+	switch(seq.cmd) {
+		case Command.Return:
+			let prefix = appStore.getState().currentDir;
+			let buffer = appStore.getState().entitySelectionBuffer;
+
+			if(buffer === null) return null;
+
+			let clipboard_buffer: string | null = null;
+			switch(active_item.data){
+				case "m_selact_c2c":
+					clipboard_buffer = FilePathsExport(buffer, prefix);
+					break;
+				case "m_selact_c2c_py":
+					clipboard_buffer = FilePathsExportAsPythonList(buffer, prefix);
+					break;
+			}
+			if(clipboard_buffer === null) return null;
+
+			SendToClipboard(clipboard_buffer);
+			return true;
+		case Command.Escape:
+			// clean up selection buffer
+			appStore.getState().setEntitySelectionBuffer(null);
+			switchToPreviousWorkspace(appStore);
+			return true;
+		default:
+			return null;
+	}
+}
 
 function input_interject_dir_browser(
 	seq: resultModeNormal,
