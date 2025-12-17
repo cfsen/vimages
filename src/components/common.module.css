@@ -37,3 +37,7 @@
 .ContainerMargin {
 	margin: 9px 3px 3px 0px;
 }
+
+.Bg900 { background-color: var(--neutral-900); }
+.Bg800 { background-color: var(--neutral-800); }
+.Bg700 { background-color: var(--neutral-700); }
