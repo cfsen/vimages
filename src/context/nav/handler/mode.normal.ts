@@ -9,6 +9,7 @@ import { INavigationState } from "@nav/nav.provider.store";
 import { StoreApi } from "zustand";
 import { NavigationItem } from "@nav/nav.types";
 import { FilePathsExport, FilePathsExportAsPythonList, SendToClipboard } from "@/components/utility.general";
+import { selectCursorItem, selectCursorRow } from "./mode.visual";
 
 export function handleNavigationCommand(
 	appStore: StoreApi<IAppState>,
@@ -50,7 +51,7 @@ export function handleNavigationCommand(
 	}
 	// handle input for image grid
 	if(component === UIComponent.imgGrid) {
-		let interject_input_img_grid = input_interject_img_grid(appStore, seq, active_item);
+		let interject_input_img_grid = input_interject_img_grid(appStore, navStore, seq, active_item);
 		if(interject_input_img_grid !== null) return interject_input_img_grid;
 	}
 	// handle input for selection actions
@@ -134,10 +135,27 @@ function input_interject_dir_browser(
 
 function input_interject_img_grid(
 	appStore: StoreApi<IAppState>,
+	navStore: StoreApi<INavigationState>,
 	seq: resultModeNormal,
 	active_item: NavigationItem
 ): boolean | null {
 	switch(seq.cmd){
+		case Command.Yank:
+			let item = selectCursorItem(appStore, navStore);
+			if(item === null) {
+				console.error("Failed to yank!");
+				return false;
+			}
+			SendToClipboard(item);
+			return true;
+		case Command.YankLine: // yy
+			let items_row = selectCursorRow(appStore, navStore);
+			if(items_row === null) {
+				console.error("Failed to yank!");
+				return false;
+			}
+			SendToClipboard(items_row);
+			return true;
 		case Command.Return:
 			appStore.getState().setFullscreenImage(true);
 			appStore.getState().setFullscreenImagePath(active_item.data);

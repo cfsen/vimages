@@ -38,6 +38,49 @@ export function handleSelectionCommand(
 	return (cursorHandler !== null);
 }
 
+export function selectCursorItem(
+	appStore: StoreApi<IAppState>,
+	navStore: StoreApi<INavigationState>,
+): string | null {
+	let id = navStore.getState().navItemActive;
+	if(id === null) return null;
+
+	let item = navStore.getState().navItems.find(x => x.id === id);
+	if(item === undefined) return null;
+
+	// TODO: windows path support
+	return `${appStore.getState().currentDir}/${item.data}`
+}
+
+export function selectCursorRow(
+	appStore: StoreApi<IAppState>,
+	navStore: StoreApi<INavigationState>,
+): string | null {
+	let id = navStore.getState().navItemActive;
+	if(id === null) return null;
+
+	let all_items = navStore.getState().navItems;
+
+	let item = all_items.find(x => x.id === id);
+	if(item === undefined) return null;
+
+	let item_pos = all_items.indexOf(item);
+	let per_row = navStore.getState().navItemsPerRow;
+
+	let select_from = Math.floor(item_pos / per_row) * per_row;
+	let select_to = select_from + per_row;
+
+	let selection = "";
+	let current_dir = appStore.getState().currentDir;
+
+	for(let i = select_from; i < select_to; i++) {
+		// TODO: windows path support
+		selection += `${current_dir}/${all_items[i].data}\n`;
+	}
+
+	return selection;
+}
+
 function startSelection(
 	navStore: StoreApi<INavigationState>,
 ) {

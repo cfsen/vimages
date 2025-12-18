@@ -45,6 +45,10 @@ export function getDefaultKeyMap(): Map<string, Command> {
 
 	keyMap.set('R', Command.Refresh);
 
+	keyMap.set('y', Command.PartialInput);
+	keyMap.set('yw', Command.Yank);
+	keyMap.set('yy', Command.YankLine);
+
 	keyMap.set('r', Command.ImageRotate);
 	keyMap.set('zi', Command.ImageZoomIn);
 	keyMap.set('zo', Command.ImageZoomOut);
@@ -128,6 +132,9 @@ export enum Command {
 
 	OptionUp,
 	OptionDown,
+
+	Yank,
+	YankLine,
 
 	TauriFullscreen,
 }
