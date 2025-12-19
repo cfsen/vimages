@@ -15,7 +15,18 @@ export function defaultResultModeCommand(): resultModeCommand {
 	}
 }
 
-export function handleModeCommand(event: KeyboardEvent, sequenceState: resultModeCommand): resultModeCommand {
+export function defaultResultModeInsert(): resultModeCommand {
+	return {
+		sequence: "",
+		cursor: 0,
+		cmd: Command.None,
+	}
+}
+
+export function handleModeCommand(
+	event: KeyboardEvent,
+	sequenceState: resultModeCommand
+): resultModeCommand {
 	if(event.ctrlKey && isSpecialKey(event.key))
 		return handleModeCommandSpecialCtrl(event.key as SpecialKey, sequenceState);
 	if(isSpecialKey(event.key))

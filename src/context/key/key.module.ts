@@ -4,7 +4,7 @@ import { staticSpecialKeyBinds } from './key.input.parsers';
 import { Modal, modeNormal, modeState, modeInsert, modeVisual, modeCommand, Keybinds } from "./key.types";
 
 import { handleModeNormal, resultModeNormal, defaultResultModeNormal } from "./key.module.handler.normal";
-import { handleModeCommand, resultModeCommand, defaultResultModeCommand } from "./key.module.handler.cmd";
+import { handleModeCommand, resultModeCommand, defaultResultModeCommand, defaultResultModeInsert } from "./key.module.handler.cmd";
 
 let KEYBINDS = getDefaultKeybinds();
 
@@ -12,7 +12,7 @@ let commandBuffer: resultModeCommand = defaultResultModeCommand();
 let normalBuffer: resultModeNormal = defaultResultModeNormal();
 
 let visualBuffer: resultModeNormal = defaultResultModeNormal();
-let insertSequence = "";
+let insertBuffer: resultModeCommand = defaultResultModeInsert();
 
 export function modalKeyboard(
 	event: KeyboardEvent,
@@ -29,12 +29,13 @@ export function modalKeyboard(
 
 		// clear buffers
 		visualBuffer = defaultResultModeNormal();
-		insertSequence = "";
+		insertBuffer = defaultResultModeInsert();
 		normalBuffer = defaultResultModeNormal();
 		commandBuffer = defaultResultModeCommand();
 
 		// reset external stores
 		cmdHandler.callback?.(commandBuffer);
+		insertHandler.callback?.(insertBuffer);
 		visualBuffer.cmd = Command.ModeVisualExit;
 		visualHandler.callback?.(visualBuffer);
 		return;
@@ -65,7 +66,14 @@ export function modalKeyboard(
 
 			break;
 		case Modal.Insert:
-			handleModeInsert(insertHandler, event, insertSequence);
+			insertBuffer = handleModeCommand(event, insertBuffer);
+
+			insertHandler.callback?.(insertBuffer);
+
+			if(insertBuffer.cmd === Command.Return) {
+				insertBuffer = defaultResultModeInsert();
+				insertBuffer.sequence = "";
+			}
 			break;
 		case Modal.Command:
 			commandBuffer = handleModeCommand(event, commandBuffer);

@@ -49,7 +49,7 @@ type AppContextType = {
 	// Main command handlers
 	handleModeNormal: (resultNormal: resultModeNormal) => void;
 	handleModeVisual: (resultNormal: resultModeNormal) => void;
-	handleModeInsert: (input: string, sequence: CommandSequence) => void;
+	handleModeInsert: (resultInsert: CommandSequence) => void;
 	handleModeCommand: (resultCommand: resultModeCommand) => void;
 };
 
@@ -216,10 +216,10 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
 		VisualModeHandler(sequence);
 	}
-	const handleModeInsert = (input: string, sequence: CommandSequence) => {
+	const handleModeInsert = (resultInsert: CommandSequence) => {
 		if(APP_ERROR_LOCK) return;
 
-		InsertModeHandler(input, sequence);
+		InsertModeHandler(resultInsert);
 	}
 
 	const handleModeCommand = (resultCmd: resultModeCommand) => {
