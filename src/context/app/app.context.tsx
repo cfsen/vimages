@@ -16,7 +16,7 @@ import { IPC_DataStringArray, IPC_MsgInfoWindow, IPC_QueueStatus } from "@app/ap
 
 import { NavigationHandle, RustApiAction, UIComponent, VimagesConfig, Workspace } from "@context/context.types";
 
-import { Command, CommandSequence, getDefaultKeyMap } from "@key/key.command";
+import { Command, getDefaultKeyMap } from "@key/key.command";
 import { resultModeCommand } from "@key/key.module.handler.cmd";
 import { resultModeNormal } from "@key/key.module.handler.normal";
 import { parseCommand, setKeybinds } from "@key/key.module";
@@ -49,7 +49,7 @@ type AppContextType = {
 	// Main command handlers
 	handleModeNormal: (resultNormal: resultModeNormal) => void;
 	handleModeVisual: (resultNormal: resultModeNormal) => void;
-	handleModeInsert: (resultInsert: CommandSequence) => void;
+	handleModeInsert: (resultInsert: resultModeCommand) => void;
 	handleModeCommand: (resultCommand: resultModeCommand) => void;
 };
 
@@ -216,7 +216,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
 		VisualModeHandler(sequence);
 	}
-	const handleModeInsert = (resultInsert: CommandSequence) => {
+	const handleModeInsert = (resultInsert: resultModeCommand) => {
 		if(APP_ERROR_LOCK) return;
 
 		InsertModeHandler(resultInsert);
