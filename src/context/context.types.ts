@@ -92,3 +92,8 @@ export enum Workspace {
 	ImageGrid,
 	SelectionAction,
 }
+
+// Insert mode component identifier for coupling UI to action
+export enum InsertModeCompAction {
+	EntityBatchRename,
+}
