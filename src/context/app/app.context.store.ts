@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { EntityDirectory, EntityImage, NavigationHandle, UIComponent, Workspace } from "@context/context.types";
+import { EntityDirectory, EntityImage, InsertModeCompAction, NavigationHandle, UIComponent, Workspace } from "@context/context.types";
 import { Modal } from "@key/key.types";
 
 interface IAppProps {
@@ -56,6 +56,12 @@ interface IAppProps {
 	searchHitLastJump: number | null
 
 	errorDisplayGeneric: boolean
+
+	//
+	// Insert mode
+	// key_insertmode
+	insertBuffer: string,
+	insertCompAction: InsertModeCompAction | null,
 
 	//
 	// Image grid UI
@@ -146,6 +152,12 @@ export interface IAppState extends IAppProps {
 	setSearchHitLastJump: (jump: number | null) => void
 
 	setErrorDisplayGeneric: (display: boolean) => void
+
+	//
+	// Insert mode
+	// key_insertmode
+	setInsertBuffer: (bfr: string) => void
+	setInsertCompAction: (id: InsertModeCompAction | null) => void
 
 	//
 	// Image grid UI
@@ -326,6 +338,16 @@ export const useAppState = create<IAppState>((set) => ({
 
 	errorDisplayGeneric: true,
 	setErrorDisplayGeneric: (display: boolean) => set({ errorDisplayGeneric: display }),
+
+	//
+	// Insert mode
+	// key_insertmode
+	insertBuffer: "",
+	setInsertBuffer: (str: string) => set({ insertBuffer: str }),
+	insertCompAction: null,
+	setInsertCompAction: (id: InsertModeCompAction | null) => set({
+		insertCompAction: id,
+	}),
 
 	//
 	// Image grid UI
