@@ -41,7 +41,6 @@ export function modalKeyboard(
 		return;
 	}
 
-	// TODO: FEAT: FEAT_MODE_INSERT
 	switch(mode){
 		case Modal.Visual:
 			visualBuffer = handleModeNormal(event, visualBuffer, KEYBINDS.keyMap);
