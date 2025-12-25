@@ -79,24 +79,7 @@ function input_interject_select_actions(
 ): boolean | null {
 	switch(seq.cmd) {
 		case Command.Return:
-			let prefix = appStore.getState().currentDir;
-			let buffer = appStore.getState().entitySelectionBuffer;
-
-			if(buffer === null) return null;
-
-			let clipboard_buffer: string | null = null;
-			switch(active_item.data){
-				case "m_selact_c2c":
-					clipboard_buffer = FilePathsExport(buffer, prefix);
-					break;
-				case "m_selact_c2c_py":
-					clipboard_buffer = FilePathsExportAsPythonList(buffer, prefix);
-					break;
-			}
-			if(clipboard_buffer === null) return null;
-
-			SendToClipboard(clipboard_buffer);
-			return true;
+			return handle_selection_action_menu(appStore, active_item);
 		case Command.Escape:
 			// clean up selection buffer
 			appStore.getState().setEntitySelectionBuffer(null);
@@ -104,6 +87,36 @@ function input_interject_select_actions(
 			return true;
 		default:
 			return null;
+	}
+}
+
+function handle_selection_action_menu(
+	appStore: StoreApi<IAppState>,
+	active_item: NavigationItem
+): boolean | null {
+	if(active_item.data === "m_selact_rename"){
+		// TODO: open rename ui
+		return true;
+	}
+	else if(is_clipboard_action(active_item.data)){
+		let buffer = appStore.getState().entitySelectionBuffer;
+		if(buffer === null) return null;
+
+		let prefix = appStore.getState().currentDir;
+		let clipboard_buffer = active_item.data === "m_selact_c2c"
+			? FilePathsExport(buffer,prefix)
+			: FilePathsExportAsPythonList(buffer, prefix);
+		if(clipboard_buffer === null) return null;
+
+		SendToClipboard(clipboard_buffer);
+		return true;
+	}
+
+	return false; // not handled
+
+	// local
+	function is_clipboard_action(active_item_data: string) {
+		return (active_item_data === "m_selact_c2c" || active_item_data === "m_selact_c2c_py")
 	}
 }
 
