@@ -1,12 +1,14 @@
 import { IAppState } from "@app/app.context.store";
 
-import { UIComponent } from "@context/context.types";
+import { UIComponent, Workspace } from "@context/context.types";
 import { Command } from "@key/key.command";
 import { resultModeNormal } from "@key/key.module.handler.normal";
 import { INavigationState } from "@nav/nav.provider.store";
 import { updateSelectionBuffer } from "@nav/nav.provider.actions";
 import { StoreApi } from "zustand";
 import { update_cursor_position } from "./mode.normal";
+import { switchToWorkspace } from "@/context/app/app.context.actions";
+import { Modal } from "@/context/key/key.types";
 
 export function handleSelectionCommand(
 	appStore: StoreApi<IAppState>,
@@ -18,9 +20,10 @@ export function handleSelectionCommand(
 
 	switch(seq.cmd) {
 		case Command.ModeVisualExit:
+			console.warn("ModeVisualExit");
 			return exitModeVisual(appStore, navStore);
 		case Command.Return:
-			return handleCmdReturn(appStore, navStore);
+			return openSelectionActionUI(appStore, navStore);
 	};
 
 	if(provider.selectionStart === null) {
@@ -104,10 +107,19 @@ function exitModeVisual(
 	return true;
 }
 
-function handleCmdReturn(
+function openSelectionActionUI(
 	appStore: StoreApi<IAppState>,
 	navStore: StoreApi<INavigationState>,
 ): boolean {
-	// TODO: call UI for selection actions
+	// capture selection
+	appStore.getState().setEntitySelectionBuffer(new Set<string>(appStore.getState().activeSelection));
+
+	// clean up state
+	exitModeVisual(appStore, navStore);
+
+	// change vim mode
+	appStore.getState().setMode(Modal.Normal);
+
+	switchToWorkspace(appStore, Workspace.SelectionAction);
 	return true;
 }

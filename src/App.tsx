@@ -18,8 +18,9 @@ import InfoPopup from "@ui/info/ui.info";
 import ConfigViewerPopup from "@ui/config.viewer/ui.config.viewer";
 
 import DirBrowser from "@fs/dir.browser";
-import SelectionOverview from "./components/ui/selection/ui.selection.overview";
 import { resizeScrollToActive } from "@app/app.context.actions";
+import SelectionOverview from "@ui/selection/ui.selection.overview";
+import SelectionAction from "@ui/selection/ui.selection.action";
 
 function App() {
 	const { handleModeVisual, handleModeNormal, handleModeInsert, handleModeCommand } = useGlobalCtx();
@@ -73,6 +74,7 @@ function App() {
 			<DirBrowser />
 			<VimageBrowser />
 			<SelectionOverview />
+			<SelectionAction />
 			<Navbar />
 		</main>
 	);
