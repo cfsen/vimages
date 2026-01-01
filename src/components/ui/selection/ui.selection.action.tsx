@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 
 import modStyles from "./ui.selection.module.css"
 import compStyles from "@components/common.module.css"
+import BulkRenameUi from "./ui.selection.rename";
+import { CssPreset, CssSelect } from "@/components/utility.styling";
 
 function SelectionAction() {
 	const {
@@ -17,6 +19,9 @@ function SelectionAction() {
 
 	const [render, setRender] = useState<boolean>();
 
+	let css_display = render ? 'flex' : 'none';
+	let css_workingPath = [compStyles.FlexRow, compStyles.ContainerMargin];
+
 	// hide or show image grid workspace
 	useEffect(() => {
 		setRender(workspaceActive === Workspace.SelectionAction);
@@ -24,32 +29,30 @@ function SelectionAction() {
 
 	return(
 		<div
-			style={{
-				display: render ? 'flex' : 'none',
-			}}
-			className={`${compStyles.Container} ${compStyles.Bg900}`}
+			style={{ display: css_display }}
+			className={CssSelect(CssPreset.Container)}
 		>
-			<div className={`${compStyles.FlexRow} ${compStyles.ContainerMargin}`}>
+			<div className={css_workingPath.join(" ")}>
 				{currentDir}
 			</div>
 
-			<div className={`${compStyles.FlexRow} ${compStyles.Gap} ${compStyles.ContainerMargin}`}>
-				<div className={`${compStyles.Bg700} ${compStyles.FlexColumn}`}>
-					{entitySelectionBuffer ? (
-						[...entitySelectionBuffer].map((ent, index) => (
-							<li key={index}>{ent}</li>
-						))
-					) : (
-							<p>No items selected</p>
-						)}
+			<div className={CssSelect(CssPreset.Row)}>
+				<div className={CssSelect(CssPreset.Column)}>
 				</div>
-				<div className={`${compStyles.Bg700} ${compStyles.FlexColumn}`}>
+				<div className={CssSelect(CssPreset.Column)}>
 					<NavigationProvider
 						tabOrder={12}
 						component={UIComponent.selectAction}
 						workspace={Workspace.SelectionAction}
 						initActive={false}
 					>
+						<NavWrapper
+							id="m_selact_rename"
+							itemType={NavWrapperItemType.Menu}
+							data="m_selact_rename"
+						>
+							Rename
+						</NavWrapper>
 						<NavWrapper
 							id="m_selact_c2c"
 							itemType={NavWrapperItemType.Menu}
