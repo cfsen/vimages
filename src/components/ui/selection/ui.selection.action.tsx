@@ -5,27 +5,34 @@ import { NavWrapper } from "@nav/nav.element.wrapper";
 import { NavWrapperItemType } from "@nav/nav.types";
 import { useEffect, useState } from "react";
 
-import modStyles from "./ui.selection.module.css"
 import compStyles from "@components/common.module.css"
 import BulkRenameUi from "./ui.selection.rename";
 import { CssPreset, CssSelect } from "@/components/utility.styling";
+import { Modal } from "@/context/key/key.types";
 
 function SelectionAction() {
 	const {
 		workspaceActive,
-		entitySelectionBuffer,
 		currentDir,
+		mode,
 	} = useAppState();
 
 	const [render, setRender] = useState<boolean>();
+	const [renderMenu, setRenderMenu] = useState<boolean>();
 
 	let css_display = render ? 'flex' : 'none';
+	let css_display_menu = renderMenu ? 'flex' : 'none';
 	let css_workingPath = [compStyles.FlexRow, compStyles.ContainerMargin];
 
 	// hide or show image grid workspace
 	useEffect(() => {
 		setRender(workspaceActive === Workspace.SelectionAction);
 	}, [workspaceActive]);
+
+	// hide or show menu
+	useEffect(() => {
+		setRenderMenu(mode !== Modal.Insert);
+	}, [mode]);
 
 	return(
 		<div
@@ -38,8 +45,12 @@ function SelectionAction() {
 
 			<div className={CssSelect(CssPreset.Row)}>
 				<div className={CssSelect(CssPreset.Column)}>
+					<BulkRenameUi />
 				</div>
-				<div className={CssSelect(CssPreset.Column)}>
+				<div
+					className={CssSelect(CssPreset.Column)}
+					style={{ display: css_display_menu }}
+				>
 					<NavigationProvider
 						tabOrder={12}
 						component={UIComponent.selectAction}
@@ -72,7 +83,5 @@ function SelectionAction() {
 			</div>
 		</div>
 	);
-
 }
-
 export default SelectionAction;
