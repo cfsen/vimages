@@ -59,6 +59,13 @@ pub fn get_io_error_description(code: &FilesystemIOErrorCode) -> &str {
         FilesystemIOErrorCode::TargetDoesNotExist => "Target does not exist",
         FilesystemIOErrorCode::TargetIsNotFile => "Target is not a file",
         FilesystemIOErrorCode::TargetIsNotDirectory => "Target is not a directory",
+
+        FilesystemIOErrorCode::RegexSubstitutionMissingPrefix => "Substitution must start with: s/",
+        FilesystemIOErrorCode::RegexSubstitutionMinimumLength => "Substitution must be at least 4 characters",
+        FilesystemIOErrorCode::RegexSubstitutionMissingSeparators => "Missing separators",
+        FilesystemIOErrorCode::RegexSubstitutionTooManySeparators => "Too many separators",
+
+        FilesystemIOErrorCode::RegexInvalidExpr => "Invalid regex",
     }
 }
 #[derive(Debug, Clone)]
@@ -76,4 +83,11 @@ pub enum FilesystemIOErrorCode {
     TargetDoesNotExist,
     TargetIsNotFile,
     TargetIsNotDirectory,
+
+    RegexSubstitutionMissingPrefix,
+    RegexSubstitutionMinimumLength,
+    RegexSubstitutionMissingSeparators,
+    RegexSubstitutionTooManySeparators,
+
+    RegexInvalidExpr,
 }
