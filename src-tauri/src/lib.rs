@@ -99,6 +99,7 @@ pub fn run() {
             fs_io::ops::delete_dir,
             fs_io::ops::delete_file,
             fs_io::ops::copy_file,
+            fs_io::regex::preview_batch_rename,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
