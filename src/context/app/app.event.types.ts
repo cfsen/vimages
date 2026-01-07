@@ -36,3 +36,10 @@ export enum IPC_QueueOpCode {
 	StatusBlacklist = "StatusBlacklist",
 	StatusQueue = "StatusQueue",
 };
+
+// Encapsulates previews of substitution operations performed on filesystem entities
+// Rust type: FsIoBatchEntity (src-tauri/src/fs_io/types.rs)
+export type IPC_FsIoBatchEntity = {
+	Original: string,
+	Target: string;
+}
