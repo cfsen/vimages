@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 import { EntityDirectory, EntityImage, InsertModeCompAction, NavigationHandle, UIComponent, Workspace } from "@context/context.types";
 import { Modal } from "@key/key.types";
+import { IPC_FsIoBatchEntity } from './app.event.types';
 
 interface IAppProps {
 	//
@@ -56,6 +57,8 @@ interface IAppProps {
 	searchHitLastJump: number | null
 
 	errorDisplayGeneric: boolean
+
+	batchOperationPreview: Array<IPC_FsIoBatchEntity> | null
 
 	//
 	// Insert mode
@@ -152,6 +155,7 @@ export interface IAppState extends IAppProps {
 	setSearchHitLastJump: (jump: number | null) => void
 
 	setErrorDisplayGeneric: (display: boolean) => void
+	setBatchOperationPreview: (res: Array<IPC_FsIoBatchEntity> | null) => void
 
 	//
 	// Insert mode
@@ -338,6 +342,9 @@ export const useAppState = create<IAppState>((set) => ({
 
 	errorDisplayGeneric: true,
 	setErrorDisplayGeneric: (display: boolean) => set({ errorDisplayGeneric: display }),
+
+	batchOperationPreview: null,
+	setBatchOperationPreview: (res: Array<IPC_FsIoBatchEntity> | null) => set({ batchOperationPreview: res }),
 
 	//
 	// Insert mode
