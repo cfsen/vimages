@@ -68,10 +68,22 @@ pub fn substitution_pattern_split(pattern: String) -> Result<SearchAndReplace, F
     else {
         Ok(SearchAndReplace {
             search: pattern[2..separators[0]].to_string(),
-            replace: pattern[separators[0]+1..].to_string(),
+            replace: substitute_empty_replace(&pattern[separators[0]+1..]).to_string(),
             flag: None,
         })
 
+    }
+}
+
+fn substitute_empty_replace(replace: &str) -> &str {
+    // handles edge case of s/foo//, which is not counted as having two separators due to how the
+    // string is walked. does not apply if a flag is set, which is counted as having two
+    // separators: s/foo//g
+    if replace == "/" {
+        ""
+    }
+    else {
+        replace
     }
 }
 
