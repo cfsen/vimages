@@ -1,23 +1,29 @@
 import { useAppState } from "@app/app.context.store";
 
-import { CssPreset, CssSelect } from "@/components/utility.styling";
-import { Modal } from "@/context/key/key.types";
+import { IPC_FsIoBatchEntity } from "@app/app.event.types";
+import { CssPreset, CssSelect } from "@components/utility.styling";
+import { Modal } from "@key/key.types";
+import { invoke } from "@tauri-apps/api/core";
+import { useEffect } from "react";
 
 function BulkRenameUi() {
 	const {
 		insertBuffer,
 		entitySelectionBuffer,
+		batchOperationPreview,
 		mode,
 	} = useAppState();
+
+	useEffect(() => {
+		ApiPreviewRename(entitySelectionBuffer, insertBuffer);
+	}, [insertBuffer]);
 
 	if(entitySelectionBuffer == null){
 		return(<>Error: entity buffer was null.</>);
 	}
 
-	let content = mode == Modal.Insert
-		? PrepareItems(ApiPreview(entitySelectionBuffer, insertBuffer))
-		: ListItems(entitySelectionBuffer);
 
+	let content = ListItems(entitySelectionBuffer, batchOperationPreview);
 	let show_input = mode == Modal.Insert
 		? InputField(insertBuffer, mode)
 		: "";
@@ -28,25 +34,26 @@ function BulkRenameUi() {
 	</>);
 }
 
-function ListItems(entities: Set<String>) {
-	return [...entities].map((ent, index) => 
-		<div className={CssSelect(CssPreset.Row)} key={"ui_sr_listitems_" + index}>
-			<div className={CssSelect(CssPreset.Column)}>
-				{ent}
-			</div>
-		</div>);
-}
-
-function PrepareItems(entities: Array<ApiRenameResponse>) {
-	return [...entities].map((ent, index) => 
-		<div className={CssSelect(CssPreset.Row)} key={"ui_sr_prepareItems_" + index}>
-			<div className={CssSelect(CssPreset.Column)}>
-				{ent.Original}
-			</div>
-			<div className={CssSelect(CssPreset.Column)}>
-				{ent.Target}
-			</div>
-		</div>);
+function ListItems(items: Set<String>, entities: Array<IPC_FsIoBatchEntity> | null) {
+	if(entities === null) {
+		return [...items].map((ent, index) => 
+			<div className={CssSelect(CssPreset.Row)} key={"ui_sr_listitems_" + index}>
+				<div className={CssSelect(CssPreset.Column)}>
+					{ent}
+				</div>
+			</div>);
+	}
+	else {
+		return [...entities].map((ent, index) => 
+			<div className={CssSelect(CssPreset.Row)} key={"ui_sr_prepareItems_" + index}>
+				<div className={CssSelect(CssPreset.Column)}>
+					{ent.Original}
+				</div>
+				<div className={CssSelect(CssPreset.Column)}>
+					{ent.Target}
+				</div>
+			</div>);
+	}
 }
 
 function InputField(insertBuffer: string, mode: Modal){
@@ -69,17 +76,19 @@ function InputField(insertBuffer: string, mode: Modal){
 	);
 }
 
-function ApiPreview(entitySelectionBuffer: Set<string>, insertBuffer: string): Array<ApiRenameResponse> {
-	// TODO: API call
-	return [...entitySelectionBuffer].map(x => ({
-		Original: x,
-		Target: x // TODO: placeholder
-	}));
-}
+function ApiPreviewRename(entitySelectionBuffer: Set<string> | null, insertBuffer: string){
+	if(entitySelectionBuffer === null) return;
 
-type ApiRenameResponse = {
-	Original: string,
-	Target: string;
+	let arr = Array.from(entitySelectionBuffer);
+	invoke("preview_batch_rename", { items: arr, pattern: insertBuffer })
+		.then(res => {
+			let cast = res as Array<IPC_FsIoBatchEntity>;
+			useAppState.getState().setBatchOperationPreview(cast);
+		})
+		.catch(err => {
+			console.error(err);
+			useAppState.getState().setBatchOperationPreview(null);
+		});
 }
 
 export default BulkRenameUi;
