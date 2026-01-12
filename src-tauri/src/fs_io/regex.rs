@@ -33,19 +33,22 @@ pub fn substitution_pattern_split(pattern: String) -> Result<SearchAndReplace, F
             FilesystemIOErrorCode::RegexSubstitutionMinimumLength))
     }
 
-    let mut c = 2;
     let mut separators = Vec::<usize>::new();
+    let mut chars = pattern.char_indices().skip(2);
+    let mut skip_next = false;
 
-    while c < pattern.len()-1 {
-        if &pattern[c..c+1] == "\\" {
-            c += 2;
+    while let Some((byte_idx, char)) = chars.next() {
+        if skip_next {
+            skip_next = false;
             continue;
         }
-        else if &pattern[c..c+1] == "/" {
-            separators.push(c);
-        }
 
-        c += 1;
+        if char == '\\' {
+            skip_next = true;
+        }
+        else if char == '/' {
+            separators.push(byte_idx);
+        }
     }
 
     if separators.len() == 0 {
