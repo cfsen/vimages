@@ -10,6 +10,7 @@ import { StoreApi } from "zustand";
 import { NavigationItem } from "@nav/nav.types";
 import { FilePathsExport, FilePathsExportAsPythonList, SendToClipboard } from "@/components/utility.general";
 import { selectCursorItem, selectCursorRow } from "./mode.visual";
+import { Modal } from "@/context/key/key.types";
 
 export function handleNavigationCommand(
 	appStore: StoreApi<IAppState>,
@@ -95,7 +96,7 @@ function handle_selection_action_menu(
 	active_item: NavigationItem
 ): boolean | null {
 	if(active_item.data === "m_selact_rename"){
-		// TODO: open rename ui
+		appStore.getState().setMode(Modal.Insert);
 		return true;
 	}
 	else if(is_clipboard_action(active_item.data)){
