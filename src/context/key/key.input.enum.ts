@@ -1,3 +1,5 @@
+import { Key } from "react";
+
 export enum SpecialKey {
 	// Navigation keys
 	ArrowUp = 'ArrowUp',
@@ -50,5 +52,38 @@ export enum SpecialKey {
 const specialKeySet = new Set(Object.values(SpecialKey));
 
 export function isSpecialKey(key: string): key is SpecialKey {
-    return specialKeySet.has(key as SpecialKey);
+	return specialKeySet.has(key as SpecialKey);
+}
+
+export function classifyKey(event: KeyboardEvent): KeyInputClassification {
+	let checkSpecial = isSpecialKey(event.key);
+	if(!checkSpecial)
+		return {
+			SpecialKey: null,
+			Key: event.key,
+		};
+
+	let cast = event.key as SpecialKey | null;
+	let key = null;
+
+	if(event.shiftKey) {
+		switch(event.code) {
+			case 'BracketRight': // caret workaround
+				key = "^";
+				cast = null;
+				break;
+			default:
+				break;
+		}
+	}
+
+	return {
+		SpecialKey: cast,
+		Key: key,
+	}
+}
+
+export type KeyInputClassification = {
+	SpecialKey: SpecialKey | null,
+	Key: String | null,
 }

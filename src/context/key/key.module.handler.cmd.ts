@@ -1,5 +1,5 @@
 import { Command, } from './key.command';
-import { isSpecialKey, SpecialKey } from './key.input.enum';
+import { castSpecialKey, classifyKey, isSpecialKey, SpecialKey } from './key.input.enum';
 
 export type resultModeCommand = {
 	sequence: string,
@@ -27,10 +27,12 @@ export function handleModeCommand(
 	event: KeyboardEvent,
 	sequenceState: resultModeCommand
 ): resultModeCommand {
-	if(event.ctrlKey && isSpecialKey(event.key))
-		return handleModeCommandSpecialCtrl(event.key as SpecialKey, sequenceState);
-	if(isSpecialKey(event.key))
-		return handleModeCommandSpecial(event.key as SpecialKey, sequenceState);
+	let ckey = classifyKey(event);
+
+	if(event.ctrlKey && ckey.SpecialKey !== null)
+		return handleModeCommandSpecialCtrl(ckey.SpecialKey, sequenceState);
+	if(ckey.SpecialKey !== null)
+		return handleModeCommandSpecial(ckey.SpecialKey, sequenceState);
 
 	// normal input
 	let sequence = sequenceState.sequence;
@@ -39,7 +41,7 @@ export function handleModeCommand(
 	// mid sequence insert 
 	if(cursor !== sequence.length){
 		let preserveBefore = sequence.slice(0, cursor);
-		preserveBefore += event.key;
+		preserveBefore += ckey.Key;
 		cursor += 1;
 
 		let preserveAfter = sequence.slice(cursor-1, sequence.length);
@@ -49,7 +51,7 @@ export function handleModeCommand(
 	}
 
 	// cursor is at EOS, append input
-	sequence += event.key;
+	sequence += ckey.Key;
 	cursor = sequence.length;
 
 	return { ...defaultResultModeCommand(), sequence, cursor, cmd: Command.None };
