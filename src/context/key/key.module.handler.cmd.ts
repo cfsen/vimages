@@ -1,5 +1,5 @@
 import { Command, } from './key.command';
-import { castSpecialKey, classifyKey, isSpecialKey, SpecialKey } from './key.input.enum';
+import { classifyKey, SpecialKey } from './key.input.enum';
 
 export type resultModeCommand = {
 	sequence: string,
