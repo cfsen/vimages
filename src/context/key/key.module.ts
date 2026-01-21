@@ -35,9 +35,13 @@ export function modalKeyboard(
 
 		// reset external stores
 		cmdHandler.callback?.(commandBuffer);
+
+		insertBuffer.cmd = Command.Escape;
 		insertHandler.callback?.(insertBuffer);
+
 		visualBuffer.cmd = Command.ModeVisualExit;
 		visualHandler.callback?.(visualBuffer);
+
 		return;
 	}
 
