@@ -1,7 +1,7 @@
 import { IAppState, useAppState } from "@app/app.context.store";
 import { getDirectory, switchToPreviousWorkspace } from "@app/app.context.actions";
 
-import { UIComponent } from "@context/context.types";
+import { InsertModeCompAction, UIComponent } from "@context/context.types";
 import { Command } from "@key/key.command";
 import { KeyboardCursorHandle } from "@key/key.cursor.handler";
 import { resultModeNormal } from "@key/key.module.handler.normal";
@@ -97,6 +97,7 @@ function handle_selection_action_menu(
 ): boolean | null {
 	if(active_item.data === "m_selact_rename"){
 		appStore.getState().setMode(Modal.Insert);
+		appStore.getState().setInsertCompAction(InsertModeCompAction.EntityBatchRename);
 		return true;
 	}
 	else if(is_clipboard_action(active_item.data)){
