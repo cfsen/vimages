@@ -65,6 +65,8 @@ function InputField(insertBuffer: string, mode: Modal){
 		? insertBuffer
 		: "…";
 
+	// TODO: display caret
+
 	return(
 		<div className={CssSelect(CssPreset.Row)}>
 			<div className={CssSelect(CssPreset.Column)}>
@@ -86,7 +88,7 @@ function ApiPreviewRename(entitySelectionBuffer: Set<string> | null, insertBuffe
 			useAppState.getState().setBatchOperationPreview(cast);
 		})
 		.catch(err => {
-			console.error(err);
+			// TODO: better error handling for user
 			useAppState.getState().setBatchOperationPreview(null);
 		});
 }
