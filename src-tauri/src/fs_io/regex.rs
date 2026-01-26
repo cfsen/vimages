@@ -3,6 +3,18 @@ use regex::Regex;
 
 use crate::fs_io::{error::{FilesystemIOError, FilesystemIOErrorCode}, types::FsIoBatchEntity};
 
+#[tauri::command]
+pub fn exec_batch_rename(items: Vec<String>, pattern: String, path: String) -> Result<(), FilesystemIOError> {
+    info!("exec_batch_rename called: {}", path);
+
+    let rename = preview_batch_rename(items, pattern)?;
+
+    for item in rename {
+        info!("{} -> {}", item.original, item.target);
+    }
+
+    Ok(())
+}
 
 #[tauri::command]
 pub fn preview_batch_rename(items: Vec<String>, pattern: String) -> Result<Vec<FsIoBatchEntity>, FilesystemIOError> {
