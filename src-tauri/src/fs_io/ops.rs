@@ -186,10 +186,12 @@ fn get_path_root(path: &Path) -> Option<String> {
 }
 
 // check destination path for copy/rename operations
-fn check_dest_path(target: &Path, check_type: PathCheckType) -> Result<(), String> {
-    // TODO: use enum for more specific errors (file/directory exists)
+fn check_dest_path(target: &Path, check_type: PathCheckType) -> Result<(), FilesystemIOError> {
     if check_path_exists(&target, check_type).is_ok() {
-        return Err("Destination path exists.".to_string());
+        return Err(FilesystemIOError::with_details(
+                FilesystemIOErrorCode::TargetExists,
+                target.to_string_lossy()
+            ))
     }
     Ok(())
 }
