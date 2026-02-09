@@ -197,20 +197,28 @@ fn check_dest_path(target: &Path, check_type: PathCheckType) -> Result<(), Files
 }
 
 // check if destination path (directory or file) exists
-fn check_path_exists(target: &Path, check_type: PathCheckType) -> Result<(), String> {
-    // TODO: use enum for more specific errors (file/directory exists)
+fn check_path_exists(target: &Path, check_type: PathCheckType) -> Result<(), FilesystemIOError> {
     if !target.exists() {
-        return Err("Target path does not exist".to_string())
+        return Err(FilesystemIOError::with_details(
+            FilesystemIOErrorCode::TargetDoesNotExist,
+            target.to_string_lossy()
+        ))
     }
     match check_type {
         PathCheckType::File => {
             if !target.is_file() {
-                return Err("Target path is not a file".to_string())
+                return Err(FilesystemIOError::with_details(
+                    FilesystemIOErrorCode::TargetIsNotFile,
+                    target.to_string_lossy()
+                ))
             }
         }
         PathCheckType::Directory => {
             if !target.is_dir() {
-                return Err("Target path is not a directory".to_string())
+                return Err(FilesystemIOError::with_details(
+                    FilesystemIOErrorCode::TargetIsNotDirectory,
+                    target.to_string_lossy()
+                ))
             }
         }
     }
