@@ -10,5 +10,9 @@ fn main() {
         .filter_module("vimages_lib::img_cache::queue", log::LevelFilter::Info)
         .filter_module("vimages_lib::ipc::send", log::LevelFilter::Info)
         .init();
+
+    // TODO: config file toggle for hyprland workaround
+    std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+
     vimages_lib::run()
 }
