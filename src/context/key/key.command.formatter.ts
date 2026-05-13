@@ -62,6 +62,8 @@ const commandLabels: Record<Command, string> = {
 	[Command.OptionDown]: "Select option down",
 
 	[Command.TauriFullscreen]: "Toggle app fullscreen",
+	[Command.Yank]: "Yank",
+	[Command.YankLine]: "Yank line"
 };
 
 // Retrieves a human-readable label or short description of a Command.
