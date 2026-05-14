@@ -1,4 +1,4 @@
-import { Command, CommandSequence } from "./key.command";
+import { Command } from "./key.command";
 import { resultModeCommand } from "./key.module.handler.cmd";
 import { resultModeNormal } from "./key.module.handler.normal";
 

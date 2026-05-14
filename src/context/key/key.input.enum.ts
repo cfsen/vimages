@@ -1,5 +1,3 @@
-import { Key } from "react";
-
 export enum SpecialKey {
 	// Navigation keys
 	ArrowUp = 'ArrowUp',
