@@ -87,7 +87,7 @@ function ApiPreviewRename(entitySelectionBuffer: Set<string> | null, insertBuffe
 			let cast = res as Array<IPC_FsIoBatchEntity>;
 			useAppState.getState().setBatchOperationPreview(cast);
 		})
-		.catch(err => {
+		.catch(_err => {
 			// TODO: better error handling for user
 			useAppState.getState().setBatchOperationPreview(null);
 		});
