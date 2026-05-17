@@ -79,7 +79,7 @@ function handleModeNormalSpecialCtrl(key: SpecialKey): resultModeNormal{
 	return { ...defaultResultModeNormal(), cmd, cmdSequence: { cmd } };
 }
 
-function handleModeNormalCtrl(key: string, sequenceState: resultModeNormal): resultModeNormal{
+function handleModeNormalCtrl(key: string, _sequenceState: resultModeNormal): resultModeNormal{
 	let cmd = Command.None;
 
 	switch(key) {
