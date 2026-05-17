@@ -189,9 +189,9 @@ fn get_path_root(path: &Path) -> Option<String> {
 fn check_dest_path(target: &Path, check_type: PathCheckType) -> Result<(), FilesystemIOError> {
     if check_path_exists(&target, check_type).is_ok() {
         return Err(FilesystemIOError::with_details(
-                FilesystemIOErrorCode::TargetExists,
-                target.to_string_lossy()
-            ))
+            FilesystemIOErrorCode::TargetExists,
+            target.to_string_lossy()
+        ))
     }
     Ok(())
 }
