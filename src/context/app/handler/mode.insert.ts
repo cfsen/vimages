@@ -7,7 +7,6 @@ import { invoke } from "@tauri-apps/api/core";
 
 export function InsertModeHandler(resultInsert: resultModeCommand){
 	const {
-		insertBuffer,
 		setInsertBuffer,
 		insertCompAction,
 		setInsertCompAction,
