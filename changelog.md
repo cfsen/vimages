@@ -1,3 +1,22 @@
+# 0.1.11
+
+## Dev's note
+Commits between this version bump up to and including ff92b08 are quick fixes to silence frontend build errors. I expect to revisit them when development resumes.
+
+## User facing:
+- fix: Caret `^` can now be captured in input and command mode.
+- fix: No longer crashes when launching on hyprland/nvidia webkit systems
+- fix: Config file version checking now works as intended
+- feature: path yanking to clipboard with `yw` for single item, `yy` for row of items.
+- feature: UI for actions that can be performed on a selection, accessed by making a selection and sending return.
+
+### Under the hood:
+- Work commenced on batch file renaming
+- CSS cleanup
+- Vim module insert mode
+- IO module for filesystem operations
+- Workspace handling cleanup
+
 # 0.1.10
 
 ## User facing:
