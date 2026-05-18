@@ -156,10 +156,10 @@ export function overwriteBufferCommandMode(newValue: resultModeCommand){
 
 
 // TODO: FEAT: FEAT_MODE_INSERT
-function handleModeInsert(
-	handler: modeInsert,
-	event: KeyboardEvent,
-	sequence: string,
-) {
-	console.log("handleModeInsert", handler, event, sequence);
-}
+// function handleModeInsert(
+// 	handler: modeInsert,
+// 	event: KeyboardEvent,
+// 	sequence: string,
+// ) {
+// 	console.log("handleModeInsert", handler, event, sequence);
+// }
