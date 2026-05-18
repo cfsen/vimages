@@ -1,3 +1,5 @@
+// TODO: regex batch renaming, capture groups
+// TODO: cleanup
 use log::info;
 use regex::Regex;
 
@@ -19,6 +21,9 @@ pub fn exec_batch_rename(items: Vec<String>, pattern: String, path: String) -> R
 #[tauri::command]
 pub fn preview_batch_rename(items: Vec<String>, pattern: String) -> Result<Vec<FsIoBatchEntity>, FilesystemIOError> {
     let sub_pattern = substitution_pattern_split(pattern)?;
+
+    // for debugging
+    // info!("Pattern [flag: {}]: {} -> {}", sub_pattern.flag.unwrap_or("No flag".to_string()), sub_pattern.search, sub_pattern.replace);
 
     let expr = regex_from_expr(&sub_pattern.search)?;
 
@@ -118,7 +123,18 @@ pub fn regex_from_expr(expr: &String) -> Result<Regex, FilesystemIOError> {
         .and_then(|r| Ok(r) )
 }
 
+// pub fn should_resolve_capture_groups(replace: &String) -> bool {
+//     replace.contains("$")
+// }
+
 pub fn run_regex(expr: &Regex, haystack: &String, rep: &String) -> String {
     let s = expr.replace(&haystack, rep);
+
+    // for debugging
+    // info!("s = {s}");
     s.to_string()
 }
+
+// pub fn run_regex_with_capture(item: String, expr: Regex) {
+//     let c = expr.captures(&item); // for capture groups
+// }
